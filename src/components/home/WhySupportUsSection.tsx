@@ -17,40 +17,40 @@ interface WhySupportUsSectionProps {
 export const WhySupportUsSection: React.FC<WhySupportUsSectionProps> = ({ onNavigate }) => {
   const pillars = [
     {
-      title: 'Complete Financial Transparency',
-      description: 'Every donation is accounted for to the cent. Our financial accounts are independently audited every year and publicly downloadable.',
+      title: '100% Honest Accounts',
+      description: 'Every single rupee is accounted for. Anyone can download our yearly balance sheet and audit papers directly from our website.',
       icon: Eye,
-      tag: 'Public Audits'
+      tag: 'Open Accounts'
     },
     {
-      title: 'Direct Grassroots Delivery',
-      description: 'We do not hire expensive consulting agencies. Our dedicated volunteers and ground coordinators work directly within the villages.',
+      title: 'Direct Help — No Middlemen',
+      description: 'We do not pay commission agents or fancy agencies. Our own volunteers deliver food, books, and medical care straight to families.',
       icon: HeartHandshake,
       tag: 'Zero Middlemen'
     },
     {
-      title: 'Community Self-Reliance',
-      description: 'We do not create perpetual dependency. Local mothers and youth councils are trained to manage and maintain facilities long-term.',
+      title: 'Helping Families Stand Proudly',
+      description: 'We do not just give one-day help. We teach mothers sewing and youth computer skills so they can earn their own living with dignity.',
       icon: TrendingUp,
-      tag: 'Long-term Impact'
+      tag: 'Lifelong Support'
     },
     {
-      title: 'Statutory Tax Exemption',
-      description: 'All donations qualify for non-profit tax exemption benefits under section 80G / 501(c)(3) with instant automated digital receipts.',
+      title: 'Save Tax with 80G Receipts',
+      description: 'Get an instant 50% tax exemption receipt on WhatsApp and Email right after you donate. Completely valid under Section 80G.',
       icon: FileCheck,
-      tag: 'Tax Deductible'
+      tag: '80G Tax Save'
     },
     {
-      title: 'Ethical Child & Human Safeguarding',
-      description: 'We follow strict zero-tolerance safeguarding standards, protecting children and vulnerable individuals with utmost respect and dignity.',
+      title: 'Loving Care for Every Child',
+      description: 'Every boy and girl is treated with genuine love and safety. All our teachers and ground staff follow strict child protection rules.',
       icon: ShieldCheck,
-      tag: 'Ethical Standards'
+      tag: 'Child Safety'
     },
     {
-      title: 'Verified Field Milestones',
-      description: 'Donors receive quarterly field updates with photographic proof, GPS coordinates, and transparent beneficiary metric verification.',
+      title: 'Real Photos & Video Proof',
+      description: 'We share genuine photos and clear updates from the ground showing the exact school or water pump your donation helped build.',
       icon: Award,
-      tag: 'Measurable Outcomes'
+      tag: 'Real Proof'
     }
   ];
 
@@ -60,13 +60,13 @@ export const WhySupportUsSection: React.FC<WhySupportUsSectionProps> = ({ onNavi
       {/* Section Header */}
       <div className="text-center max-w-2xl mx-auto space-y-2">
         <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full">
-          Why Give With Confidence
+          Why You Can Trust Us
         </span>
         <h2 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight">
-          Why Support Our NGO?
+          Why Support HopeHorizon?
         </h2>
         <p className="text-xs sm:text-sm text-slate-500">
-          When you support our work, you are partnering with an ethical, audited, and community-first organization.
+          When you donate, you can be 100% sure that your hard-earned money goes directly to children and families in need.
         </p>
       </div>
 

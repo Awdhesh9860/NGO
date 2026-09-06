@@ -17,23 +17,23 @@ export const TransparencySection: React.FC<TransparencySectionProps> = ({ onNavi
           
           <div className="lg:col-span-7 space-y-4 text-left">
             <span className="inline-block text-xs font-bold uppercase tracking-wider text-emerald-400 bg-emerald-950/80 px-3 py-1 rounded-full border border-emerald-800">
-              Accountability & Trust
+              Honest & Open Accounts
             </span>
 
             <h2 className="text-2xl sm:text-4xl font-black tracking-tight leading-snug">
-              Radical Financial Transparency
+              Where Every Rupee Goes — 100% Honest & Clear
             </h2>
 
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
-              We believe every donor and community supporter has the absolute right to know where every single cent goes. Our books are audited annually by certified independent Chartered Accountants, and our complete balance sheets are open to the public.
+              You deserve to know exactly how your donation is used. 88% of every rupee is spent directly on children's schooling, meals, and clean water. Our accounts are checked by independent Chartered Accountants every year and free for anyone to download.
             </p>
 
             {/* Badges / Document categories */}
             <div className="flex flex-wrap gap-2 text-xs text-slate-200 font-semibold pt-1">
-              <span className="rounded-xl bg-slate-800 px-3.5 py-1.5 border border-slate-700">Annual Reports</span>
-              <span className="rounded-xl bg-slate-800 px-3.5 py-1.5 border border-slate-700">Financial Audit Statements</span>
-              <span className="rounded-xl bg-slate-800 px-3.5 py-1.5 border border-slate-700">80G / 501(c)(3) Certificates</span>
-              <span className="rounded-xl bg-slate-800 px-3.5 py-1.5 border border-slate-700">Registration {settings.registrationNumber}</span>
+              <span className="rounded-xl bg-slate-800 px-3.5 py-1.5 border border-slate-700">Yearly Balance Sheets</span>
+              <span className="rounded-xl bg-slate-800 px-3.5 py-1.5 border border-slate-700">Audited Expense Reports</span>
+              <span className="rounded-xl bg-slate-800 px-3.5 py-1.5 border border-slate-700">Government 80G Certificate</span>
+              <span className="rounded-xl bg-slate-800 px-3.5 py-1.5 border border-slate-700">NGO Reg #{settings.registrationNumber}</span>
             </div>
 
             <div className="pt-3">
@@ -42,7 +42,7 @@ export const TransparencySection: React.FC<TransparencySectionProps> = ({ onNavi
                 className="rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white px-7 py-3.5 text-xs font-bold transition flex items-center gap-2 cursor-pointer shadow-lg shadow-emerald-600/30"
               >
                 <FileText className="h-4 w-4" />
-                <span>Explore Full Transparency & Audit Center</span>
+                <span>See All Audit Papers & Reports</span>
                 <ArrowRight className="h-4 w-4" />
               </button>
             </div>

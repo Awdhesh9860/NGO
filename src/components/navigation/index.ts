@@ -8,3 +8,4 @@ export * from './LanguageSelector';
 export * from './DonateButton';
 export * from './NavIcon';
 export * from './navConfig';
+export * from './MobileBottomNav';

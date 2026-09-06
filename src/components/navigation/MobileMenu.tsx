@@ -238,7 +238,7 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
           })}
         </div>
 
-        {/* Mobile Drawer Footer: Prominent Donate CTA & Helpline */}
+        {/* Mobile Drawer Footer: Prominent Donate CTA & Quick Contact */}
         <div className="p-4 border-t border-slate-800/80 bg-slate-900/90 space-y-3">
           <DonateButton
             size="md"
@@ -246,8 +246,27 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
               onClose();
               onOpenDonate();
             }}
-            className="w-full py-3 text-sm shadow-xl"
+            className="w-full py-3 text-sm shadow-xl cursor-pointer"
           />
+
+          {/* Quick Helpline for Mobile */}
+          <div className="grid grid-cols-2 gap-2 pt-1">
+            <a
+              href="tel:+919876543210"
+              className="flex items-center justify-center gap-1.5 rounded-xl border border-slate-800 bg-slate-950/70 py-2.5 text-xs font-semibold text-slate-300 hover:text-white transition"
+            >
+              <Phone className="h-3.5 w-3.5 text-emerald-400" />
+              <span>Call NGO</span>
+            </a>
+            <a
+              href="https://wa.me/919876543210?text=Hello%20HopeHorizon%20NGO"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-1.5 rounded-xl border border-emerald-900/40 bg-emerald-950/40 py-2.5 text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition"
+            >
+              <span>💬 WhatsApp</span>
+            </a>
+          </div>
 
           <div className="flex items-center justify-between text-[11px] text-slate-400 px-1 pt-1">
             <span className="inline-flex items-center gap-1 text-emerald-400">
@@ -255,9 +274,9 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
             </span>
             <button
               onClick={() => handleNavClick('contact')}
-              className="hover:text-white transition font-medium underline"
+              className="hover:text-white transition font-medium underline cursor-pointer"
             >
-              Need Help? Contact Us
+              Contact & FAQ
             </button>
           </div>
         </div>

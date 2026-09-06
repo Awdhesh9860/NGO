@@ -17,34 +17,34 @@ export const AboutPreviewSection: React.FC<AboutPreviewSectionProps> = ({ onNavi
           </span>
 
           <h2 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight leading-snug">
-            Working Hand in Hand With Communities Since Day One
+            Helping Poor Families Stand On Their Own Feet
           </h2>
 
           <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-            We are an independent, grassroots non-profit organization dedicated to opening doors for families who need them most. We believe every person deserves quality schooling for their children, safe drinking water at home, timely healthcare, and the dignity of a dependable livelihood.
+            We are a registered, honest group of social workers and volunteers. We believe every child should go to school, every home should have clean drinking water, and no family should sleep hungry or suffer without doctor care.
           </p>
 
           <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
-            We never impose outside solutions. Our field volunteers and coordinators live and work alongside village elders, mothers' committees, teachers, and local youth to co-design programs that belong to the community and remain sustainable for decades.
+            We never sit in distant offices guessing what people need. Our volunteers go directly into villages and poor neighborhoods, sit with mothers and elders, and deliver real help with love and complete transparency.
           </p>
 
           {/* Core Highlights */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
             <div className="flex items-start gap-2.5">
               <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
-              <span className="text-xs font-semibold text-slate-700">100% Community-Led Solutions</span>
+              <span className="text-xs font-semibold text-slate-700">We Listen to Families First</span>
             </div>
             <div className="flex items-start gap-2.5">
               <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
-              <span className="text-xs font-semibold text-slate-700">Zero Commercial Overhead Bloat</span>
+              <span className="text-xs font-semibold text-slate-700">Zero Middlemen — Direct Ground Help</span>
             </div>
             <div className="flex items-start gap-2.5">
               <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
-              <span className="text-xs font-semibold text-slate-700">Independent Annual Financial Audits</span>
+              <span className="text-xs font-semibold text-slate-700">Yearly Audited Accounts (Public)</span>
             </div>
             <div className="flex items-start gap-2.5">
               <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
-              <span className="text-xs font-semibold text-slate-700">Strict Child Safeguarding Protocols</span>
+              <span className="text-xs font-semibold text-slate-700">Safe & Caring Space for Children</span>
             </div>
           </div>
 
@@ -53,7 +53,7 @@ export const AboutPreviewSection: React.FC<AboutPreviewSectionProps> = ({ onNavi
               onClick={() => onNavigate('about')}
               className="rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white px-7 py-3.5 text-xs font-bold transition flex items-center gap-2 cursor-pointer shadow-md shadow-emerald-600/20"
             >
-              <span>Learn More About Our Journey</span>
+              <span>Read Our Complete Story</span>
               <ArrowRight className="h-4 w-4" />
             </button>
           </div>

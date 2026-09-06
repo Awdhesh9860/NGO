@@ -24,15 +24,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenDonate, onNaviga
   const activeCampaign = campaigns[0];
 
   const [donationFrequency, setDonationFrequency] = useState<'monthly' | 'one-time'>('monthly');
-  const [selectedAmount, setSelectedAmount] = useState<number>(50);
+  const [selectedAmount, setSelectedAmount] = useState<number>(500);
   const [customAmount, setCustomAmount] = useState<string>('');
   const [isCustom, setIsCustom] = useState<boolean>(false);
 
   const presetOptions = [
-    { amount: 25, impact: 'Provides classroom books & supplies for a child' },
-    { amount: 50, impact: 'Supplies clean filtered water to 2 rural families' },
-    { amount: 100, impact: 'Sponsors emergency medical checkups & essentials' },
-    { amount: 250, impact: 'Funds vocational tailoring micro-kit for a woman' }
+    { amount: 500, impact: 'Provides books, school bag & supplies for 1 child' },
+    { amount: 1000, impact: 'Gives clean drinking water to 2 village families' },
+    { amount: 2500, impact: 'Sponsors full doctor checkup & medicines for 5 kids' },
+    { amount: 5000, impact: 'Funds sewing machine & tailoring training for a mother' }
   ];
 
   const handlePresetSelect = (amount: number) => {
@@ -52,7 +52,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenDonate, onNaviga
 
   const handleDonateSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const finalAmount = isCustom ? (parseFloat(customAmount) || 50) : selectedAmount;
+    const finalAmount = isCustom ? (parseFloat(customAmount) || 500) : selectedAmount;
     onOpenDonate(activeCampaign?.id, finalAmount);
   };
 
@@ -70,17 +70,17 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenDonate, onNaviga
           <div className="lg:col-span-7 space-y-6 text-left">
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-950/70 px-4 py-1.5 text-xs font-semibold text-emerald-300 backdrop-blur-md">
               <Sparkles className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-              <span>{t('hero.badge', 'Grassroots Community Action Since 2011')}</span>
+              <span>{t('hero.badge', 'Verified NGO • 100% Honest • Instant 80G Tax Exemption')}</span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.12]">
-              Helping People. <br className="hidden sm:block" />
-              <span className="text-emerald-400">Changing Lives.</span> <br className="hidden sm:block" />
-              Building Real Dignity.
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.15]">
+              Helping Children. <br className="hidden sm:block" />
+              <span className="text-emerald-400">Feeding Families.</span> <br className="hidden sm:block" />
+              Bringing Real Hope.
             </h1>
 
             <p className="text-base sm:text-lg text-slate-300 leading-relaxed font-normal max-w-2xl">
-              We work side-by-side with local families to bring quality schooling, safe drinking water, healthcare, and practical livelihood training to communities in need — honestly, sustainably, and transparently.
+              We work directly on the ground to provide school books, daily nutritious meals, clean drinking water, and doctor care to families in need — 100% honest and with zero middlemen.
             </p>
 
             {/* Quick Action Buttons */}
@@ -91,7 +91,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenDonate, onNaviga
                 className="flex items-center justify-center gap-2.5 rounded-2xl bg-emerald-500 px-8 py-4 text-sm font-bold text-white shadow-xl shadow-emerald-600/30 hover:bg-emerald-400 hover:scale-[1.02] active:scale-[0.98] transition cursor-pointer"
               >
                 <Heart className="h-4 w-4 fill-white" />
-                <span>{t('hero.ctaDonate', 'Support Our Work Today')}</span>
+                <span>{t('hero.ctaDonate', 'Donate Now (Save Tax)')}</span>
               </button>
 
               <button
@@ -99,7 +99,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenDonate, onNaviga
                 onClick={() => onNavigate('programs')}
                 className="flex items-center justify-center gap-2 rounded-2xl border border-slate-700 bg-slate-800/80 px-7 py-4 text-sm font-bold text-slate-200 hover:bg-slate-700 hover:text-white transition cursor-pointer"
               >
-                <span>{t('hero.ctaExplore', 'Explore Our Programs')}</span>
+                <span>{t('hero.ctaExplore', 'See How We Help')}</span>
                 <ArrowRight className="h-4 w-4 text-slate-400" />
               </button>
             </div>
@@ -108,15 +108,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenDonate, onNaviga
             <div className="pt-4 border-t border-slate-800/80 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs text-slate-300">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
-                <span className="font-medium">88% Direct Program Spend</span>
+                <span className="font-medium">88% Spent Directly on Families</span>
               </div>
               <div className="flex items-center gap-2">
                 <ShieldCheck className="h-4 w-4 text-emerald-400 shrink-0" />
-                <span className="font-medium">Registered Non-Profit</span>
+                <span className="font-medium">100% Verified Work</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
-                <span className="font-medium">Instant Tax Exemption Receipts</span>
+                <span className="font-medium">Instant 80G Tax Exemption Receipt</span>
               </div>
             </div>
           </div>
@@ -128,8 +128,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenDonate, onNaviga
               {/* Header with Monthly/One-time switch */}
               <div className="flex items-center justify-between border-b border-slate-700 pb-4">
                 <div>
-                  <h3 className="text-sm sm:text-base font-bold text-white">Make an Immediate Difference</h3>
-                  <p className="text-xs text-slate-400">100% verified grassroots impact</p>
+                  <h3 className="text-sm sm:text-base font-bold text-white">Help a Child Today</h3>
+                  <p className="text-xs text-slate-400">Save 50% tax under 80G with instant receipt</p>
                 </div>
 
                 <div className="flex rounded-xl bg-slate-900/90 p-1 border border-slate-700/80">

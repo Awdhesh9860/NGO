@@ -32,15 +32,15 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenDonate = () =>
           <div className="lg:col-span-5 space-y-4">
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-950/40 px-3 py-1 text-emerald-400 text-xs font-bold uppercase tracking-wider">
               <ShieldCheck className="h-4 w-4 shrink-0 text-emerald-400" />
-              <span>Certified 80G & FCRA Public Charity</span>
+              <span>Certified 80G Tax-Exempt NGO</span>
             </div>
 
             <h3 className="text-2xl sm:text-3xl font-bold text-white tracking-tight leading-snug">
-              Connect to Verified Impact as a Donor or Volunteer
+              Stay Connected With Our Ground Work
             </h3>
 
             <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-              Stay ahead with curated dispatches tailored to how you choose to support: financial accountability for donors and frontline deployment alerts for active volunteers.
+              Receive simple updates on how lives are changing: transparent photo updates for donors, and weekend camp alerts for volunteers.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
@@ -50,7 +50,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenDonate = () =>
                   <span>For Donors</span>
                 </div>
                 <p className="text-[11px] text-slate-400 leading-relaxed">
-                  Quarterly audited 80G statements, financial ratios & project milestone video updates.
+                  Instant 80G tax receipts, ground video proof & honest spending sheets.
                 </p>
               </div>
 
@@ -60,7 +60,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenDonate = () =>
                   <span>For Volunteers</span>
                 </div>
                 <p className="text-[11px] text-slate-400 leading-relaxed">
-                  Frontline crisis deployments, weekend school teaching & vocational mentorship calls.
+                  Weekend school teaching, food relief drives & medical camps near you.
                 </p>
               </div>
             </div>
@@ -71,13 +71,13 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenDonate = () =>
             <div className="rounded-2xl border border-slate-800 bg-slate-900/90 p-5 sm:p-7 shadow-2xl backdrop-blur-md">
               <div className="mb-4">
                 <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">
-                  Stay Informed & Engaged
+                  Stay in Touch
                 </span>
                 <h4 className="text-lg sm:text-xl font-bold text-white">
-                  Subscribe to Our Monthly Dispatch
+                  Get Our Monthly News & Stories
                 </h4>
                 <p className="text-xs text-slate-400 mt-1">
-                  Zero spam. Select your interest below to receive tailored donor impact or volunteer mobilization updates.
+                  No spam ever. Just honest stories of children helped and upcoming drives you can join.
                 </p>
               </div>
 

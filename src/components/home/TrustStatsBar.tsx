@@ -6,8 +6,8 @@ export const TrustStatsBar: React.FC = () => {
     {
       id: 'stat-years',
       number: '15+',
-      label: 'Years of Service',
-      subtext: 'Continuous grassroots work',
+      label: 'Years Helping People',
+      subtext: 'Serving since 2011',
       icon: Calendar,
       color: 'text-amber-600',
       bgColor: 'bg-amber-50'
@@ -15,8 +15,8 @@ export const TrustStatsBar: React.FC = () => {
     {
       id: 'stat-reached',
       number: '10,000+',
-      label: 'People Reached',
-      subtext: 'Directly supported with dignity',
+      label: 'Lives Changed',
+      subtext: 'Children fed & educated',
       icon: Users,
       color: 'text-emerald-600',
       bgColor: 'bg-emerald-50'
@@ -25,7 +25,7 @@ export const TrustStatsBar: React.FC = () => {
       id: 'stat-projects',
       number: '25+',
       label: 'Completed Projects',
-      subtext: '100% on-time & audited',
+      subtext: 'Schools & water filters built',
       icon: CheckCircle2,
       color: 'text-teal-600',
       bgColor: 'bg-teal-50'
@@ -33,8 +33,8 @@ export const TrustStatsBar: React.FC = () => {
     {
       id: 'stat-volunteers',
       number: '100+',
-      label: 'Active Volunteers',
-      subtext: 'Working on the frontlines',
+      label: 'Ground Volunteers',
+      subtext: 'Caring youth & teachers',
       icon: HeartHandshake,
       color: 'text-purple-600',
       bgColor: 'bg-purple-50'
@@ -42,8 +42,8 @@ export const TrustStatsBar: React.FC = () => {
     {
       id: 'stat-communities',
       number: '50+',
-      label: 'Communities Served',
-      subtext: 'Across villages & settlements',
+      label: 'Villages Supported',
+      subtext: 'Safe water & schooling',
       icon: MapPin,
       color: 'text-blue-600',
       bgColor: 'bg-blue-50'

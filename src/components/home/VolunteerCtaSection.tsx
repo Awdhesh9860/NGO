@@ -50,13 +50,13 @@ export const VolunteerCtaSection: React.FC<VolunteerCtaSectionProps> = ({
               <Heart className="h-6 w-6 fill-emerald-600 text-emerald-700" />
             </div>
             <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 block">
-              Direct Community Giving
+              Direct Community Help
             </span>
             <h3 className="text-xl sm:text-2xl font-black text-slate-900 leading-snug">
-              Every Contribution Counts
+              Every Small Help Saves a Life
             </h3>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              A regular donation of $25 or $50 provides children with uniforms, notebooks, and learning tablets. Every gift receives an instant digital 80G / tax exemption receipt and complete quarterly accountability.
+              Even a small contribution of ₹500 or ₹1,000 provides school books, bags, and clean drinking water to a child. You receive an instant 80G tax-saving receipt on WhatsApp and Email right away.
             </p>
           </div>
 

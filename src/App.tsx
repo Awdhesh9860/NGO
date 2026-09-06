@@ -12,6 +12,7 @@ import { ToastProvider } from './context/ToastContext';
 // Layout
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
+import { MobileBottomNav } from './components/navigation/MobileBottomNav';
 
 // Public Views
 import { HomeView } from './components/public/HomeView';
@@ -77,6 +78,7 @@ const AppContent: React.FC = () => {
   const [donateCampaignId, setDonateCampaignId] = useState<string | undefined>(undefined);
   const [issuedDonationReceipt, setIssuedDonationReceipt] = useState<Donation | null>(null);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleNavigate = (view: string, id?: string) => {
     setCurrentView(view);
@@ -108,11 +110,13 @@ const AppContent: React.FC = () => {
           onNavigate={handleNavigate}
           onOpenDonate={handleOpenDonate}
           onOpenSearch={() => setSearchModalOpen(true)}
+          mobileMenuOpen={mobileMenuOpen}
+          onMobileMenuToggle={setMobileMenuOpen}
         />
       )}
 
-      {/* Main Viewport */}
-      <main className="flex-1">
+      {/* Main Viewport with bottom clearance for Android bottom nav on mobile */}
+      <main className="flex-1 pb-20 lg:pb-0">
         {/* PUBLIC VIEWS */}
         {currentView === 'home' && (
           <HomeView onNavigate={handleNavigate} onOpenDonate={handleOpenDonate} />
@@ -305,6 +309,16 @@ const AppContent: React.FC = () => {
       {/* Global Auth & User Profile Modals */}
       <AuthModal />
       <UserProfileModal />
+
+      {/* Android-first Mobile Bottom Navigation */}
+      {!isDashboardView && (
+        <MobileBottomNav
+          currentView={currentView}
+          onNavigate={handleNavigate}
+          onOpenDonate={() => handleOpenDonate()}
+          onOpenMenu={() => setMobileMenuOpen(true)}
+        />
+      )}
     </div>
   );
 };

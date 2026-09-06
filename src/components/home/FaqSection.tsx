@@ -10,24 +10,24 @@ export const FaqSection: React.FC<FaqSectionProps> = ({ onNavigate }) => {
 
   const homeFaqs = [
     {
-      q: 'How does the NGO choose which communities to help?',
-      a: 'We conduct rigorous ground baseline surveys evaluating access to clean water, school dropout rates, and local family income levels. We only initiate programs where local village leaders and mothers’ committees invite us and actively agree to co-manage the initiatives.'
+      q: 'How do you choose which villages and children to help?',
+      a: 'Our volunteers visit areas in person, check where children cannot afford school or where drinking water is dirty, and talk with mothers and elders before starting any work.'
     },
     {
-      q: 'How can I make a donation, and will I receive a tax receipt?',
-      a: 'You can securely donate online using UPI, Credit/Debit cards, Net Banking, or Direct Bank Transfer. Immediately upon donation, an official tax exemption certificate (80G / 501(c)(3) compliant) is automatically generated and sent to your email.'
+      q: 'How can I donate, and will I get an 80G tax receipt?',
+      a: 'You can donate safely using UPI (GPay, PhonePe, Paytm), QR Code, Debit/Credit Card, or Net Banking. You instantly receive your official 80G tax exemption receipt on WhatsApp and Email right after donating.'
     },
     {
-      q: 'How much of my donation directly reaches the field?',
-      a: '88% of every dollar goes directly into field programs and community resources. 7% is allocated for essential on-ground quality inspections and logistics, and 5% covers mandatory statutory filings and administration. We publish certified annual audit sheets proving this.'
+      q: 'How much of my donation actually reaches children and families?',
+      a: '88% of every rupee goes directly into school books, meals, medicines, and clean water. 7% supports our ground team coordination, and 5% covers essential office work. You can check our public audit papers anytime.'
     },
     {
-      q: 'Can I volunteer if I only have a few hours on weekends?',
-      a: 'Yes, absolutely! We have dedicated weekend teaching circles, rural medical camp logistics, community tree planting days, and remote digital mentorship options for busy students and working professionals.'
+      q: 'Can I volunteer if I only have 2 hours on weekends?',
+      a: 'Yes, of course! You can join our weekend teaching classes, help in health camps, plant trees, or even mentor students online from home.'
     },
     {
-      q: 'Can our company partner with your NGO for Corporate Social Responsibility (CSR)?',
-      a: 'Yes, we are fully certified for statutory CSR execution. We provide customized MoUs, dedicated project managers, monthly video milestones, and quarterly third-party audited financial utilization certificates.'
+      q: 'Can our company partner with your NGO under CSR?',
+      a: 'Yes! We are officially registered for CSR. We provide 80G tax exemption certificates, monthly video progress updates, and audited utilization reports.'
     }
   ];
 

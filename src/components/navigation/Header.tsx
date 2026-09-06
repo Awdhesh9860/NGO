@@ -23,6 +23,8 @@ export interface HeaderProps {
   onOpenDonate: (campaignId?: string) => void;
   onOpenSearch?: () => void;
   onSearchClick?: () => void;
+  mobileMenuOpen?: boolean;
+  onMobileMenuToggle?: (open: boolean) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -30,12 +32,23 @@ export const Header: React.FC<HeaderProps> = ({
   onNavigate,
   onOpenDonate,
   onOpenSearch,
-  onSearchClick
+  onSearchClick,
+  mobileMenuOpen,
+  onMobileMenuToggle
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [internalMobileMenuOpen, setInternalMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const { currentUser, openAuthModal, openProfileModal, logout } = useAuth();
+
+  const isMenuOpen = mobileMenuOpen !== undefined ? mobileMenuOpen : internalMobileMenuOpen;
+  const setMenuOpen = (open: boolean) => {
+    if (onMobileMenuToggle) {
+      onMobileMenuToggle(open);
+    } else {
+      setInternalMobileMenuOpen(open);
+    }
+  };
 
   const triggerSearch = onOpenSearch || onSearchClick || (() => {});
 
@@ -65,7 +78,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   const handleBrandClick = () => {
     onNavigate('home');
-    setMobileMenuOpen(false);
+    setMenuOpen(false);
     setUserDropdownOpen(false);
   };
 
@@ -97,7 +110,7 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={() => onNavigate('campaign-detail', 'camp-1')}
               className="hover:underline text-slate-200 hover:text-white font-medium cursor-pointer truncate text-[11px]"
             >
-              Rebuilding 500 Submerged Village Homes — Direct Relief Ops Active
+              Urgent Help: Rebuilding 500 flood-hit homes for village families
             </button>
           </div>
 
@@ -140,7 +153,7 @@ export const Header: React.FC<HeaderProps> = ({
               </span>
             </div>
             <p className="text-[10px] sm:text-[11px] font-medium text-slate-300/80 tracking-tight leading-none mt-0.5">
-              Empowering Communities &bull; Transparent Action
+              Verified NGO &bull; 80G Tax Exemption
             </p>
           </div>
         </div>
@@ -259,8 +272,8 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Mobile Hamburger Menu Button */}
           <button
             type="button"
-            onClick={() => setMobileMenuOpen(true)}
-            aria-expanded={mobileMenuOpen}
+            onClick={() => setMenuOpen(true)}
+            aria-expanded={isMenuOpen}
             aria-label="Open mobile navigation drawer"
             className={`flex lg:hidden h-10 w-10 items-center justify-center rounded-xl transition-all duration-200 cursor-pointer border ${
               isScrolled
@@ -275,8 +288,8 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Mobile Drawer Navigation Menu */}
       <MobileMenu
-        isOpen={mobileMenuOpen}
-        onClose={() => setMobileMenuOpen(false)}
+        isOpen={isMenuOpen}
+        onClose={() => setMenuOpen(false)}
         currentView={currentView}
         onNavigate={onNavigate}
         onOpenDonate={() => onOpenDonate()}
