@@ -35,7 +35,8 @@ import {
   Files,
   BadgeCheck,
   HelpCircle,
-  FolderOpen
+  FolderOpen,
+  FileSpreadsheet
 } from 'lucide-react';
 
 interface NavIconProps {
@@ -80,6 +81,7 @@ export const NavIcon: React.FC<NavIconProps> = ({ name, className = 'h-4 w-4' })
     case 'Files': return <Files className={className} />;
     case 'BadgeCheck': return <BadgeCheck className={className} />;
     case 'HelpCircle': return <HelpCircle className={className} />;
+    case 'FileSpreadsheet': return <FileSpreadsheet className={className} />;
     default: return <FolderOpen className={className} />;
   }
 };

@@ -45,6 +45,7 @@ import { CareersView } from './components/public/CareersView';
 import { FAQView } from './components/public/FAQView';
 import { ContactView } from './components/public/ContactView';
 import { DocumentsView } from './components/public/DocumentsView';
+import { GoogleSheetsView } from './components/public/GoogleSheetsView';
 
 // Dedicated About & Organization Views
 import {
@@ -249,6 +250,10 @@ const AppContent: React.FC = () => {
 
         {currentView === 'documents' && (
           <DocumentsView onNavigate={handleNavigate} />
+        )}
+
+        {currentView === 'google-sheets' && (
+          <GoogleSheetsView onNavigate={handleNavigate} />
         )}
 
         {currentView === 'contact' && <ContactView onNavigate={handleNavigate} />}

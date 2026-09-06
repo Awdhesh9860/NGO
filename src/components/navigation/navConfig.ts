@@ -391,6 +391,14 @@ export const NAVIGATION_CONFIG: NavItemConfig[] = [
         badge: 'Audited'
       },
       {
+        id: 'res-sheets',
+        label: 'Google Sheets Hub',
+        view: 'google-sheets',
+        description: 'Sync, export & view live NGO ledgers in Google Spreadsheets',
+        iconName: 'FileSpreadsheet',
+        badge: 'Live Sync'
+      },
+      {
         id: 'res-verify',
         label: 'Check Certificate',
         view: 'verify-certificate',

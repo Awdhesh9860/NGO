@@ -5,6 +5,7 @@ import { Donation, Project, Campaign, Volunteer, Certificate, AuditLog } from '.
 import { ReceiptModal } from '../common/ReceiptModal';
 import { CertificateViewModal } from '../common/CertificateViewModal';
 import { SecurityAuditCenter } from './SecurityAuditCenter';
+import { GoogleSheetsHub } from '../sheets/GoogleSheetsHub';
 import {
   LayoutDashboard,
   DollarSign,
@@ -31,7 +32,8 @@ import {
   Eye,
   Settings,
   Mail,
-  Tag
+  Tag,
+  FileSpreadsheet
 } from 'lucide-react';
 
 interface AdminDashboardProps {
@@ -346,6 +348,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenDonate }) 
           { id: 'leads', label: 'Newsletter & Leads', icon: Mail },
           { id: 'certificates', label: 'Issued Certificates', icon: Award },
           { id: 'transparency', label: 'Audits & Reports', icon: FileText },
+          { id: 'google-sheets', label: 'Google Sheets Sync', icon: FileSpreadsheet },
           { id: 'audit_logs', label: 'Security & Audit Logs', icon: ShieldCheck }
         ].map((tab) => {
           const Icon = tab.icon;
@@ -457,6 +460,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenDonate }) 
                   className="rounded-xl border border-slate-300 pl-8 pr-3 py-1.5 text-xs text-slate-900 outline-none"
                 />
               </div>
+              <button
+                onClick={() => setActiveTab('google-sheets')}
+                className="flex items-center gap-1.5 rounded-xl border border-emerald-300 bg-emerald-50 px-3.5 py-1.5 text-xs font-bold text-emerald-800 hover:bg-emerald-100 transition shadow-xs cursor-pointer"
+              >
+                <FileSpreadsheet className="h-3.5 w-3.5 text-emerald-700" />
+                <span>Google Sheets Sync</span>
+              </button>
               <button
                 onClick={() => setShowAddDonationModal(true)}
                 className="flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3.5 py-1.5 text-xs font-bold text-white hover:bg-emerald-700 shadow-xs"
@@ -1071,6 +1081,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenDonate }) 
       {/* TAB 8: SECURITY & AUDIT LOGS */}
       {activeTab === 'audit_logs' && (
         <SecurityAuditCenter />
+      )}
+
+      {/* TAB 9: GOOGLE SHEETS SYNC */}
+      {activeTab === 'google-sheets' && (
+        <GoogleSheetsHub />
       )}
 
       {/* MODAL: ADD DONATION */}
