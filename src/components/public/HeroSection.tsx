@@ -95,7 +95,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenDonate, onNaviga
                     Priority Emergency Appeal
                   </span>
                   <span className="text-xs text-slate-400 font-mono">
-                    {activeCampaign.donorCount.toLocaleString()} Donors
+                    {activeCampaign.donorCount.toLocaleString('en-US')} Donors
                   </span>
                 </div>
 
@@ -119,10 +119,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenDonate, onNaviga
                 <div className="mt-4 space-y-1.5">
                   <div className="flex justify-between text-xs">
                     <span className="font-bold text-emerald-400">
-                      ${activeCampaign.raisedAmount.toLocaleString()} Raised
+                      ${activeCampaign.raisedAmount.toLocaleString('en-US')} Raised
                     </span>
                     <span className="text-slate-400">
-                      Goal: ${activeCampaign.targetAmount.toLocaleString()}
+                      Goal: ${activeCampaign.targetAmount.toLocaleString('en-US')}
                     </span>
                   </div>
                   <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-700">

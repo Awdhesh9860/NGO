@@ -59,8 +59,8 @@ export const CampaignsView: React.FC<CampaignsViewProps> = ({ onOpenDonate, onNa
                 {/* Progress bar */}
                 <div className="space-y-1.5 pt-2">
                   <div className="flex justify-between text-xs font-bold">
-                    <span className="text-emerald-700">${camp.raisedAmount.toLocaleString()} Raised</span>
-                    <span className="text-slate-500">${camp.targetAmount.toLocaleString()} Goal</span>
+                    <span className="text-emerald-700">${camp.raisedAmount.toLocaleString('en-US')} Raised</span>
+                    <span className="text-slate-500">${camp.targetAmount.toLocaleString('en-US')} Goal</span>
                   </div>
                   <div className="h-2.5 w-full rounded-full bg-slate-100 overflow-hidden">
                     <div
@@ -71,7 +71,7 @@ export const CampaignsView: React.FC<CampaignsViewProps> = ({ onOpenDonate, onNa
                     />
                   </div>
                   <div className="flex justify-between text-[11px] text-slate-400 pt-1">
-                    <span>{camp.donorCount.toLocaleString()} Generous Donors</span>
+                    <span>{camp.donorCount.toLocaleString('en-US')} Generous Donors</span>
                     <span>{((camp.raisedAmount / camp.targetAmount) * 100).toFixed(0)}% Funded</span>
                   </div>
                 </div>

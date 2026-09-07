@@ -1,8 +1,14 @@
 node_modules/
 build/
 dist/
+.next/
+out/
+next-env.d.ts
 coverage/
 .DS_Store
 *.log
 .env*
 !.env.example
+.vercel/
+playwright-report/
+test-results/

@@ -26,7 +26,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
     if (formatAsCurrency) {
       return `₹${val.toLocaleString('en-IN')}`;
     }
-    return `${val.toLocaleString()} ${unit}`.trim();
+    return `${val.toLocaleString('en-US')} ${unit}`.trim();
   };
 
   return (

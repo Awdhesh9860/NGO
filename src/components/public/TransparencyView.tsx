@@ -96,7 +96,7 @@ export const TransparencyView: React.FC<TransparencyViewProps> = ({ onNavigate }
             Independent statutory auditor Deloitte Haskins & Sells certifies our operational overhead remains under 12%, ensuring maximal capital deployment towards direct beneficiary impact.
           </p>
           <button
-            onClick={() => onNavigate('verify-certificate')}
+            onClick={() => onNavigate?.('verify-certificate')}
             className="flex items-center gap-2 text-xs font-bold text-emerald-700 hover:underline"
           >
             Verify Issued Volunteer & Donor Certificates →

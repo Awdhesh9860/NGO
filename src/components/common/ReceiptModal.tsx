@@ -119,7 +119,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ donation, onClose })
               <div className="text-right">
                 <span className="text-xs font-semibold uppercase tracking-wider text-emerald-800">Total Contribution</span>
                 <p className="text-2xl font-black text-emerald-700">
-                  {donation.currency} {donation.amount.toLocaleString()}
+                  {donation.currency} {donation.amount.toLocaleString('en-US')}
                 </p>
               </div>
             </div>

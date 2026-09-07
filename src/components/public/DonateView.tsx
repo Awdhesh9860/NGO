@@ -163,7 +163,7 @@ export const DonateView: React.FC<DonateViewProps> = ({ onNavigate, onDonationSu
               <div className="flex justify-between border-b border-slate-200 pb-2">
                 <span className="text-slate-500">Amount Donated:</span>
                 <span className="font-bold text-emerald-700 text-base">
-                  {currencySymbol}{completedDonation.amount.toLocaleString()}
+                  {currencySymbol}{completedDonation.amount.toLocaleString('en-US')}
                 </span>
               </div>
               <div className="flex justify-between border-b border-slate-200 pb-2">
@@ -285,7 +285,7 @@ export const DonateView: React.FC<DonateViewProps> = ({ onNavigate, onDonationSu
                             : 'border-slate-200 bg-slate-50 hover:bg-white text-slate-700'
                         }`}
                       >
-                        {currencySymbol}{amt.toLocaleString()}
+                        {currencySymbol}{amt.toLocaleString('en-US')}
                       </button>
                     ))}
                   </div>
@@ -516,7 +516,7 @@ export const DonateView: React.FC<DonateViewProps> = ({ onNavigate, onDonationSu
                   <span>
                     {isSubmitting
                       ? 'Processing Secure Donation...'
-                      : `Donate ${currencySymbol}${effectiveAmount.toLocaleString()} Now`}
+                      : `Donate ${currencySymbol}${effectiveAmount.toLocaleString('en-US')} Now`}
                   </span>
                 </button>
 

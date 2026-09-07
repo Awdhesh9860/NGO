@@ -120,95 +120,90 @@ interface DatabaseContextType {
 
 const DatabaseContext = createContext<DatabaseContextType | undefined>(undefined);
 
+// Keys paired with their setters, used both to hydrate from localStorage on
+// mount and (below) to persist changes back to it.
+type StorageKey =
+  | 'hh_db_programs'
+  | 'hh_db_projects'
+  | 'hh_db_campaigns'
+  | 'hh_db_donations'
+  | 'hh_db_volunteers'
+  | 'hh_db_members'
+  | 'hh_db_events'
+  | 'hh_db_event_registrations'
+  | 'hh_db_tasks'
+  | 'hh_db_attendance'
+  | 'hh_db_leave_requests'
+  | 'hh_db_certificates'
+  | 'hh_db_articles'
+  | 'hh_db_inquiries'
+  | 'hh_db_audit_logs'
+  | 'hh_db_subscribers'
+  | 'hh_db_settings';
+
 export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [programs, setPrograms] = useState<Program[]>(() => {
-    const s = localStorage.getItem('hh_db_programs');
-    return s ? JSON.parse(s) : INITIAL_PROGRAMS;
-  });
-
-  const [projects, setProjects] = useState<Project[]>(() => {
-    const s = localStorage.getItem('hh_db_projects');
-    return s ? JSON.parse(s) : INITIAL_PROJECTS;
-  });
-
-  const [campaigns, setCampaigns] = useState<Campaign[]>(() => {
-    const s = localStorage.getItem('hh_db_campaigns');
-    return s ? JSON.parse(s) : INITIAL_CAMPAIGNS;
-  });
-
-  const [donations, setDonations] = useState<Donation[]>(() => {
-    const s = localStorage.getItem('hh_db_donations');
-    return s ? JSON.parse(s) : INITIAL_DONATIONS;
-  });
-
-  const [volunteers, setVolunteers] = useState<Volunteer[]>(() => {
-    const s = localStorage.getItem('hh_db_volunteers');
-    return s ? JSON.parse(s) : INITIAL_VOLUNTEERS;
-  });
-
-  const [members, setMembers] = useState<Member[]>(() => {
-    const s = localStorage.getItem('hh_db_members');
-    return s ? JSON.parse(s) : INITIAL_MEMBERS;
-  });
-
-  const [events, setEvents] = useState<Event[]>(() => {
-    const s = localStorage.getItem('hh_db_events');
-    return s ? JSON.parse(s) : INITIAL_EVENTS;
-  });
-
-  const [eventRegistrations, setEventRegistrations] = useState<EventRegistration[]>(() => {
-    const s = localStorage.getItem('hh_db_event_registrations');
-    return s ? JSON.parse(s) : [];
-  });
-
-  const [tasks, setTasks] = useState<StaffTask[]>(() => {
-    const s = localStorage.getItem('hh_db_tasks');
-    return s ? JSON.parse(s) : INITIAL_TASKS;
-  });
-
-  const [attendance, setAttendance] = useState<AttendanceRecord[]>(() => {
-    const s = localStorage.getItem('hh_db_attendance');
-    return s ? JSON.parse(s) : INITIAL_ATTENDANCE;
-  });
-
-  const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>(() => {
-    const s = localStorage.getItem('hh_db_leave_requests');
-    return s ? JSON.parse(s) : INITIAL_LEAVE_REQUESTS;
-  });
-
-  const [certificates, setCertificates] = useState<Certificate[]>(() => {
-    const s = localStorage.getItem('hh_db_certificates');
-    return s ? JSON.parse(s) : INITIAL_CERTIFICATES;
-  });
-
-  const [articles, setArticles] = useState<CMSArticle[]>(() => {
-    const s = localStorage.getItem('hh_db_articles');
-    return s ? JSON.parse(s) : INITIAL_CMS_ARTICLES;
-  });
+  // State always starts from the deterministic mock dataset so server-rendered
+  // HTML matches the client's first render; persisted overrides are applied
+  // in a mount-only effect below (localStorage is unavailable during SSR).
+  const [programs, setPrograms] = useState<Program[]>(INITIAL_PROGRAMS);
+  const [projects, setProjects] = useState<Project[]>(INITIAL_PROJECTS);
+  const [campaigns, setCampaigns] = useState<Campaign[]>(INITIAL_CAMPAIGNS);
+  const [donations, setDonations] = useState<Donation[]>(INITIAL_DONATIONS);
+  const [volunteers, setVolunteers] = useState<Volunteer[]>(INITIAL_VOLUNTEERS);
+  const [members, setMembers] = useState<Member[]>(INITIAL_MEMBERS);
+  const [events, setEvents] = useState<Event[]>(INITIAL_EVENTS);
+  const [eventRegistrations, setEventRegistrations] = useState<EventRegistration[]>([]);
+  const [tasks, setTasks] = useState<StaffTask[]>(INITIAL_TASKS);
+  const [attendance, setAttendance] = useState<AttendanceRecord[]>(INITIAL_ATTENDANCE);
+  const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>(INITIAL_LEAVE_REQUESTS);
+  const [certificates, setCertificates] = useState<Certificate[]>(INITIAL_CERTIFICATES);
+  const [articles, setArticles] = useState<CMSArticle[]>(INITIAL_CMS_ARTICLES);
 
   const [reports] = useState<TransparencyReport[]>(INITIAL_TRANSPARENCY_REPORTS);
   const [faqs] = useState<FAQItem[]>(INITIAL_FAQS);
   const [partners] = useState<CSRPartner[]>(INITIAL_CSR_PARTNERS);
 
-  const [inquiries, setInquiries] = useState<ContactInquiry[]>(() => {
-    const s = localStorage.getItem('hh_db_inquiries');
-    return s ? JSON.parse(s) : [];
-  });
+  const [inquiries, setInquiries] = useState<ContactInquiry[]>([]);
+  const [auditLogs, setAuditLogs] = useState<AuditLog[]>(INITIAL_AUDIT_LOGS);
+  const [subscribers, setSubscribers] = useState<NewsletterSubscriber[]>(INITIAL_NEWSLETTER_SUBSCRIBERS);
+  const [settings, setSettings] = useState<SystemSettings>(INITIAL_SETTINGS);
 
-  const [auditLogs, setAuditLogs] = useState<AuditLog[]>(() => {
-    const s = localStorage.getItem('hh_db_audit_logs');
-    return s ? JSON.parse(s) : INITIAL_AUDIT_LOGS;
-  });
+  // One-time hydration from localStorage after mount (client only).
+  useEffect(() => {
+    const read = <T,>(key: StorageKey): T | null => {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw ? (JSON.parse(raw) as T) : null;
+      } catch (e) {
+        console.error(`Error hydrating ${key} from localStorage`, e);
+        return null;
+      }
+    };
 
-  const [subscribers, setSubscribers] = useState<NewsletterSubscriber[]>(() => {
-    const s = localStorage.getItem('hh_db_subscribers');
-    return s ? JSON.parse(s) : INITIAL_NEWSLETTER_SUBSCRIBERS;
-  });
+    const apply = <T,>(key: StorageKey, setter: (v: T) => void) => {
+      const value = read<T>(key);
+      if (value !== null) setter(value);
+    };
 
-  const [settings, setSettings] = useState<SystemSettings>(() => {
-    const s = localStorage.getItem('hh_db_settings');
-    return s ? JSON.parse(s) : INITIAL_SETTINGS;
-  });
+    apply<Program[]>('hh_db_programs', setPrograms);
+    apply<Project[]>('hh_db_projects', setProjects);
+    apply<Campaign[]>('hh_db_campaigns', setCampaigns);
+    apply<Donation[]>('hh_db_donations', setDonations);
+    apply<Volunteer[]>('hh_db_volunteers', setVolunteers);
+    apply<Member[]>('hh_db_members', setMembers);
+    apply<Event[]>('hh_db_events', setEvents);
+    apply<EventRegistration[]>('hh_db_event_registrations', setEventRegistrations);
+    apply<StaffTask[]>('hh_db_tasks', setTasks);
+    apply<AttendanceRecord[]>('hh_db_attendance', setAttendance);
+    apply<LeaveRequest[]>('hh_db_leave_requests', setLeaveRequests);
+    apply<Certificate[]>('hh_db_certificates', setCertificates);
+    apply<CMSArticle[]>('hh_db_articles', setArticles);
+    apply<ContactInquiry[]>('hh_db_inquiries', setInquiries);
+    apply<AuditLog[]>('hh_db_audit_logs', setAuditLogs);
+    apply<NewsletterSubscriber[]>('hh_db_subscribers', setSubscribers);
+    apply<SystemSettings>('hh_db_settings', setSettings);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Sync to localStorage
   useEffect(() => { localStorage.setItem('hh_db_programs', JSON.stringify(programs)); }, [programs]);
@@ -286,7 +281,7 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       'DONOR',
       'DONATION_RECEIVED',
       'Donation',
-      `Processed ${newDonation.currency} ${newDonation.amount.toLocaleString()} via ${newDonation.paymentGateway}. Receipt #${receiptNum}`,
+      `Processed ${newDonation.currency} ${newDonation.amount.toLocaleString('en-US')} via ${newDonation.paymentGateway}. Receipt #${receiptNum}`,
       newDonation.id
     );
 

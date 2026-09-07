@@ -398,7 +398,7 @@ export const SecurityAuditCenter: React.FC = () => {
                 {filteredLogs.map((log) => (
                   <tr key={log.id} className="hover:bg-slate-50/70 transition">
                     <td className="p-3 font-mono text-[11px] text-slate-500 whitespace-nowrap">
-                      {new Date(log.timestamp).toLocaleString()}
+                      {new Date(log.timestamp).toLocaleString('en-US')}
                     </td>
                     <td className="p-3 whitespace-nowrap">
                       <div className="font-bold text-slate-900">{log.actorName}</div>

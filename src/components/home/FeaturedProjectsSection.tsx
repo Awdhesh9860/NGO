@@ -74,7 +74,7 @@ export const FeaturedProjectsSection: React.FC<FeaturedProjectsSectionProps> = (
                       <div className="flex justify-between font-medium text-slate-600">
                         <span>Funding Progress ({progressPercent}%)</span>
                         <span className="font-bold text-emerald-700">
-                          {settings.currencySymbol}{project.amountRaised.toLocaleString()} / {settings.currencySymbol}{project.fundingGoal.toLocaleString()}
+                          {settings.currencySymbol}{project.amountRaised.toLocaleString('en-US')} / {settings.currencySymbol}{project.fundingGoal.toLocaleString('en-US')}
                         </span>
                       </div>
                       <div className="h-2 w-full rounded-full bg-slate-200 overflow-hidden">

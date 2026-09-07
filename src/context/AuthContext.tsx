@@ -196,27 +196,11 @@ const INITIAL_SESSIONS: UserSession[] = [
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [users, setUsers] = useState<User[]>(() => {
-    const saved = localStorage.getItem('hh_ngo_users');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error('Error parsing saved users', e);
-      }
-    }
-    return INITIAL_USERS;
-  });
-
-  const [currentUser, setCurrentUser] = useState<User | null>(() => {
-    const savedUserId = localStorage.getItem('hh_ngo_current_user_id');
-    if (savedUserId) {
-      const found = users.find((u) => u.id === savedUserId);
-      if (found) return found;
-    }
-    // Default to Super Admin for immediate rich experience
-    return users[0] || null;
-  });
+  // State always starts from the deterministic mock dataset so server-rendered
+  // HTML matches the client's first render; persisted overrides are applied
+  // in a mount-only effect below (localStorage is unavailable during SSR).
+  const [users, setUsers] = useState<User[]>(INITIAL_USERS);
+  const [currentUser, setCurrentUser] = useState<User | null>(INITIAL_USERS[0] || null);
 
   // Modal states
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -224,15 +208,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   // Security & 2FA states
-  const [twoFactorEnabled, setTwoFactorEnabled] = useState<boolean>(() => {
-    return localStorage.getItem('hh_2fa_enabled') === 'true';
-  });
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState<boolean>(false);
 
   // Sessions
-  const [sessions, setSessions] = useState<UserSession[]>(() => {
-    const saved = localStorage.getItem('hh_user_sessions');
-    return saved ? JSON.parse(saved) : INITIAL_SESSIONS;
-  });
+  const [sessions, setSessions] = useState<UserSession[]>(INITIAL_SESSIONS);
+
+  // One-time hydration from localStorage after mount (client only).
+  useEffect(() => {
+    try {
+      const savedUsers = localStorage.getItem('hh_ngo_users');
+      const parsedUsers: User[] = savedUsers ? JSON.parse(savedUsers) : INITIAL_USERS;
+      if (savedUsers) setUsers(parsedUsers);
+
+      const savedUserId = localStorage.getItem('hh_ngo_current_user_id');
+      if (savedUserId) {
+        const found = parsedUsers.find((u) => u.id === savedUserId);
+        if (found) setCurrentUser(found);
+      }
+
+      setTwoFactorEnabled(localStorage.getItem('hh_2fa_enabled') === 'true');
+
+      const savedSessions = localStorage.getItem('hh_user_sessions');
+      if (savedSessions) setSessions(JSON.parse(savedSessions));
+    } catch (e) {
+      console.error('Error hydrating auth state from localStorage', e);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('hh_ngo_users', JSON.stringify(users));

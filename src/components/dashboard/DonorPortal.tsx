@@ -71,7 +71,7 @@ export const DonorPortal: React.FC<DonorPortalProps> = ({ onOpenDonate }) => {
             Cumulative Giving
           </span>
           <p className="mt-2 text-3xl font-black text-slate-900">
-            ${totalGiven.toLocaleString()}
+            ${totalGiven.toLocaleString('en-US')}
           </p>
           <p className="mt-1 text-xs text-emerald-700 font-semibold flex items-center gap-1">
             <TrendingUp className="h-3.5 w-3.5" /> {myDonations.length} Contributions Recorded
@@ -83,7 +83,7 @@ export const DonorPortal: React.FC<DonorPortalProps> = ({ onOpenDonate }) => {
             Estimated 80G Tax Benefit
           </span>
           <p className="mt-2 text-3xl font-black text-emerald-700">
-            ~${estimatedTaxSavings.toLocaleString()}
+            ~${estimatedTaxSavings.toLocaleString('en-US')}
           </p>
           <p className="mt-1 text-xs text-slate-500">
             50% Deduction under Sec 80G(5)(vi)
@@ -136,9 +136,9 @@ export const DonorPortal: React.FC<DonorPortalProps> = ({ onOpenDonate }) => {
               {myDonations.map((d) => (
                 <tr key={d.id} className="hover:bg-slate-50 transition">
                   <td className="py-3 px-4 font-mono font-bold text-slate-900">{d.receiptNumber}</td>
-                  <td className="py-3 px-4 text-slate-500">{new Date(d.createdAt).toLocaleDateString()}</td>
+                  <td className="py-3 px-4 text-slate-500">{new Date(d.createdAt).toLocaleDateString('en-US')}</td>
                   <td className="py-3 px-4 font-semibold text-slate-800">{d.campaignTitle || 'General Welfare Fund'}</td>
-                  <td className="py-3 px-4 font-black text-emerald-700">${d.amount.toLocaleString()}</td>
+                  <td className="py-3 px-4 font-black text-emerald-700">${d.amount.toLocaleString('en-US')}</td>
                   <td className="py-3 px-4 capitalize font-medium">{d.paymentGateway}</td>
                   <td className="py-3 px-4 text-right">
                     <button
@@ -172,7 +172,7 @@ export const DonorPortal: React.FC<DonorPortalProps> = ({ onOpenDonate }) => {
               <h4 className="font-bold text-slate-900">{c.title}</h4>
               <p className="text-slate-600 line-clamp-2">{c.description}</p>
               <div className="pt-2 border-t border-slate-200 flex justify-between font-semibold text-emerald-700">
-                <span>Raised: ${c.raisedAmount.toLocaleString()}</span>
+                <span>Raised: ${c.raisedAmount.toLocaleString('en-US')}</span>
                 <span>{c.donorCount} Supporters</span>
               </div>
             </div>
@@ -226,7 +226,7 @@ export const DonorPortal: React.FC<DonorPortalProps> = ({ onOpenDonate }) => {
                 </div>
                 <div>
                   <span className="text-slate-500">Total Eligible Sum:</span>
-                  <p className="text-sm font-black text-emerald-700">${totalGiven.toLocaleString()}</p>
+                  <p className="text-sm font-black text-emerald-700">${totalGiven.toLocaleString('en-US')}</p>
                 </div>
                 <div>
                   <span className="text-slate-500">Form 10BE Filing Ack:</span>

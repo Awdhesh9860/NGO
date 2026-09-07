@@ -108,7 +108,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, onOpenDo
                   <div className="flex justify-between font-medium">
                     <span className="text-slate-600">Funding Progress</span>
                     <span className="font-bold text-emerald-700">
-                      ${project.amountRaised.toLocaleString()} / ${project.fundingGoal.toLocaleString()}
+                      ${project.amountRaised.toLocaleString('en-US')} / ${project.fundingGoal.toLocaleString('en-US')}
                     </span>
                   </div>
                   <div className="h-2 w-full rounded-full bg-slate-200">
@@ -120,7 +120,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, onOpenDo
                     />
                   </div>
                   <div className="flex justify-between text-[11px] text-slate-500 pt-1">
-                    <span>Beneficiaries: <strong className="text-slate-800">{project.beneficiariesCount.toLocaleString()}</strong></span>
+                    <span>Beneficiaries: <strong className="text-slate-800">{project.beneficiariesCount.toLocaleString('en-US')}</strong></span>
                     <span>Milestones: <strong className="text-slate-800">{project.milestones.filter(m => m.completed).length}/{project.milestones.length}</strong></span>
                   </div>
                 </div>

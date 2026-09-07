@@ -380,7 +380,7 @@ export const ImpactTracker: React.FC<ImpactTrackerProps> = ({ onOpenDonate, onNa
 
         tooltipBox.attr('transform', `translate(${boxX},${boxY})`);
         tooltipDateText.text(d.label);
-        tooltipAmountText.text(`$${d.cumulativeAmount.toLocaleString()}`);
+        tooltipAmountText.text(`$${d.cumulativeAmount.toLocaleString('en-US')}`);
       });
   }, [activeTab, timeSeriesData]);
 
@@ -695,7 +695,7 @@ export const ImpactTracker: React.FC<ImpactTrackerProps> = ({ onOpenDonate, onNa
               {totalVolunteersEngaged}
             </div>
             <div className="text-[11px] font-semibold text-amber-800">
-              {totalVolunteerHours.toLocaleString()} verified service hrs
+              {totalVolunteerHours.toLocaleString('en-US')} verified service hrs
             </div>
           </div>
 
@@ -710,7 +710,7 @@ export const ImpactTracker: React.FC<ImpactTrackerProps> = ({ onOpenDonate, onNa
               </div>
             </div>
             <div className="text-2xl sm:text-3xl font-black text-slate-900">
-              {totalBeneficiaries.toLocaleString()}+
+              {totalBeneficiaries.toLocaleString('en-US')}+
             </div>
             <div className="text-[11px] font-semibold text-purple-700">
               Across 140+ rural gram panchayats
@@ -783,7 +783,7 @@ export const ImpactTracker: React.FC<ImpactTrackerProps> = ({ onOpenDonate, onNa
 
                       <div className="text-right">
                         <p className="font-mono font-bold text-xs text-slate-900">
-                          ${cat.amount.toLocaleString()}
+                          ${cat.amount.toLocaleString('en-US')}
                         </p>
                         <span className="font-mono text-[10px] text-slate-500">
                           {cat.percentage.toFixed(1)}%

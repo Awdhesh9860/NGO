@@ -210,7 +210,7 @@ export const CSRView: React.FC = () => {
                     </div>
                   </div>
                   <span className="text-xs font-bold text-emerald-700">
-                    ${p.totalContributed.toLocaleString()}
+                    ${p.totalContributed.toLocaleString('en-US')}
                   </span>
                 </div>
               ))}

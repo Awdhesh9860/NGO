@@ -277,7 +277,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenDonate }) 
             </div>
           </div>
           <p className="mt-3 text-2xl sm:text-3xl font-black text-slate-900">
-            ${totalDonationsAmount.toLocaleString()}
+            ${totalDonationsAmount.toLocaleString('en-US')}
           </p>
           <div className="mt-1 flex items-center gap-1 text-[11px] font-semibold text-emerald-700">
             <TrendingUp className="h-3.5 w-3.5" />
@@ -298,7 +298,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenDonate }) 
             {projects.length}
           </p>
           <div className="mt-1 text-[11px] text-slate-500">
-            {totalBeneficiaries.toLocaleString()} souls impacted
+            {totalBeneficiaries.toLocaleString('en-US')} souls impacted
           </div>
         </div>
 
@@ -395,7 +395,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenDonate }) 
                     <p className="text-slate-600">{log.details}</p>
                   </div>
                   <div className="text-right font-mono text-[10px] text-slate-400 shrink-0 ml-4">
-                    {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {new Date(log.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>
               ))}
@@ -506,11 +506,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenDonate }) 
                       </td>
                       <td className="py-3 px-4 font-mono">{d.panOrTaxId || '—'}</td>
                       <td className="py-3 px-4 font-black text-emerald-700">
-                        {d.currency} {d.amount.toLocaleString()}
+                        {d.currency} {d.amount.toLocaleString('en-US')}
                       </td>
                       <td className="py-3 px-4 truncate max-w-xs">{d.campaignTitle || 'General Impact'}</td>
                       <td className="py-3 px-4 capitalize font-medium">{d.paymentGateway}</td>
-                      <td className="py-3 px-4 text-slate-500">{new Date(d.createdAt).toLocaleDateString()}</td>
+                      <td className="py-3 px-4 text-slate-500">{new Date(d.createdAt).toLocaleDateString('en-US')}</td>
                       <td className="py-3 px-4 text-right">
                         <button
                           onClick={() => setSelectedReceiptDonation(d)}
@@ -561,7 +561,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenDonate }) 
                   <div className="flex justify-between font-semibold">
                     <span>Budget Raised</span>
                     <span className="text-emerald-700 font-bold">
-                      ${proj.amountRaised.toLocaleString()} / ${proj.fundingGoal.toLocaleString()}
+                      ${proj.amountRaised.toLocaleString('en-US')} / ${proj.fundingGoal.toLocaleString('en-US')}
                     </span>
                   </div>
                   <div className="h-2 w-full rounded-full bg-slate-200">
@@ -633,8 +633,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenDonate }) 
 
                 <div className="space-y-1.5 rounded-2xl bg-slate-50 p-3.5 text-xs">
                   <div className="flex justify-between font-bold">
-                    <span className="text-emerald-700">${camp.raisedAmount.toLocaleString()}</span>
-                    <span className="text-slate-500">${camp.targetAmount.toLocaleString()} Goal</span>
+                    <span className="text-emerald-700">${camp.raisedAmount.toLocaleString('en-US')}</span>
+                    <span className="text-slate-500">${camp.targetAmount.toLocaleString('en-US')} Goal</span>
                   </div>
                   <div className="h-2 w-full rounded-full bg-slate-200">
                     <div

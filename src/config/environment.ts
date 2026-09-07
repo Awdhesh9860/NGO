@@ -13,7 +13,7 @@ export const ENV = {
   },
 
   database: {
-    url: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/ngo_platform?schema=public',
+    uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/ngo_platform',
   },
 
   auth: {
@@ -41,10 +41,6 @@ export const ENV = {
 
   analytics: {
     enabled: process.env.ANALYTICS_ENABLED === 'true',
-  },
-
-  ai: {
-    geminiApiKey: process.env.GEMINI_API_KEY || '',
   },
 } as const;
 

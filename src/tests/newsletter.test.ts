@@ -1,24 +1,9 @@
+import { describe, it } from 'vitest';
 import { assert, assertEquals } from './setup';
 import { validateNewsletterForm } from '../validations/newsletter';
 
-export function runNewsletterTests(): { passed: number; failed: number; results: Array<{ test: string; status: 'PASS' | 'FAIL'; error?: string }> } {
-  const results: Array<{ test: string; status: 'PASS' | 'FAIL'; error?: string }> = [];
-  let passed = 0;
-  let failed = 0;
-
-  const test = (name: string, fn: () => void) => {
-    try {
-      fn();
-      results.push({ test: name, status: 'PASS' });
-      passed++;
-    } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : String(err);
-      results.push({ test: name, status: 'FAIL', error: errorMsg });
-      failed++;
-    }
-  };
-
-  test('validateNewsletterForm accepts valid donor lead subscription', () => {
+describe('validateNewsletterForm', () => {
+  it('accepts a valid donor lead subscription', () => {
     const res = validateNewsletterForm({
       email: 'DONOR.LEAD@EXAMPLE.COM',
       fullName: 'Sarah Connor',
@@ -32,7 +17,7 @@ export function runNewsletterTests(): { passed: number; failed: number; results:
     assertEquals(res.data?.interest, 'donor', 'Interest was not preserved');
   });
 
-  test('validateNewsletterForm accepts valid volunteer lead subscription', () => {
+  it('accepts a valid volunteer lead subscription', () => {
     const res = validateNewsletterForm({
       email: 'volunteer@example.org',
       fullName: 'David Miller',
@@ -46,7 +31,7 @@ export function runNewsletterTests(): { passed: number; failed: number; results:
     assertEquals(res.data?.frequency, 'weekly', 'Weekly frequency not preserved');
   });
 
-  test('validateNewsletterForm rejects invalid email', () => {
+  it('rejects an invalid email', () => {
     const res = validateNewsletterForm({
       email: 'invalid-email-string',
       interest: 'donor',
@@ -56,7 +41,7 @@ export function runNewsletterTests(): { passed: number; failed: number; results:
     assert(!!res.errors?.email, 'Missing error message for invalid email');
   });
 
-  test('validateNewsletterForm rejects missing consent', () => {
+  it('rejects missing consent', () => {
     const res = validateNewsletterForm({
       email: 'supporter@example.com',
       interest: 'both',
@@ -66,7 +51,7 @@ export function runNewsletterTests(): { passed: number; failed: number; results:
     assert(!!res.errors?.consent, 'Missing error message for consent');
   });
 
-  test('validateNewsletterForm rejects empty email', () => {
+  it('rejects an empty email', () => {
     const res = validateNewsletterForm({
       email: '   ',
       interest: 'donor',
@@ -74,6 +59,4 @@ export function runNewsletterTests(): { passed: number; failed: number; results:
     });
     assert(!res.success, 'Empty email unexpectedly passed');
   });
-
-  return { passed, failed, results };
-}
+});

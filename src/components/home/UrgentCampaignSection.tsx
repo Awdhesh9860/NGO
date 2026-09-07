@@ -49,7 +49,7 @@ export const UrgentCampaignSection: React.FC<UrgentCampaignSectionProps> = ({
             </span>
             <span className="font-mono flex items-center gap-1">
               <Users className="h-3.5 w-3.5 text-slate-400" />
-              {activeCampaign.donorCount.toLocaleString()} Kind Donors
+              {activeCampaign.donorCount.toLocaleString('en-US')} Kind Donors
             </span>
           </div>
 
@@ -64,10 +64,10 @@ export const UrgentCampaignSection: React.FC<UrgentCampaignSectionProps> = ({
           <div className="space-y-2">
             <div className="flex justify-between text-xs font-bold">
               <span className="text-emerald-700">
-                {settings.currencySymbol}{activeCampaign.raisedAmount.toLocaleString()} Raised ({percentRaised}%)
+                {settings.currencySymbol}{activeCampaign.raisedAmount.toLocaleString('en-US')} Raised ({percentRaised}%)
               </span>
               <span className="text-slate-500">
-                Target: {settings.currencySymbol}{activeCampaign.targetAmount.toLocaleString()}
+                Target: {settings.currencySymbol}{activeCampaign.targetAmount.toLocaleString('en-US')}
               </span>
             </div>
             <div className="h-3 w-full rounded-full bg-slate-100 overflow-hidden">

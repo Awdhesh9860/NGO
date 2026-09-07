@@ -591,7 +591,7 @@ export const DonorRegisterPage: React.FC<DonorRegisterPageProps> = ({
                 <div className="space-y-2 pt-2">
                   <label className="text-xs font-bold text-slate-700 flex items-center justify-between">
                     <span>Target Support Pledge (INR / Equivalent)</span>
-                    <span className="text-xs font-bold text-emerald-700">₹{pledgedAmount.toLocaleString()}</span>
+                    <span className="text-xs font-bold text-emerald-700">₹{pledgedAmount.toLocaleString('en-US')}</span>
                   </label>
                   <div className="grid grid-cols-4 gap-2">
                     {[1000, 5000, 15000, 50000].map((amt) => (
@@ -605,7 +605,7 @@ export const DonorRegisterPage: React.FC<DonorRegisterPageProps> = ({
                             : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                         }`}
                       >
-                        ₹{amt.toLocaleString()}
+                        ₹{amt.toLocaleString('en-US')}
                       </button>
                     ))}
                   </div>
@@ -785,15 +785,15 @@ export const DonorRegisterPage: React.FC<DonorRegisterPageProps> = ({
               <div className="my-6 rounded-2xl bg-white/10 p-4 border border-white/10 space-y-3">
                 <div className="flex items-center justify-between text-xs text-slate-200">
                   <span>Selected Pledge Amount:</span>
-                  <span className="font-bold text-white text-sm">₹{pledgedAmount.toLocaleString()}</span>
+                  <span className="font-bold text-white text-sm">₹{pledgedAmount.toLocaleString('en-US')}</span>
                 </div>
                 <div className="flex items-center justify-between text-xs text-emerald-300">
                   <span>Eligible 80G Deduction (50%):</span>
-                  <span className="font-bold text-emerald-400">₹{(pledgedAmount * 0.5).toLocaleString()}</span>
+                  <span className="font-bold text-emerald-400">₹{(pledgedAmount * 0.5).toLocaleString('en-US')}</span>
                 </div>
                 <div className="pt-2 border-t border-white/10 flex items-center justify-between">
                   <span className="text-xs font-bold text-white">Estimated Direct Tax Saved:</span>
-                  <span className="text-base font-black text-amber-400">~₹{estimatedTaxSavings.toLocaleString()}</span>
+                  <span className="text-base font-black text-amber-400">~₹{estimatedTaxSavings.toLocaleString('en-US')}</span>
                 </div>
               </div>
 

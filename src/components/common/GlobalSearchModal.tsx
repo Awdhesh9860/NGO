@@ -166,7 +166,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
                       <div>
                         <p className="text-xs font-bold text-slate-900 group-hover:text-emerald-800">{c.title}</p>
                         <p className="text-[11px] text-slate-500">
-                          Goal: ${c.targetAmount.toLocaleString()} • Raised: ${c.raisedAmount.toLocaleString()}
+                          Goal: ${c.targetAmount.toLocaleString('en-US')} • Raised: ${c.raisedAmount.toLocaleString('en-US')}
                         </p>
                       </div>
                     </div>

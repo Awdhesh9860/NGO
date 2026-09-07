@@ -133,11 +133,11 @@ export const CampaignDetailView: React.FC<CampaignDetailViewProps> = ({
                     <div>
                       <p className="font-bold text-slate-900">{d.donorName}</p>
                       <span className="text-[11px] text-slate-400">
-                        {new Date(d.createdAt).toLocaleDateString()}
+                        {new Date(d.createdAt).toLocaleDateString('en-US')}
                       </span>
                     </div>
                     <span className="font-black text-emerald-700">
-                      ${d.amount.toLocaleString()}
+                      ${d.amount.toLocaleString('en-US')}
                     </span>
                   </div>
                 ))
@@ -153,8 +153,8 @@ export const CampaignDetailView: React.FC<CampaignDetailViewProps> = ({
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl space-y-6">
             <div className="space-y-2">
               <div className="flex justify-between text-sm font-bold">
-                <span className="text-emerald-700 text-2xl">${campaign.raisedAmount.toLocaleString()}</span>
-                <span className="text-slate-500 self-end">Goal: ${campaign.targetAmount.toLocaleString()}</span>
+                <span className="text-emerald-700 text-2xl">${campaign.raisedAmount.toLocaleString('en-US')}</span>
+                <span className="text-slate-500 self-end">Goal: ${campaign.targetAmount.toLocaleString('en-US')}</span>
               </div>
               <div className="h-3 w-full rounded-full bg-slate-100 overflow-hidden">
                 <div
@@ -165,7 +165,7 @@ export const CampaignDetailView: React.FC<CampaignDetailViewProps> = ({
                 />
               </div>
               <div className="flex justify-between text-xs text-slate-500">
-                <span>{campaign.donorCount.toLocaleString()} Donors</span>
+                <span>{campaign.donorCount.toLocaleString('en-US')} Donors</span>
                 <span>{((campaign.raisedAmount / campaign.targetAmount) * 100).toFixed(0)}% Funded</span>
               </div>
             </div>

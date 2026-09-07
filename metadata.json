@@ -1,6 +1,0 @@
-{
-  "name": "HopeHorizon Foundation",
-  "description": "A modern, trustworthy, and transparent public NGO website and management platform featuring verified impact metrics, donor 80G tax receipts, field project tracking, volunteer hubs, and audited public reports.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}

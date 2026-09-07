@@ -161,7 +161,7 @@ export const DonateModal: React.FC<DonateModalProps> = ({
               <div className="flex justify-between items-center border-b border-emerald-100 pb-3">
                 <span className="text-xs text-slate-600">Amount Contributed</span>
                 <span className="text-lg font-black text-emerald-700">
-                  {completedDonation.currency} {completedDonation.amount.toLocaleString()}
+                  {completedDonation.currency} {completedDonation.amount.toLocaleString('en-US')}
                 </span>
               </div>
               <div className="flex justify-between items-center pt-3 text-xs text-slate-600">
@@ -400,7 +400,7 @@ export const DonateModal: React.FC<DonateModalProps> = ({
               ) : (
                 <>
                   <Lock className="h-4 w-4" />
-                  Give ${currentAmount.toLocaleString()} {donationType === 'recurring' ? '/ month' : 'Now'}
+                  Give ${currentAmount.toLocaleString('en-US')} {donationType === 'recurring' ? '/ month' : 'Now'}
                 </>
               )}
             </button>

@@ -164,10 +164,16 @@ const DICTIONARY: Record<Language, Record<string, string>> = {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [language, setLanguageState] = useState<Language>(() => {
+  // Starts at the deterministic default so SSR output matches the client's
+  // first render; the persisted preference is applied after mount.
+  const [language, setLanguageState] = useState<Language>('en');
+
+  useEffect(() => {
     const saved = localStorage.getItem('hh_ngo_language');
-    return (saved === 'hi' || saved === 'en' || saved === 'bn') ? saved : 'en';
-  });
+    if (saved === 'hi' || saved === 'en' || saved === 'bn') {
+      setLanguageState(saved);
+    }
+  }, []);
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);

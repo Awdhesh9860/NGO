@@ -143,7 +143,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
               <div className="flex justify-between text-sm">
                 <span className="text-slate-600 font-medium">Raised to Date</span>
                 <span className="font-bold text-emerald-700 text-lg">
-                  ${project.amountRaised.toLocaleString()}
+                  ${project.amountRaised.toLocaleString('en-US')}
                 </span>
               </div>
               <div className="h-3 w-full rounded-full bg-slate-100 overflow-hidden">
@@ -155,7 +155,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
                 />
               </div>
               <div className="flex justify-between text-xs text-slate-500">
-                <span>Budget Goal: ${project.fundingGoal.toLocaleString()}</span>
+                <span>Budget Goal: ${project.fundingGoal.toLocaleString('en-US')}</span>
                 <span>{((project.amountRaised / project.fundingGoal) * 100).toFixed(0)}% Funded</span>
               </div>
             </div>
@@ -171,7 +171,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
             <div className="rounded-2xl bg-slate-50 p-4 space-y-2.5 text-xs">
               <div className="flex justify-between">
                 <span className="text-slate-500">Beneficiaries Reached:</span>
-                <span className="font-bold text-slate-900">{project.beneficiariesCount.toLocaleString()} souls</span>
+                <span className="font-bold text-slate-900">{project.beneficiariesCount.toLocaleString('en-US')} souls</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">Start Date:</span>

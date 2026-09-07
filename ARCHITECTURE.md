@@ -1,34 +1,32 @@
 # Enterprise NGO Management Platform — Architecture Blueprint
 
-## 1. Multi-Tenant Database Architecture
+## 1. Current State: Next.js Front End on Mock Data
 
-All domain entities are strictly partitioned by `organizationId`. Compound unique constraints (e.g. `@@unique([organizationId, slug])` or `@@unique([organizationId, email])`) guarantee multi-tenant namespace isolation without cross-tenant collisions.
+The site is a Next.js 16 (App Router) port of the original single-page view tree — real routes, per-page SEO metadata, and SSR — but `DatabaseContext` and `AuthContext` still run entirely on the mock dataset in `src/data/mockDatabase.ts`, persisted to `localStorage` per browser. There is no live backend yet.
 
-### Key Indexes:
-- `@@index([organizationId])`: Fast tenant partition pruning
-- `@@index([status])`: High-frequency dashboard filtering
-- `@@index([createdAt])`: Chronological ledger sorting
-- `@@index([donatedAt])`: Financial year tax-exemption filtering (Form 10BE)
+## 2. Planned Multi-Tenant Database Architecture
+
+The next phase wires each domain (donations, volunteers, campaigns, certificates, etc.) over to MongoDB via Mongoose (`src/lib/mongodb.ts` has the connection singleton), one entity at a time, replacing its slice of the mock data. All domain documents should be scoped by `organizationId` for multi-tenant isolation, with compound indexes mirroring the current per-entity lookups (status filtering, chronological ledger sorting, financial-year tax-exemption filtering for Form 10BE).
 
 ---
 
-## 2. Layered Architecture Pattern
+## 3. Layered Architecture Pattern (target)
 
 ```text
 Client / UI Components
        ↓
 Application Services (Business Rules & Workflows)
        ↓
-Repositories / Data Access Layer (BaseRepository<T>)
+Mongoose Models (Data Access Layer)
        ↓
-Prisma Client Singleton (Connection Pooling & HMR Protection)
+Mongoose Connection Singleton (src/lib/mongodb.ts)
        ↓
-PostgreSQL Database
+MongoDB
 ```
 
 ---
 
-## 3. Design System & Semantic Tokens
+## 4. Design System & Semantic Tokens
 
 Located in `src/lib/design-tokens.ts`:
 - **Colors**: Semantic tokens for Emerald primary, Sky secondary, Amber humanitarian warmth, and Slate neutrals.
@@ -38,7 +36,7 @@ Located in `src/lib/design-tokens.ts`:
 
 ---
 
-## 4. Statutory NGO Compliance
+## 5. Statutory NGO Compliance
 
 Integrated models for:
 - Section 80G(5)(vi) tax-exemption receipt generation (Form 10BE)

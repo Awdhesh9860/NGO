@@ -60,7 +60,7 @@ export const NewsBlogSection: React.FC<NewsBlogSectionProps> = ({ onNavigate }) 
                     <Clock className="h-3 w-3" />
                     {art.readTimeMinutes} min read
                   </span>
-                  <span>{art.publishedAt ? new Date(art.publishedAt).toLocaleDateString() : 'Recent'}</span>
+                  <span>{art.publishedAt ? new Date(art.publishedAt).toLocaleDateString('en-US') : 'Recent'}</span>
                 </div>
 
                 <h3 className="text-base font-bold text-slate-900 group-hover:text-emerald-700 transition line-clamp-2 leading-snug">
