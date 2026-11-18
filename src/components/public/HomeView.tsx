@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  AnnouncementBar,
   HeroSection,
   TrustStatsBar,
   AboutPreviewSection,
@@ -34,6 +35,9 @@ interface HomeViewProps {
 export const HomeView: React.FC<HomeViewProps> = ({ onOpenDonate, onNavigate }) => {
   return (
     <div id="ngo-homepage" className="space-y-16 sm:space-y-24 pb-4">
+      {/* 0. ANNOUNCEMENT BAR */}
+      <AnnouncementBar onCtaClick={() => onOpenDonate('camp-1')} />
+
       {/* 1. HERO SECTION */}
       <HeroSection onOpenDonate={onOpenDonate} onNavigate={onNavigate} />
 

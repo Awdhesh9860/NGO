@@ -14,7 +14,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
   onOpenDonate
 }) => {
   const { articles } = useDatabase();
-  const article = articles.find((a) => a.id === articleId) || articles[0];
+  const article = articles.find((a) => a.id === articleId || a.slug === articleId) || articles[0];
 
   if (!article) {
     return (

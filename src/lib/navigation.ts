@@ -1,6 +1,6 @@
 /**
- * Maps the legacy view-name/id navigation contract (used throughout the
- * ported component tree via `onNavigate(view, id?)`) onto real Next.js
+ * Maps the view-name/id navigation contract (used throughout the
+ * component tree via `onNavigate(view, id?)`) onto real Next.js
  * App Router paths, and back again for active-link highlighting.
  */
 
@@ -10,23 +10,40 @@ const VIEW_TO_PATH: Record<string, string> = {
   'about-story': '/about/our-story',
   'about-mission-vision': '/about/mission-vision',
   'about-values': '/about/values',
-  'about-founder': '/about/founder-message',
+  'about-founder': '/about/founder',
   'about-leadership': '/about/leadership',
-  'about-board': '/about/board-members',
-  'about-team': '/about/our-team',
+  'about-board': '/about/board',
+  'about-team': '/about/team',
   'about-awards': '/about/awards',
   programs: '/programs',
   projects: '/projects',
+  'projects-ongoing': '/projects/ongoing',
+  'projects-completed': '/projects/completed',
+  'projects-upcoming': '/projects/upcoming',
   campaigns: '/campaigns',
   transparency: '/transparency',
+  'transparency-annual': '/transparency/annual-reports',
+  'transparency-financial': '/transparency/financial-reports',
+  'transparency-audits': '/transparency/audit-reports',
+  'transparency-governance': '/transparency/governance',
+  'transparency-registrations': '/transparency/registrations',
   volunteers: '/volunteer',
+  volunteer: '/volunteer',
+  'volunteer-apply': '/volunteer/apply',
   membership: '/membership',
+  'membership-apply': '/membership/apply',
   csr: '/csr',
   events: '/events',
   news: '/news',
+  blog: '/blog',
+  press: '/press',
+  'press-coverage': '/press/media-coverage',
   'verify-certificate': '/verify-certificate',
   donate: '/donate',
   impact: '/impact',
+  'impact-stories': '/impact/success-stories',
+  'impact-beneficiaries': '/impact/beneficiary-stories',
+  'impact-highlights': '/impact/annual-highlights',
   gallery: '/gallery',
   stories: '/stories',
   partners: '/partners',
@@ -36,15 +53,25 @@ const VIEW_TO_PATH: Record<string, string> = {
   'google-sheets': '/google-sheets',
   contact: '/contact',
   legal: '/legal',
+  'privacy-policy': '/privacy-policy',
+  'terms-and-conditions': '/terms-and-conditions',
+  'refund-policy': '/refund-policy',
+  'donation-policy': '/donation-policy',
+  'child-protection': '/child-protection-policy',
+  safeguarding: '/safeguarding-policy',
+  'code-of-conduct': '/code-of-conduct',
   login: '/login',
   'donor-register': '/donor-register',
   dashboard: '/dashboard',
 };
 
 const DETAIL_VIEW_PREFIX: Record<string, string> = {
+  'program-detail': '/programs',
   'project-detail': '/projects',
   'campaign-detail': '/campaigns',
   'article-detail': '/news',
+  'event-detail': '/events',
+  'blog-detail': '/blog',
 };
 
 /** Views that accept an optional id as a query/hash param rather than a path segment. */
@@ -72,18 +99,19 @@ const PATH_TO_VIEW: Record<string, string> = Object.entries(VIEW_TO_PATH).reduce
   {} as Record<string, string>
 );
 
-/** Reverse-maps a pathname back to the legacy view name, for nav active-state highlighting. */
-export function viewForPath(pathname: string): string {
-  if (PATH_TO_VIEW[pathname]) return PATH_TO_VIEW[pathname];
+export function viewForPath(pathname: string | null): string {
+  if (!pathname || pathname === '/') return 'home';
 
-  if (pathname.startsWith('/projects/')) return 'project-detail';
-  if (pathname.startsWith('/campaigns/')) return 'campaign-detail';
-  if (pathname.startsWith('/news/')) return 'article-detail';
-  if (pathname.startsWith('/about/')) {
-    const match = Object.entries(VIEW_TO_PATH).find(([, path]) => path === pathname);
-    if (match) return match[0];
+  const exact = PATH_TO_VIEW[pathname];
+  if (exact) return exact;
+
+  for (const [view, prefix] of Object.entries(DETAIL_VIEW_PREFIX)) {
+    if (pathname.startsWith(`${prefix}/`)) return view;
   }
-  if (pathname.startsWith('/dashboard')) return 'dashboard';
+
+  for (const [path, view] of Object.entries(PATH_TO_VIEW)) {
+    if (path !== '/' && pathname.startsWith(path)) return view;
+  }
 
   return 'home';
 }

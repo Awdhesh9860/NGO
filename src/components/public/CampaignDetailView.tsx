@@ -26,7 +26,7 @@ export const CampaignDetailView: React.FC<CampaignDetailViewProps> = ({
   const { campaigns, donations } = useDatabase();
   const [copied, setCopied] = useState(false);
 
-  const campaign = campaigns.find((c) => c.id === campaignId) || campaigns[0];
+  const campaign = campaigns.find((c) => c.id === campaignId || c.slug === campaignId) || campaigns[0];
   const campaignDonations = donations.filter((d) => d.campaignId === campaign?.id);
 
   if (!campaign) {

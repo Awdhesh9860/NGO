@@ -22,3 +22,4 @@ export { TestimonialsSection } from './TestimonialsSection';
 export { FaqSection } from './FaqSection';
 export { NewsletterSection } from './NewsletterSection';
 export { FinalCtaSection } from './FinalCtaSection';
+export { AnnouncementBar } from './AnnouncementBar';

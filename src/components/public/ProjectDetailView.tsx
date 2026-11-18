@@ -26,7 +26,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
   onOpenDonate
 }) => {
   const { projects } = useDatabase();
-  const project = projects.find((p) => p.id === projectId) || projects[0];
+  const project = projects.find((p) => p.id === projectId || p.slug === projectId) || projects[0];
 
   if (!project) {
     return (

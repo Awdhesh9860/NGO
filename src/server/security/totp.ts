@@ -10,7 +10,7 @@ export function generate2FASecret(): string {
 /**
  * Generates an otpauth:// URI for rendering as a QR code.
  */
-export function get2FAKeyURI(userEmail: string, serviceName: string, secret: string): string {
+export function get2FAKeyURI(userEmail: string, secret: string, serviceName: string = 'HopeHorizon'): string {
   return generateURI({
     issuer: serviceName,
     label: userEmail,
@@ -20,13 +20,15 @@ export function get2FAKeyURI(userEmail: string, serviceName: string, secret: str
 
 /**
  * Verifies a 6-digit TOTP token against a user's secret.
+ * Supports both (secret, token) and (token, secret) argument order.
  */
-export function verify2FAToken(token: string, secret: string): boolean {
+export function verify2FAToken(arg1: string, arg2: string): boolean {
   try {
-    const result = verifySync({ token: token.trim(), secret });
+    const token = /^\d{6}$/.test(arg1.trim()) ? arg1.trim() : arg2.trim();
+    const secret = token === arg1.trim() ? arg2.trim() : arg1.trim();
+    const result = verifySync({ token, secret });
     return !!result;
   } catch {
     return false;
   }
 }
-
