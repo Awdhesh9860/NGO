@@ -36,10 +36,18 @@ Located in `src/lib/design-tokens.ts`:
 
 ---
 
-## 5. Statutory NGO Compliance
+## 6. Master Architecture Documentation Suite
 
-Integrated models for:
-- Section 80G(5)(vi) tax-exemption receipt generation (Form 10BE)
-- Section 12A registration verification
-- FCRA (Foreign Contribution Regulation Act) fund segregation
-- NITI Aayog NGO Darpan unique identification
+For exhaustive blueprints, schemas, and specifications created during **Phase 1 (Project Audit & Master Architecture Planning)**, consult the dedicated documentation suite in [`docs/`](file:///s:/Project/NGO/docs/README.md):
+
+1. **[Project Audit Report](file:///s:/Project/NGO/docs/PROJECT_AUDIT.md)**: Current state analysis, code asset inventory, runtime dependencies, and implementation status matrix.
+2. **[Product Requirements Document (PRD)](file:///s:/Project/NGO/docs/PRODUCT_REQUIREMENTS.md)**: Personas, functional/non-functional specs, and business requirements.
+3. **[Master Technical Architecture](file:///s:/Project/NGO/docs/MASTER_ARCHITECTURE.md)**: Clean Layered Architecture, Next.js 16 App Router, service boundaries, and request flows.
+4. **[User Roles & Permissions](file:///s:/Project/NGO/docs/USER_ROLES_AND_PERMISSIONS.md)**: 13-role system, 36 granular permissions, and server-side enforcement guards.
+5. **[Master Module Inventory](file:///s:/Project/NGO/docs/MODULE_INVENTORY.md)**: Catalog of 24+ public routes, 10 dashboard tabs, and 4 dedicated user portals.
+6. **[Database Architecture](file:///s:/Project/NGO/docs/DATABASE_ARCHITECTURE.md)**: Mongoose schemas, ERD diagrams, compound indexing, and multi-tenant scoping.
+7. **[Authentication & Email Architecture](file:///s:/Project/NGO/docs/AUTHENTICATION_AND_EMAIL_ARCHITECTURE.md)**: JWT sessions, TOTP 2FA, session revocation, and branded transactional email templates.
+8. **[API Architecture](file:///s:/Project/NGO/docs/API_ARCHITECTURE.md)**: Next.js 16 Route Handlers under `/api/v1/*`, middleware pipeline, and endpoint catalog.
+9. **[Multi-Tenant Architecture](file:///s:/Project/NGO/docs/MULTI_TENANT_ARCHITECTURE.md)**: Tenant resolution, logical isolation, Mongoose query plugins, and tenant customization.
+10. **[16-Phase Development Roadmap](file:///s:/Project/NGO/docs/DEVELOPMENT_ROADMAP.md)**: Dependency-aware implementation plan from Phase 1 through Phase 16.
+
