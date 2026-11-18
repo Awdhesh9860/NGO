@@ -1,8 +1,13 @@
 @import "tailwindcss";
+@import "../styles/tokens.css";
+@import "../styles/themes.css";
+@import "../styles/utilities.css";
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 antialiased selection:bg-emerald-500 selection:text-white;
+    background-color: var(--bg-soft, #f7faf8);
+    color: var(--text-primary, #172b24);
+    @apply antialiased selection:bg-emerald-600 selection:text-white;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 }

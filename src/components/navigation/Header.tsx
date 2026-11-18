@@ -4,6 +4,7 @@ import { DesktopNavigation } from './DesktopNavigation';
 import { MobileMenu } from './MobileMenu';
 import { LanguageSelector } from './LanguageSelector';
 import { DonateButton } from './DonateButton';
+import { ThemeToggle } from '../ui/ThemeToggle';
 import {
   Heart,
   Search,
@@ -182,9 +183,10 @@ export const Header: React.FC<HeaderProps> = ({
             <Search className="h-4 w-4" />
           </button>
 
-          {/* Language Selector */}
-          <div className="hidden sm:block">
+          {/* Language & Theme Controls */}
+          <div className="hidden sm:flex items-center gap-2">
             <LanguageSelector isScrolled={isScrolled} />
+            <ThemeToggle />
           </div>
 
           {/* User Profile or Portal Button */}

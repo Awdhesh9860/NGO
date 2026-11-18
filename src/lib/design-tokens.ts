@@ -1,65 +1,71 @@
 /**
  * Enterprise NGO Design System Tokens
  * Defines standardized semantic tokens for colors, typography, spacing, elevations, and responsive breakpoints.
+ * Color Direction: Deep Emerald (#087F5B), Sky Blue (#2787C7), Humanitarian Amber (#E9A23B), and Nature Neutrals.
  */
 
 export const DESIGN_TOKENS = {
   colors: {
-    // Brand Semantic Palette (Emerald & Amber humanitarian trust)
+    // Primary - Deep Emerald & Forest (Trust & Mission)
     primary: {
-      DEFAULT: '#059669', // emerald-600
-      hover: '#047857',   // emerald-700
-      light: '#ecfdf5',   // emerald-50
-      dark: '#064e3b',    // emerald-900
-      foreground: '#ffffff',
+      DEFAULT: '#087F5B', // Deep Emerald
+      dark: '#075B43',    // Dark Forest
+      light: '#E8F5EF',   // Soft Emerald
+      hover: '#075B43',
+      foreground: '#FFFFFF',
     },
+    // Secondary - Sky Blue (Humanitarian Hope & Clean Water)
     secondary: {
-      DEFAULT: '#0284c7', // sky-600
-      hover: '#0369a1',   // sky-700
-      light: '#f0f9ff',   // sky-50
-      dark: '#0c4a6e',    // sky-900
-      foreground: '#ffffff',
+      DEFAULT: '#2787C7', // Sky Blue
+      dark: '#1B689C',
+      light: '#EAF4FC',   // Soft Sky
+      hover: '#1B689C',
+      foreground: '#FFFFFF',
     },
+    // Accent - Humanitarian Amber (Urgency, Warmth & Energy)
     accent: {
-      DEFAULT: '#d97706', // amber-600 (warm humanitarian warmth)
-      hover: '#b45309',   // amber-700
-      light: '#fffbeb',   // amber-50
-      foreground: '#ffffff',
+      DEFAULT: '#E9A23B', // Humanitarian Amber
+      dark: '#B8791E',
+      light: '#FFF4DF',   // Soft Amber
+      hover: '#B8791E',
+      foreground: '#FFFFFF',
     },
+    // Nature-Inspired Neutral Palette
     neutral: {
-      canvas: '#f8fafc',  // slate-50
-      card: '#ffffff',
-      surface: '#f1f5f9', // slate-100
-      border: '#e2e8f0',  // slate-200
-      subtle: '#cbd5e1',  // slate-300
-      muted: '#64748b',   // slate-500
-      body: '#334155',    // slate-700
-      heading: '#0f172a', // slate-900
+      primaryText: '#172B24',   // Deep Nature Forest Text
+      secondaryText: '#64746D', // Muted Moss Slate
+      mainBg: '#FFFFFF',        // Pure White
+      softBg: '#F7FAF8',        // Soft Mineral Background
+      border: '#E3EBE6',        // Subtle Sage Border
+      darkSurface: '#13231D',   // Deep Charcoal Surface
+      card: '#FFFFFF',
+      muted: '#8A9A93',
     },
+    // Standard Feedback Tokens
     feedback: {
       success: {
-        DEFAULT: '#10b981', // emerald-500
-        bg: '#ecfdf5',
-        border: '#a7f3d0',
-        text: '#065f46',
+        DEFAULT: '#087F5B',
+        bg: '#E8F5EF',
+        border: '#B2E2D3',
+        text: '#075B43',
       },
       warning: {
-        DEFAULT: '#f59e0b', // amber-500
-        bg: '#fffbeb',
-        border: '#fde68a',
-        text: '#92400e',
+        DEFAULT: '#E9A23B',
+        bg: '#FFF4DF',
+        border: '#FCE0B3',
+        text: '#B8791E',
       },
       destructive: {
-        DEFAULT: '#ef4444', // red-500
-        bg: '#fef2f2',
-        border: '#fecaca',
-        text: '#991b1b',
+        DEFAULT: '#D9383A',
+        bg: '#FDE8E8',
+        border: '#F8B4B4',
+        text: '#9B1C1C',
       },
       info: {
-        DEFAULT: '#3b82f6', // blue-500
-        bg: '#eff6ff',
-        border: '#bfdbfe',
-        text: '#1e40af',
+        DEFAULT: '#2787C7',
+        bg: '#EAF4FC',
+        border: '#B8DCF5',
+        text: '#1B689C',
       },
     },
   },
@@ -67,25 +73,66 @@ export const DESIGN_TOKENS = {
   typography: {
     fontFamily: {
       sans: 'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      display: 'Outfit, Inter, system-ui, sans-serif',
+      display: 'Inter, system-ui, sans-serif',
       mono: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
     },
     scale: {
-      xs: '0.75rem',    // 12px
-      sm: '0.875rem',   // 14px
-      base: '1rem',      // 16px
-      lg: '1.125rem',   // 18px
-      xl: '1.25rem',    // 20px
-      '2xl': '1.5rem',  // 24px
-      '3xl': '1.875rem',// 30px
-      '4xl': '2.25rem', // 36px
-      '5xl': '3rem',    // 48px
-    },
-    lineHeights: {
-      tight: '1.25',
-      normal: '1.5',
-      relaxed: '1.625',
-      loose: '2',
+      display: {
+        fontSize: '3.5rem',    // 56px
+        lineHeight: '1.15',
+        fontWeight: '900',
+        letterSpacing: '-0.025em',
+      },
+      h1: {
+        fontSize: '2.5rem',     // 40px
+        lineHeight: '1.2',
+        fontWeight: '800',
+        letterSpacing: '-0.02em',
+      },
+      h2: {
+        fontSize: '2rem',       // 32px
+        lineHeight: '1.25',
+        fontWeight: '700',
+        letterSpacing: '-0.015em',
+      },
+      h3: {
+        fontSize: '1.5rem',     // 24px
+        lineHeight: '1.3',
+        fontWeight: '700',
+        letterSpacing: '-0.01em',
+      },
+      h4: {
+        fontSize: '1.25rem',    // 20px
+        lineHeight: '1.4',
+        fontWeight: '600',
+      },
+      bodyLarge: {
+        fontSize: '1.125rem',   // 18px
+        lineHeight: '1.6',
+        fontWeight: '400',
+      },
+      body: {
+        fontSize: '1rem',        // 16px
+        lineHeight: '1.6',
+        fontWeight: '400',
+      },
+      bodySmall: {
+        fontSize: '0.875rem',   // 14px
+        lineHeight: '1.5',
+        fontWeight: '400',
+      },
+      caption: {
+        fontSize: '0.75rem',    // 12px
+        lineHeight: '1.4',
+        fontWeight: '500',
+      },
+      label: {
+        fontSize: '0.75rem',    // 12px
+        lineHeight: '1',
+        fontWeight: '700',
+        letterSpacing: '0.05em',
+        textTransform: 'uppercase',
+      },
     },
   },
 
@@ -94,15 +141,20 @@ export const DESIGN_TOKENS = {
     2: '0.5rem',   // 8px
     3: '0.75rem',  // 12px
     4: '1rem',     // 16px
+    5: '1.25rem',  // 20px
     6: '1.5rem',   // 24px
     8: '2rem',     // 32px
+    10: '2.5rem',  // 40px
     12: '3rem',    // 48px
     16: '4rem',    // 64px
+    20: '5rem',    // 80px
+    24: '6rem',    // 96px
   },
 
   radius: {
     none: '0px',
-    sm: '0.25rem',   // 4px
+    xs: '0.25rem',   // 4px
+    sm: '0.375rem',  // 6px
     md: '0.5rem',    // 8px
     lg: '0.75rem',   // 12px
     xl: '1rem',      // 16px
@@ -112,10 +164,17 @@ export const DESIGN_TOKENS = {
 
   elevation: {
     none: 'none',
-    subtle: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-    card: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
-    elevated: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-    modal: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+    subtle: '0 1px 2px 0 rgba(23, 43, 36, 0.05)',
+    card: '0 1px 3px 0 rgba(23, 43, 36, 0.08), 0 1px 2px -1px rgba(23, 43, 36, 0.05)',
+    elevated: '0 4px 6px -1px rgba(23, 43, 36, 0.08), 0 2px 4px -2px rgba(23, 43, 36, 0.05)',
+    modal: '0 20px 25px -5px rgba(23, 43, 36, 0.1), 0 8px 10px -6px rgba(23, 43, 36, 0.05)',
+  },
+
+  layout: {
+    sidebarWidth: '280px',
+    sidebarCollapsedWidth: '76px',
+    headerHeight: '72px',
+    containerMaxWidth: '1280px',
   },
 
   breakpoints: {
@@ -128,3 +187,4 @@ export const DESIGN_TOKENS = {
 } as const;
 
 export type DesignTokens = typeof DESIGN_TOKENS;
+export default DESIGN_TOKENS;

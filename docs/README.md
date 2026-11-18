@@ -37,3 +37,17 @@ This directory contains the complete technical architecture, security specificat
 
 10. **[10. 16-Phase Development Roadmap](file:///s:/Project/NGO/docs/DEVELOPMENT_ROADMAP.md)**  
     *Dependency-aware implementation roadmap detailing deliverables, acceptance criteria, and sequence from Phase 1 through Phase 16.*
+
+---
+
+### 🎨 Design System & UI/UX Foundation Suite (Phase 3)
+
+1. **[Design System Overview](file:///s:/Project/NGO/docs/design/DESIGN_SYSTEM.md)**: Visual philosophy, multi-surface design consistency, and architecture.
+2. **[Color Tokens](file:///s:/Project/NGO/docs/design/COLOR_TOKENS.md)**: Nature-inspired palette (Emerald, Sky, Amber), semantic tokens, and WCAG AA contrast.
+3. **[Typography System](file:///s:/Project/NGO/docs/design/TYPOGRAPHY.md)**: Responsive type scale, font pairings, line heights, and usage guidelines.
+4. **[Spacing & Layout Grid](file:///s:/Project/NGO/docs/design/SPACING_AND_LAYOUT.md)**: 4px baseline grid, layout containers, breakpoints, and elevation tokens.
+5. **[Component Library](file:///s:/Project/NGO/docs/design/COMPONENT_LIBRARY.md)**: Reusable UI component catalog, prop contracts, and code examples.
+6. **[Accessibility Guidelines](file:///s:/Project/NGO/docs/design/ACCESSIBILITY_GUIDELINES.md)**: WCAG 2.2 AA standards, screen reader attributes, and focus states.
+7. **[Animation Guidelines](file:///s:/Project/NGO/docs/design/ANIMATION_GUIDELINES.md)**: Motion tokens, timing scales, and reduced motion compliance.
+8. **[Theme & Dark Mode Guidelines](file:///s:/Project/NGO/docs/design/THEME_GUIDELINES.md)**: Light/dark mode variables, ThemeProvider, and tenant themes.
+

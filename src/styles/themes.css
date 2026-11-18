@@ -1,14 +1,33 @@
 /**
- * Theme Overrides & Portal Accents
+ * Multi-Tenant Theme Customizations & Dark Mode Overrides
  */
-[data-theme='ngo-emerald'] {
-  --theme-accent: #059669;
+
+/* Theme: Emerald Foundation (Default) */
+[data-theme='emerald'] {
+  --primary: #087f5b;
+  --primary-hover: #075b43;
+  --primary-soft: #e8f5ef;
 }
 
-[data-theme='ngo-sky'] {
-  --theme-accent: #0284c7;
+/* Theme: Ocean Hope (Water & Health Focus) */
+[data-theme='sky'] {
+  --primary: #2787c7;
+  --primary-hover: #1b689c;
+  --primary-soft: #eaf4fc;
 }
 
-[data-theme='ngo-warm'] {
-  --theme-accent: #d97706;
+/* Theme: Warm Horizon (Community & Disaster Relief Focus) */
+[data-theme='amber'] {
+  --primary: #e9a23b;
+  --primary-hover: #b8791e;
+  --primary-soft: #fff4df;
+}
+
+/* High Contrast Accessibility Mode */
+[data-theme='high-contrast'] {
+  --text-primary: #000000;
+  --text-secondary: #222222;
+  --bg-main: #ffffff;
+  --border-default: #000000;
+  --primary: #044d36;
 }

@@ -35,3 +35,9 @@ export * from './ActivityList';
 export * from './ProgressBar';
 export * from './StatusBadge';
 export * from './MetricCard';
+export * from './IconButton';
+export * from './Container';
+export * from './Section';
+export * from './PageHeader';
+export * from './ThemeToggle';
+

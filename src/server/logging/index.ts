@@ -1,4 +1,4 @@
 /**
  * Server Structured Logger with Automatic PII Redaction
  */
-export * from '../../../lib/logger';
+export * from '../../lib/logger';
