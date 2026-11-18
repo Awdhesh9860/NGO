@@ -1,0 +1,16 @@
+/**
+ * Core Design Tokens
+ */
+:root {
+  --primary-emerald: #059669;
+  --primary-emerald-hover: #047857;
+  --secondary-sky: #0284c7;
+  --accent-amber: #d97706;
+  --neutral-dark: #0f172a;
+  --neutral-light: #f8fafc;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+}

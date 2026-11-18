@@ -1,0 +1,14 @@
+/**
+ * Theme Overrides & Portal Accents
+ */
+[data-theme='ngo-emerald'] {
+  --theme-accent: #059669;
+}
+
+[data-theme='ngo-sky'] {
+  --theme-accent: #0284c7;
+}
+
+[data-theme='ngo-warm'] {
+  --theme-accent: #d97706;
+}

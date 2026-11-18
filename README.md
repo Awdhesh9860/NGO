@@ -1,102 +1,148 @@
 # Enterprise Multi-Tenant NGO Management & Digital Platform
-
-A production-grade, enterprise digital ecosystem engineered for non-governmental organizations (NGOs), non-profits, and charitable trusts. Features statutory 80G tax-exemption management, multi-tenant isolation, 9-tier role-based access control (RBAC), donor lifecycle automation, volunteer field operations, and verifiable public transparency ledgers.
-
----
-
-## 🚀 Technology Stack
-
-- **Runtime & Framework**: Next.js 16 (App Router) / React 19 + TypeScript (Strict Mode)
-- **Database & ORM (planned)**: MongoDB + Mongoose — see [Data Layer](#-data-layer) below
-- **Styling & Tokens**: Tailwind CSS v4 with enterprise semantic design tokens
-- **State**: React Context (auth, database, language, toast) + Zustand for cross-page UI state
-- **Validation**: Zod schema-first data contracts
-- **Icons & Motion**: Lucide React + `motion/react`
-- **Testing**: Vitest (unit) + Playwright (e2e)
-- **Developer Tooling**: ESLint (`eslint-config-next`), TypeScript Compiler (`tsc`)
+**Platform Name**: HopeHorizon / Vikas NGO Ecosystem  
+**Target Architecture**: Enterprise Hybrid Feature-Based Architecture (Next.js 16 App Router / React 19)  
+**Version**: 2.0.0-foundation  
 
 ---
 
-## 📁 Project Structure
+## 1. Project Overview
+
+A production-grade, enterprise digital ecosystem engineered for non-governmental organizations (NGOs), non-profits, and charitable trusts. Features statutory Section 80G tax-exemption management, multi-tenant isolation, 13-tier role-based access control (RBAC), donor lifecycle automation, volunteer field operations, and verifiable public transparency ledgers.
+
+---
+
+## 2. Technology Stack
+
+- **Runtime & Framework**: Next.js 16.2 (App Router, Turbopack) / React 19.2 + TypeScript (Strict Mode)
+- **Database & ORM**: MongoDB + Mongoose (Connection singleton in `src/server/database/connection/`)
+- **Styling & Tokens**: Tailwind CSS v4 with semantic tokens (`src/styles/tokens.css`, `src/lib/design-tokens.ts`)
+- **State Management**: React Context (`AuthContext`, `DatabaseContext`, `LanguageContext`, `ToastContext`) + Zustand (`src/lib/ui-store.ts`) + `@tanstack/react-query`
+- **Validation**: Zod schema-first data contracts (`@/shared/schemas`)
+- **Icons & Motion**: Lucide React + `motion/react` + Canvas Confetti
+- **Integrations**: Google Workspace (Firebase Auth + Sheets/Drive API), Razorpay & Stripe adapters, Nodemailer SMTP
+- **Testing**: Vitest (unit/DOM tests) + Playwright (end-to-end tests)
+- **Developer Tooling**: ESLint, TypeScript Compiler (`tsc`)
+
+---
+
+## 3. Enterprise Hybrid Feature-Based Architecture
+
+The repository combines **Domain-Driven Design (DDD)** and **Layered Architecture** principles:
 
 ```text
 ├── src/
-│   ├── app/                          # Next.js App Router routes
-│   │   ├── (public)/                 # Public site: shares Navbar/Footer/MobileBottomNav layout
-│   │   └── dashboard/                # Immersive, role-switched authenticated workspace
-│   ├── components/
-│   │   ├── ui/                       # 25+ accessible, reusable design system components
-│   │   ├── layout/                   # Public, Admin, Team, Volunteer, Donor, Member layouts
-│   │   ├── common/                   # ErrorBoundary, LoadingScreen, NotFoundView, modals
-│   │   ├── dashboard/                # Operational dashboard panels & summaries
-│   │   └── public/                   # Public transparency & storytelling views
-│   ├── hooks/
-│   │   └── useViewNavigation.ts      # Legacy view-name → Next.js route bridge
-│   ├── config/
-│   │   ├── app.ts                    # Branding, statutory registrations & locales
-│   │   ├── navigation.ts             # Configuration-driven navigation trees
-│   │   ├── site.ts                   # SEO defaults and contact information
-│   │   ├── constants.ts              # Global status enums, limits & 80G thresholds
-│   │   └── environment.ts            # Type-safe grouped environment configuration
-│   ├── lib/
-│   │   ├── navigation.ts             # view-name <-> URL path mapping for ported components
-│   │   ├── ui-store.ts               # Zustand store for cross-route modals (donate/search/etc.)
-│   │   ├── mongodb.ts                # Mongoose connection singleton (not yet wired into the UI)
-│   │   ├── design-tokens.ts          # Centralized color, typography, radius & elevation tokens
-│   │   ├── api-response.ts           # Standardized ApiResponse<T> & pagination contracts
-│   │   ├── error-handler.ts          # Enterprise AppError, ValidationError & hierarchy
-│   │   ├── logger.ts                 # Structured logger with automatic secret redactions
-│   │   └── utils.ts                  # cn(), formatCurrency(), formatDate()
-│   ├── integrations/                 # Pluggable adapter boundaries (Payment, Email, Storage, Notification)
-│   ├── validations/                  # Centralized Zod validation schemas
-│   ├── tests/                        # Vitest unit tests
-│   ├── context/                      # Client-side global context (Auth, Database, Language, Toast)
-│   └── types/                        # Core TypeScript interfaces & domain models
-└── .env.example                      # Production environment template
+│   ├── app/                          # Next.js App Router (Thin routing & layout shell)
+│   │   ├── (public)/                 # 24+ Public routes (Home, About, Causes, 80G Giving)
+│   │   ├── (auth)/                   # Dedicated auth routes (Login, Register, 2FA)
+│   │   ├── dashboard/                # Role-switched authenticated workspace
+│   │   └── api/                      # RESTful Next.js 16 Route Handlers (/api/v1/*)
+│   │
+│   ├── features/                     # Self-Contained Business Modules
+│   │   ├── authentication/           # Identity, 2FA, session management, persona switcher
+│   │   ├── organizations/            # Multi-tenant profile & statutory IDs
+│   │   ├── users/                    # User accounts & department assignments
+│   │   ├── roles-permissions/        # 13 roles & 36 granular permissions
+│   │   ├── programs/                 # Thematic NGO causes (Water, Education, Health)
+│   │   ├── projects/                 # Field deployments & milestone tracking
+│   │   ├── campaigns/                # Urgent fundraising appeals & live updates
+│   │   ├── donations/                # Section 80G giving & Form 10BE receipts
+│   │   ├── donors/                   # Donor CRM & giving portfolios
+│   │   ├── volunteers/               # Volunteer applications & hour logging
+│   │   ├── members/                  # General assembly & digital QR cards
+│   │   ├── certificates/             # Credential issuance & public verification
+│   │   ├── finance/                  # Financial ledger, expenses & refund desk
+│   │   ├── compliance/               # Section 80G, 12A, FCRA & Darpan governance
+│   │   ├── email/                    # Transactional email dispatcher & logs
+│   │   ├── notifications/            # In-app toasts & alerts
+│   │   ├── cms/                      # News articles, blog & success stories
+│   │   ├── media/                    # Gallery assets & document vault
+│   │   ├── newsletter/               # Zod-validated lead capturing
+│   │   ├── google-workspace/         # Firebase Auth + Drive & Sheets live sync
+│   │   └── audit-logs/               # Immutable administrative security ledger
+│   │
+│   ├── components/                   # Reusable Design System Primitives
+│   │   ├── ui/                       # 25+ base components (Button, Modal, DataTable)
+│   │   ├── layout/                   # PublicLayout, AdminLayout, Footer, Navbar
+│   │   ├── navigation/               # Header, MegaMenu, MobileBottomNav, LangSelector
+│   │   └── common/                   # GlobalModals, PersonaSwitcher, ErrorBoundary
+│   │
+│   ├── server/                       # Server-Only Infrastructure
+│   │   ├── database/                 # Connection singleton, Mongoose models, seeds
+│   │   ├── auth/                     # Server-side JWT session verifier
+│   │   ├── authorization/            # Server-side RBAC permission guards
+│   │   ├── tenant/                   # Tenant resolver (Host / Subdomain / Header)
+│   │   ├── security/                 # Rate limiting, CSRF & hashing utils
+│   │   ├── logging/                  # Pino structured logger with PII redaction
+│   │   └── errors/                   # AppError, ValidationError, UnauthorizedError
+│   │
+│   ├── integrations/                 # Pluggable Third-Party Service Adapters
+│   │   ├── payment/                  # Razorpay & Stripe interfaces
+│   │   ├── email/                    # Nodemailer, Resend & SendGrid interfaces
+│   │   ├── storage/                  # Local, S3 & Cloudinary interfaces
+│   │   └── google-workspace/         # Google Drive & Sheets REST API drivers
+│   │
+│   ├── shared/                       # Cross-Cutting Shared Utilities
+│   │   ├── types/                    # Domain interfaces re-exported
+│   │   ├── constants/                # Global limits, thresholds & enums
+│   │   ├── schemas/                  # Shared Zod validation schemas
+│   │   ├── utils/                    # cn(), formatters, string helpers
+│   │   └── contracts/                # ApiResponse<T> & pagination contracts
+│   │
+│   ├── config/                       # Centralized System Configuration
+│   │   ├── app.config.ts             # Statutory registration IDs, locales, currency
+│   │   ├── site.config.ts            # Global SEO, metadata & social links
+│   │   ├── navigation.config.ts      # Navigation tree hierarchy
+│   │   ├── permissions.config.ts     # Role-permission baseline matrix
+│   │   └── feature-flags.config.ts   # System feature toggles
+│   │
+│   └── styles/                       # Centralized Design Tokens & Styles
+│       ├── tokens.css                # CSS variables for colors, spacing, radii
+│       ├── themes.css                # Multi-tenant theme overrides
+│       └── utilities.css             # Print stylesheets & utility classes
 ```
 
 ---
 
-## 🛠️ Getting Started
+## 4. Documentation Suite
 
-### Prerequisites
+Exhaustive blueprints and guidelines are available in [`docs/`](file:///s:/Project/NGO/docs/README.md):
 
+- **Architecture**:
+  - [`docs/architecture/FOLDER_STRUCTURE.md`](file:///s:/Project/NGO/docs/architecture/FOLDER_STRUCTURE.md)
+  - [`docs/architecture/SYSTEM_ARCHITECTURE.md`](file:///s:/Project/NGO/docs/architecture/SYSTEM_ARCHITECTURE.md)
+  - [`docs/architecture/MODULE_BOUNDARIES.md`](file:///s:/Project/NGO/docs/architecture/MODULE_BOUNDARIES.md)
+  - [`docs/architecture/DEPENDENCY_RULES.md`](file:///s:/Project/NGO/docs/architecture/DEPENDENCY_RULES.md)
+  - [`docs/architecture/ARCHITECTURE_DECISIONS.md`](file:///s:/Project/NGO/docs/architecture/ARCHITECTURE_DECISIONS.md)
+- **Development**:
+  - [`docs/development/DEVELOPMENT_GUIDELINES.md`](file:///s:/Project/NGO/docs/development/DEVELOPMENT_GUIDELINES.md)
+  - [`docs/development/CODING_STANDARDS.md`](file:///s:/Project/NGO/docs/development/CODING_STANDARDS.md)
+  - [`docs/development/GIT_WORKFLOW.md`](file:///s:/Project/NGO/docs/development/GIT_WORKFLOW.md)
+  - [`docs/development/PULL_REQUEST_GUIDELINES.md`](file:///s:/Project/NGO/docs/development/PULL_REQUEST_GUIDELINES.md)
+  - [`docs/development/DEVELOPER_ONBOARDING.md`](file:///s:/Project/NGO/docs/development/DEVELOPER_ONBOARDING.md)
+
+---
+
+## 5. Getting Started & Development Commands
+
+### Prerequisites:
 - Node.js 20+
 
-### 1. Environment Setup
-
-Copy `.env.example` to `.env`:
-
+### Setup:
 ```bash
-cp .env.example .env
-```
-
-### 2. Install & Run
-
-```bash
+# 1. Install dependencies
 npm install
+
+# 2. Configure environment
+cp .env.example .env
+
+# 3. Start local development server (Turbopack)
 npm run dev
 ```
 
-The site runs at `http://localhost:3000`. It currently runs entirely on the mock dataset in `src/data/mockDatabase.ts` (persisted to `localStorage` in the browser) — no database connection is required for local development.
-
-### 3. Code Quality & Testing
-
+### Verification & Testing:
 ```bash
-npm run lint       # ESLint (eslint-config-next)
-npm run test:run   # Vitest unit tests
-npm run test:e2e   # Playwright end-to-end tests
+npm run test:run   # Run Vitest unit tests
+npm run lint       # Run ESLint validation
+npm run test:e2e   # Run Playwright end-to-end tests
+npm run build      # Production build
 ```
-
-### 4. Production Build
-
-```bash
-npm run build
-npm run start
-```
-
----
-
-## 🗄️ Data Layer
-
-The UI currently runs entirely on the mock dataset in `src/data/mockDatabase.ts`, surfaced through `DatabaseContext`/`AuthContext` and persisted to `localStorage` per browser — there is no live backend yet. `src/lib/mongodb.ts` provides a ready Mongoose connection singleton (set `MONGODB_URI` in `.env`) for the next phase of wiring each domain (donations, volunteers, campaigns, certificates, etc.) over to real persistence, replacing the mock data one entity at a time.

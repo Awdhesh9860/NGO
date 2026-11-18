@@ -1,0 +1,13 @@
+/**
+ * Custom Print & Utility Styles
+ */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  .printable-area {
+    display: block !important;
+    position: relative !important;
+    width: 100% !important;
+  }
+}
