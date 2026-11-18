@@ -29,3 +29,4 @@ export function verify2FAToken(token: string, secret: string): boolean {
     return false;
   }
 }
+

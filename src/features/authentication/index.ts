@@ -1,4 +1,2 @@
-export * from '../../context/AuthContext';
-export { AuthModal } from '../../components/common/AuthModal';
-export { PersonaSwitcher } from '../../components/common/PersonaSwitcher';
-export { UserProfileModal } from '../../components/common/UserProfileModal';
+export * from './schemas/auth.schema';
+export * from './services/auth-api.service';

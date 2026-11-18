@@ -285,6 +285,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     setCurrentUser(null);
+    if (typeof window !== 'undefined') {
+      fetch('/api/v1/auth/logout', { method: 'POST' }).catch(() => {});
+    }
   };
 
   const switchUser = (userId: string) => {
