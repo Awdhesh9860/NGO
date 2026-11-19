@@ -16,11 +16,7 @@ export async function GET(req: NextRequest) {
     const status = (searchParams.get('status') as 'active' | 'inactive') || undefined;
     const search = searchParams.get('search') || undefined;
 
-    const result = await adminService.getDepartments(
-      orgId,
-      { status, search },
-      { page, limit }
-    );
+    const result = await adminService.getDepartments(orgId, { status, search }, { page, limit });
 
     const safeDepartments = result.departments.map((d) => ({
       id: d._id.toString(),
@@ -30,19 +26,24 @@ export async function GET(req: NextRequest) {
       headUser: d.headUserId,
       budget: d.budget,
       status: d.status,
+      memberCount: result.memberCounts[d._id.toString()] || 0,
       createdAt: d.createdAt,
       updatedAt: d.updatedAt,
     }));
 
     return NextResponse.json(
-      successResponse(safeDepartments, {
-        page,
-        pageSize: limit,
-        totalCount: result.total,
-        totalPages: Math.ceil(result.total / limit) || 1,
-        hasNextPage: page * limit < result.total,
-        hasPrevPage: page > 1,
-      }, orgId),
+      successResponse(
+        safeDepartments,
+        {
+          page,
+          pageSize: limit,
+          totalCount: result.total,
+          totalPages: Math.ceil(result.total / limit) || 1,
+          hasNextPage: page * limit < result.total,
+          hasPrevPage: page > 1,
+        },
+        orgId
+      ),
       { status: HTTP_STATUS.OK }
     );
   } catch (error) {
@@ -62,15 +63,20 @@ export async function POST(req: NextRequest) {
     const created = await adminService.createDepartment(orgId, validated, actor);
 
     return NextResponse.json(
-      successResponse({
-        id: created._id.toString(),
-        name: created.name,
-        slug: created.slug,
-        description: created.description,
-        budget: created.budget,
-        status: created.status,
-        createdAt: created.createdAt,
-      }, undefined, orgId),
+      successResponse(
+        {
+          id: created._id.toString(),
+          name: created.name,
+          slug: created.slug,
+          description: created.description,
+          budget: created.budget,
+          status: created.status,
+          memberCount: 0,
+          createdAt: created.createdAt,
+        },
+        undefined,
+        orgId
+      ),
       { status: HTTP_STATUS.CREATED }
     );
   } catch (error) {

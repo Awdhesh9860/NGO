@@ -37,6 +37,8 @@ export async function GET(req: NextRequest) {
       resource: log.resource,
       resourceId: log.resourceId,
       details: log.details,
+      metadata: log.metadata,
+      correlationId: log.correlationId,
       ipAddress: log.ipAddress,
       timestamp: log.timestamp,
     }));

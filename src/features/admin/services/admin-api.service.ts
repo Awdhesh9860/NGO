@@ -10,12 +10,22 @@ import {
   UpdateRoleInput,
 } from '../schemas/admin.schema';
 
+export interface AdminUserActivity {
+  id: string;
+  action: string;
+  resource: string;
+  details?: string;
+  timestamp: string;
+}
+
 export interface AdminUser {
   id: string;
   name: string;
   email: string;
   role: string;
+  customRoleId?: { _id: string; name: string; key: string; permissions: string[] } | string;
   departmentId?: { _id: string; name: string; slug: string } | string;
+  managerId?: { _id: string; name: string; email: string; designation?: string } | string;
   phone?: string;
   designation?: string;
   avatar?: string;
@@ -24,6 +34,27 @@ export interface AdminUser {
   twoFactorEnabled: boolean;
   lastLoginAt?: string;
   createdAt: string;
+  updatedAt?: string;
+  activity?: AdminUserActivity[];
+}
+
+export interface AdminUserSession {
+  id: string;
+  device: string;
+  browser: string;
+  ipAddress: string;
+  lastActiveAt: string;
+  expiresAt: string;
+  createdAt: string;
+}
+
+export interface AdminDepartmentMember {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  designation?: string;
+  status: 'active' | 'inactive' | 'suspended';
 }
 
 export interface AdminDepartment {
@@ -31,9 +62,12 @@ export interface AdminDepartment {
   name: string;
   slug: string;
   description?: string;
-  headUser?: { _id: string; name: string; email: string; avatar?: string };
+  headUser?: { _id: string; name: string; email: string; avatar?: string; designation?: string };
   budget: number;
   status: 'active' | 'inactive';
+  memberCount: number;
+  members?: AdminDepartmentMember[];
+  activity?: Array<{ id: string; actorName: string; action: string; details?: string; timestamp: string }>;
   createdAt: string;
   updatedAt: string;
 }
@@ -59,19 +93,53 @@ export interface AdminAuditLog {
   resource: string;
   resourceId?: string;
   details?: string;
+  metadata?: Record<string, unknown>;
+  correlationId?: string;
   ipAddress?: string;
   timestamp: string;
+}
+
+export interface AdminRoleSummary {
+  id: string;
+  name: string;
+  key: string;
+  description?: string;
+  permissions: string[];
+  isSystemRole: boolean;
+  status: 'active' | 'inactive';
+  assignedUserCount?: number;
+  createdAt?: string;
+}
+
+export interface PermissionCatalogItem {
+  key: string;
+  label: string;
+  description: string;
+  module: string;
+  isPlatformProtected?: boolean;
 }
 
 export interface AdminOrganization {
   id: string;
   name: string;
+  legalName?: string;
   slug: string;
   customDomain?: string;
   logo?: string;
+  description?: string;
+  website?: string;
   contactEmail: string;
   contactPhone?: string;
   headquartersAddress?: string;
+  status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'PENDING_VERIFICATION';
+  verificationStatus: 'unverified' | 'pending' | 'verified';
+  verifiedAt?: string;
+  identity: {
+    registrationType?: string;
+    registrationNumber?: string;
+    registeredAddress?: string;
+    establishmentDate?: string;
+  };
   statutory: {
     panNumber?: string;
     section80GNumber?: string;
@@ -79,6 +147,29 @@ export interface AdminOrganization {
     fcraNumber?: string;
     darpanId?: string;
     taxExemptionPercentage: number;
+  };
+  regional: {
+    country: string;
+    state?: string;
+    district?: string;
+    timezone: string;
+    currencyCode: string;
+    currencySymbol: string;
+    dateFormat: string;
+    language: string;
+  };
+  securitySettings: {
+    sessionTimeoutMinutes: number;
+    minPasswordLength: number;
+    requireStrongPassword: boolean;
+    maxFailedLoginAttempts: number;
+    invitationExpiryDays: number;
+    twoFactorPolicy: 'optional' | 'recommended' | 'required_for_admins';
+  };
+  notificationSettings: {
+    emailNotifications: boolean;
+    adminAlerts: boolean;
+    invitationNotifications: boolean;
   };
   settings: {
     currencyCode: string;
@@ -88,19 +179,48 @@ export interface AdminOrganization {
     maintenanceMode: boolean;
   };
   isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface AdminNotification {
+  id: string;
+  type: 'security' | 'invitation' | 'compliance' | 'system';
+  severity: 'info' | 'warning' | 'critical';
+  title: string;
+  message: string;
+  timestamp: string;
+  actionUrl?: string;
+}
+
+export interface AdminSearchResult {
+  users: Array<{ id: string; name: string; email: string; role: string; status: string }>;
+  departments: Array<{ id: string; name: string; slug: string; status: string }>;
+  invitations: Array<{ id: string; email: string; role: string; status: string }>;
+  roles: Array<{ id: string; name: string; key: string; status: string }>;
 }
 
 export interface AdminExecutiveStats {
   userMetrics: {
     total: number;
     active: number;
+    inactive: number;
     suspended: number;
     byRole: Record<string, number>;
   };
   organizationMetrics: {
     departmentCount: number;
+    activeDepartmentCount: number;
     pendingInvitationsCount: number;
+    customRolesCount: number;
     recentAuditCount: number;
+    volunteersCount: number;
+    membersCount: number;
+    donorsCount: number;
+  };
+  charts: {
+    monthlyRegistrations: Array<{ month: string; count: number }>;
+    departmentDistribution: Array<{ departmentId: string; name: string; count: number }>;
   };
   recentActivity: AdminAuditLog[];
 }
@@ -109,6 +229,7 @@ export class AdminApiService {
   private async fetchJson<T>(url: string, init?: RequestInit): Promise<ApiResponse<T>> {
     const res = await fetch(url, {
       ...init,
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
         ...(init?.headers || {}),
@@ -121,6 +242,15 @@ export class AdminApiService {
     return this.fetchJson<AdminExecutiveStats>('/api/v1/admin/stats');
   }
 
+  async globalSearch(query: string): Promise<ApiResponse<AdminSearchResult>> {
+    return this.fetchJson<AdminSearchResult>(`/api/v1/admin/search?q=${encodeURIComponent(query)}`);
+  }
+
+  async getNotifications(): Promise<ApiResponse<AdminNotification[]>> {
+    return this.fetchJson<AdminNotification[]>('/api/v1/admin/notifications');
+  }
+
+  // Users
   async getUsers(params: {
     page?: number;
     limit?: number;
@@ -128,6 +258,8 @@ export class AdminApiService {
     status?: string;
     departmentId?: string;
     search?: string;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
   } = {}): Promise<ApiResponse<AdminUser[]>> {
     const query = new URLSearchParams();
     if (params.page) query.set('page', params.page.toString());
@@ -136,6 +268,8 @@ export class AdminApiService {
     if (params.status) query.set('status', params.status);
     if (params.departmentId) query.set('departmentId', params.departmentId);
     if (params.search) query.set('search', params.search);
+    if (params.sortBy) query.set('sortBy', params.sortBy);
+    if (params.sortOrder) query.set('sortOrder', params.sortOrder);
 
     return this.fetchJson<AdminUser[]>(`/api/v1/admin/users?${query.toString()}`);
   }
@@ -164,6 +298,24 @@ export class AdminApiService {
     });
   }
 
+  async getUserSessions(id: string): Promise<ApiResponse<AdminUserSession[]>> {
+    return this.fetchJson<AdminUserSession[]>(`/api/v1/admin/users/${id}/sessions`);
+  }
+
+  async revokeUserSession(
+    userId: string,
+    options: { sessionId?: string; all?: boolean }
+  ): Promise<ApiResponse<{ revokedCount: number }>> {
+    const query = options.all
+      ? 'all=true'
+      : `sessionId=${encodeURIComponent(options.sessionId || '')}`;
+    return this.fetchJson<{ revokedCount: number }>(
+      `/api/v1/admin/users/${userId}/sessions?${query}`,
+      { method: 'DELETE' }
+    );
+  }
+
+  // Departments
   async getDepartments(params: {
     page?: number;
     limit?: number;
@@ -203,6 +355,21 @@ export class AdminApiService {
     });
   }
 
+  async assignDepartmentMember(departmentId: string, userId: string): Promise<ApiResponse<unknown>> {
+    return this.fetchJson(`/api/v1/admin/departments/${departmentId}/members`, {
+      method: 'POST',
+      body: JSON.stringify({ userId }),
+    });
+  }
+
+  async removeDepartmentMember(departmentId: string, userId: string): Promise<ApiResponse<unknown>> {
+    return this.fetchJson(
+      `/api/v1/admin/departments/${departmentId}/members?userId=${encodeURIComponent(userId)}`,
+      { method: 'DELETE' }
+    );
+  }
+
+  // Invitations
   async getInvitations(params: {
     page?: number;
     limit?: number;
@@ -227,43 +394,53 @@ export class AdminApiService {
     });
   }
 
+  async resendInvitation(id: string): Promise<ApiResponse<AdminInvitation>> {
+    return this.fetchJson<AdminInvitation>(`/api/v1/admin/invitations/${id}/resend`, {
+      method: 'POST',
+    });
+  }
+
   async revokeInvitation(id: string): Promise<ApiResponse<{ id: string; status: string }>> {
     return this.fetchJson<{ id: string; status: string }>(`/api/v1/admin/invitations/${id}`, {
       method: 'DELETE',
     });
   }
 
-  async getRoles(): Promise<ApiResponse<{
-    systemRoles: Record<string, string[]>;
-    customRoles: Array<{
-      id: string;
-      name: string;
-      key: string;
-      description?: string;
-      permissions: string[];
-      isSystemRole: boolean;
-      status: string;
-      createdAt: string;
-    }>;
-    allPermissionsCatalog: Array<{ key: string; name: string; description: string; module: string }>;
-  }>> {
+  // Roles & Permissions
+  async getRoles(): Promise<
+    ApiResponse<{
+      systemRoles: Record<string, string[]>;
+      customRoles: AdminRoleSummary[];
+      allPermissionsCatalog: PermissionCatalogItem[];
+    }>
+  > {
     return this.fetchJson('/api/v1/admin/roles');
   }
 
-  async createRole(data: CreateRoleInput): Promise<ApiResponse<unknown>> {
-    return this.fetchJson('/api/v1/admin/roles', {
+  async getRoleById(id: string): Promise<
+    ApiResponse<{
+      role: AdminRoleSummary;
+      allPermissionsCatalog: PermissionCatalogItem[];
+    }>
+  > {
+    return this.fetchJson(`/api/v1/admin/roles/${id}`);
+  }
+
+  async createRole(data: CreateRoleInput): Promise<ApiResponse<AdminRoleSummary>> {
+    return this.fetchJson<AdminRoleSummary>('/api/v1/admin/roles', {
       method: 'POST',
       body: JSON.stringify(data),
     });
   }
 
-  async updateRole(id: string, data: UpdateRoleInput): Promise<ApiResponse<unknown>> {
-    return this.fetchJson(`/api/v1/admin/roles/${id}`, {
+  async updateRole(id: string, data: UpdateRoleInput): Promise<ApiResponse<AdminRoleSummary>> {
+    return this.fetchJson<AdminRoleSummary>(`/api/v1/admin/roles/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(data),
     });
   }
 
+  // Organization
   async getOrganization(): Promise<ApiResponse<AdminOrganization>> {
     return this.fetchJson<AdminOrganization>('/api/v1/admin/organization');
   }
@@ -275,6 +452,22 @@ export class AdminApiService {
     });
   }
 
+  async listPlatformOrganizations(): Promise<
+    ApiResponse<
+      Array<{
+        id: string;
+        name: string;
+        slug: string;
+        status: string;
+        verificationStatus: string;
+        contactEmail: string;
+      }>
+    >
+  > {
+    return this.fetchJson('/api/v1/admin/organizations');
+  }
+
+  // Audit Logs
   async getAuditLogs(params: {
     page?: number;
     limit?: number;

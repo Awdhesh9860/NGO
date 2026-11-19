@@ -51,3 +51,18 @@ This directory contains the complete technical architecture, security specificat
 7. **[Animation Guidelines](file:///s:/Project/NGO/docs/design/ANIMATION_GUIDELINES.md)**: Motion tokens, timing scales, and reduced motion compliance.
 8. **[Theme & Dark Mode Guidelines](file:///s:/Project/NGO/docs/design/THEME_GUIDELINES.md)**: Light/dark mode variables, ThemeProvider, and tenant themes.
 
+---
+
+### 🛡️ Admin Dashboard & Organization Management Suite (Phase 6)
+
+1. **[Admin Dashboard Module](file:///s:/Project/NGO/docs/modules/ADMIN_DASHBOARD.md)**: Executive KPIs, route map, global search, and 15 reusable dashboard components.
+2. **[User Management Module](file:///s:/Project/NGO/docs/modules/USER_MANAGEMENT.md)**: Tenant user CRUD, role/dept/manager assignments, active sessions, and last-admin protection.
+3. **[Role & Permission Management](file:///s:/Project/NGO/docs/modules/ROLE_PERMISSION_MANAGEMENT.md)**: 13 built-in system roles, custom organization roles, and module-wise permission matrix.
+4. **[Department Management](file:///s:/Project/NGO/docs/modules/DEPARTMENT_MANAGEMENT.md)**: Operational departments, department heads, budgets, duplicate slug prevention, and rosters.
+5. **[Organization Management & Settings](file:///s:/Project/NGO/docs/modules/ORGANIZATION_MANAGEMENT.md)**: Tenant lifecycle, verification status, regional/security/notification settings.
+6. **[Invitation Management](file:///s:/Project/NGO/docs/modules/INVITATION_MANAGEMENT.md)**: Token-hashed email invitations, expiry, resend, revoke, and cross-tenant isolation.
+7. **[Audit Logs & Admin Activity](file:///s:/Project/NGO/docs/modules/AUDIT_LOGS.md)**: Immutable append-only audit trail, correlation IDs, metadata sanitization, and CSV export.
+8. **[Administrative Security Architecture](file:///s:/Project/NGO/docs/security/ADMIN_SECURITY.md)**: Server-side guards, privilege escalation defense, and tenant isolation.
+9. **[Admin Module Development Guidelines](file:///s:/Project/NGO/docs/development/ADMIN_MODULE_GUIDELINES.md)**: Multi-developer squad ownership, boundaries, and local verification commands.
+
+

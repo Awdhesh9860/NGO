@@ -155,7 +155,15 @@ export interface PermissionDefinition {
   label: string;
   description: string;
   module: string;
+  isPlatformProtected?: boolean;
 }
+
+/**
+ * Platform-level permissions that organization-defined custom roles cannot grant or override.
+ */
+export const PLATFORM_PROTECTED_PERMISSIONS: PermissionKey[] = [
+  'organizations.manage',
+];
 
 export const ALL_PERMISSIONS: PermissionDefinition[] = [
   // User & Access Control
@@ -163,7 +171,7 @@ export const ALL_PERMISSIONS: PermissionDefinition[] = [
   { key: 'users.manage', label: 'Manage Users', description: 'Create, edit, suspend, or invite users', module: 'Users' },
   { key: 'roles.manage', label: 'Manage Roles', description: 'Configure custom roles and permission assignments', module: 'Users' },
   // Organization & Departments
-  { key: 'organizations.manage', label: 'Manage Organization', description: 'Configure tenant profiles and multi-tenant settings', module: 'Organization' },
+  { key: 'organizations.manage', label: 'Manage Organization', description: 'Configure tenant profiles and multi-tenant settings', module: 'Organization', isPlatformProtected: true },
   { key: 'departments.manage', label: 'Manage Departments', description: 'Create, edit, and assign department units', module: 'Organization' },
   { key: 'teams.manage', label: 'Manage Teams', description: 'Structure functional operational teams', module: 'Organization' },
   { key: 'settings.manage', label: 'Manage Settings', description: 'Update statutory configurations and security policies', module: 'Organization' },

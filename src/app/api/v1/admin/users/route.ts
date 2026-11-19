@@ -17,11 +17,13 @@ export async function GET(req: NextRequest) {
     const status = (searchParams.get('status') as 'active' | 'inactive' | 'suspended') || undefined;
     const departmentId = searchParams.get('departmentId') || undefined;
     const search = searchParams.get('search') || undefined;
+    const sortBy = searchParams.get('sortBy') || 'createdAt';
+    const sortOrder = (searchParams.get('sortOrder') as 'asc' | 'desc') || 'desc';
 
     const result = await adminService.getUsers(
       orgId,
       { role, status, departmentId, search },
-      { page, limit }
+      { page, limit, sortBy, sortOrder }
     );
 
     const safeUsers = result.users.map((u) => ({
@@ -29,7 +31,9 @@ export async function GET(req: NextRequest) {
       name: u.name,
       email: u.email,
       role: u.role,
+      customRoleId: u.customRoleId,
       departmentId: u.departmentId,
+      managerId: u.managerId,
       phone: u.phone,
       designation: u.designation,
       avatar: u.avatar,
@@ -41,14 +45,18 @@ export async function GET(req: NextRequest) {
     }));
 
     return NextResponse.json(
-      successResponse(safeUsers, {
-        page: result.page,
-        pageSize: result.limit,
-        totalCount: result.total,
-        totalPages: result.totalPages,
-        hasNextPage: result.page < result.totalPages,
-        hasPrevPage: result.page > 1,
-      }, orgId),
+      successResponse(
+        safeUsers,
+        {
+          page: result.page,
+          pageSize: result.limit,
+          totalCount: result.total,
+          totalPages: result.totalPages,
+          hasNextPage: result.page < result.totalPages,
+          hasPrevPage: result.page > 1,
+        },
+        orgId
+      ),
       { status: HTTP_STATUS.OK }
     );
   } catch (error) {
@@ -68,17 +76,23 @@ export async function POST(req: NextRequest) {
     const created = await adminService.createUser(orgId, validated, actor);
 
     return NextResponse.json(
-      successResponse({
-        id: created._id.toString(),
-        name: created.name,
-        email: created.email,
-        role: created.role,
-        departmentId: created.departmentId,
-        phone: created.phone,
-        designation: created.designation,
-        status: created.status,
-        createdAt: created.createdAt,
-      }, undefined, orgId),
+      successResponse(
+        {
+          id: created._id.toString(),
+          name: created.name,
+          email: created.email,
+          role: created.role,
+          customRoleId: created.customRoleId,
+          departmentId: created.departmentId,
+          managerId: created.managerId,
+          phone: created.phone,
+          designation: created.designation,
+          status: created.status,
+          createdAt: created.createdAt,
+        },
+        undefined,
+        orgId
+      ),
       { status: HTTP_STATUS.CREATED }
     );
   } catch (error) {

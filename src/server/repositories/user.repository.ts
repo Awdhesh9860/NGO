@@ -13,7 +13,10 @@ export class UserRepository {
   async findById(id: string | mongoose.Types.ObjectId): Promise<IUserDocument | null> {
     await connectToDatabase();
     if (!mongoose.Types.ObjectId.isValid(id.toString())) return null;
-    return await User.findById(id).populate('departmentId', 'name slug');
+    return await User.findById(id)
+      .populate('departmentId', 'name slug')
+      .populate('managerId', 'name email designation')
+      .populate('customRoleId', 'name key permissions');
   }
 
   async findByEmail(email: string, organizationId?: string | mongoose.Types.ObjectId): Promise<IUserDocument | null> {
@@ -67,6 +70,7 @@ export class UserRepository {
 
     return await User.find(query)
       .populate('departmentId', 'name slug')
+      .populate('managerId', 'name email')
       .sort(sort)
       .skip(skip)
       .limit(limit);
@@ -126,7 +130,10 @@ export class UserRepository {
   async update(id: string | mongoose.Types.ObjectId, updates: Partial<IUserDocument>): Promise<IUserDocument | null> {
     await connectToDatabase();
     if (!mongoose.Types.ObjectId.isValid(id.toString())) return null;
-    return await User.findByIdAndUpdate(id, { $set: updates }, { new: true }).populate('departmentId', 'name slug');
+    return await User.findByIdAndUpdate(id, { $set: updates }, { new: true })
+      .populate('departmentId', 'name slug')
+      .populate('managerId', 'name email designation')
+      .populate('customRoleId', 'name key permissions');
   }
 
   async updatePassword(id: string | mongoose.Types.ObjectId, passwordHash: string): Promise<boolean> {

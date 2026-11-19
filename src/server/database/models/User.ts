@@ -7,7 +7,9 @@ export interface IUserDocument extends Document {
   email: string;
   passwordHash: string;
   role: UserRole;
+  customRoleId?: mongoose.Types.ObjectId;
   departmentId?: mongoose.Types.ObjectId;
+  managerId?: mongoose.Types.ObjectId;
   phone?: string;
   designation?: string;
   avatar?: string;
@@ -74,6 +76,15 @@ const UserSchema = new Schema<IUserDocument>(
     departmentId: {
       type: Schema.Types.ObjectId,
       ref: 'Department',
+      index: true,
+    },
+    managerId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    customRoleId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Role',
     },
     phone: { type: String, trim: true },
     designation: { type: String, trim: true },

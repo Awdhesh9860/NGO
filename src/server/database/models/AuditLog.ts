@@ -9,6 +9,8 @@ export interface IAuditLogDocument extends Document {
   resource: string;
   resourceId?: string;
   details?: string;
+  metadata?: Record<string, unknown>;
+  correlationId?: string;
   ipAddress?: string;
   userAgent?: string;
   timestamp: Date;
@@ -22,8 +24,10 @@ const AuditLogSchema = new Schema<IAuditLogDocument>(
     actorRole: { type: String, required: true },
     action: { type: String, required: true, index: true },
     resource: { type: String, required: true, index: true },
-    resourceId: { type: String },
+    resourceId: { type: String, index: true },
     details: { type: String },
+    metadata: { type: Schema.Types.Mixed },
+    correlationId: { type: String, index: true },
     ipAddress: { type: String },
     userAgent: { type: String },
     timestamp: { type: Date, default: Date.now, index: true },

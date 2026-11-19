@@ -2,21 +2,30 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { adminApiService, AdminExecutiveStats } from '@/features/admin';
+import {
+  adminApiService,
+  AdminExecutiveStats,
+  PageHeader,
+  StatCard,
+  ActivityTimeline,
+  EmptyState,
+  PermissionGate,
+} from '@/features/admin';
 import {
   Users,
   Building2,
   Mail,
-  ShieldCheck,
+  History,
   UserCheck,
   UserX,
-  History,
   ArrowUpRight,
   PlusCircle,
   RefreshCw,
   Building,
-  CheckCircle2,
   AlertCircle,
+  HeartHandshake,
+  BarChart3,
+  TrendingUp,
 } from 'lucide-react';
 
 export default function AdminOverviewPage() {
@@ -36,7 +45,7 @@ export default function AdminOverviewPage() {
         setError(res.error?.message || 'Failed to load executive statistics');
       }
     } catch {
-      setError('Unable to connect to administration service');
+      setError('Unable to connect to administration service. Ensure you have an active authenticated session.');
     } finally {
       setIsLoading(false);
     }
@@ -46,37 +55,45 @@ export default function AdminOverviewPage() {
     fetchStats();
   }, []);
 
+  const maxMonthlyCount = Math.max(
+    1,
+    ...(stats?.charts?.monthlyRegistrations?.map((m) => m.count) || [1])
+  );
+  const maxDeptCount = Math.max(
+    1,
+    ...(stats?.charts?.departmentDistribution?.map((d) => d.count) || [1])
+  );
+
   return (
     <div className="space-y-6">
-      {/* Header Banner */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
-            Executive Admin Control Center
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-            Real-time multi-tenant organizational metrics, role-based controls, and security audit status.
-          </p>
-        </div>
+      <PageHeader
+        title="Executive Admin Control Center"
+        description="Live multi-tenant organization metrics, monthly registration trends, department distribution, and immutable audit stream."
+        actions={
+          <>
+            <button
+              type="button"
+              onClick={fetchStats}
+              disabled={isLoading}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#12221b] px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-[#1a3026] transition disabled:opacity-50"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? 'animate-spin' : ''}`} />
+              <span>Refresh</span>
+            </button>
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={fetchStats}
-            disabled={isLoading}
-            className="flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#14261e] px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-[#1b3127] transition disabled:opacity-50"
-          >
-            <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-            <span>Refresh</span>
-          </button>
-          <button
-            onClick={() => router.push('/dashboard/admin/invitations')}
-            className="flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-emerald-700 transition shadow-xs"
-          >
-            <PlusCircle className="h-3.5 w-3.5" />
-            <span>Invite User</span>
-          </button>
-        </div>
-      </div>
+            <PermissionGate permission="users.manage">
+              <button
+                type="button"
+                onClick={() => router.push('/dashboard/admin/invitations')}
+                className="inline-flex items-center gap-1.5 rounded-xl bg-[#087F5B] px-3.5 py-2 text-xs font-bold text-white hover:bg-emerald-700 transition shadow-xs"
+              >
+                <PlusCircle className="h-3.5 w-3.5" />
+                <span>Invite Member</span>
+              </button>
+            </PermissionGate>
+          </>
+        }
+      />
 
       {error && (
         <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs font-medium text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-300 flex items-center gap-2">
@@ -85,117 +102,186 @@ export default function AdminOverviewPage() {
         </div>
       )}
 
-      {/* KPI Cards Grid */}
+      {/* Primary KPI Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Total Users */}
-        <div className="rounded-2xl border border-[#e2ece6] dark:border-[#1d332b] bg-white dark:bg-[#12221b] p-5 shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-              Total Users
-            </span>
-            <div className="rounded-xl bg-emerald-50 dark:bg-emerald-950/60 p-2 text-emerald-600 dark:text-emerald-400">
-              <Users className="h-5 w-5" />
+        <StatCard
+          title="Total Users"
+          value={stats?.userMetrics.total ?? 0}
+          subtitle="accounts"
+          loading={isLoading}
+          accent="emerald"
+          icon={<Users className="h-5 w-5" />}
+          footer={
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold">
+                <UserCheck className="h-3.5 w-3.5" /> {stats?.userMetrics.active ?? 0} active
+              </span>
+              <span>•</span>
+              <span className="inline-flex items-center gap-1 text-rose-600 dark:text-rose-400 font-semibold">
+                <UserX className="h-3.5 w-3.5" /> {stats?.userMetrics.suspended ?? 0} suspended
+              </span>
             </div>
-          </div>
-          <div className="mt-4 flex items-baseline gap-2">
-            <span className="text-3xl font-black text-slate-900 dark:text-white">
-              {isLoading ? '...' : stats?.userMetrics.total ?? 0}
-            </span>
-            <span className="text-xs font-medium text-slate-500">accounts</span>
-          </div>
-          <div className="mt-3 flex items-center gap-3 text-xs text-slate-500">
-            <span className="flex items-center gap-1 text-emerald-600 font-semibold">
-              <UserCheck className="h-3.5 w-3.5" /> {stats?.userMetrics.active ?? 0} active
-            </span>
-            <span>&bull;</span>
-            <span className="flex items-center gap-1 text-rose-600 font-semibold">
-              <UserX className="h-3.5 w-3.5" /> {stats?.userMetrics.suspended ?? 0} suspended
-            </span>
-          </div>
-        </div>
+          }
+        />
 
-        {/* Departments */}
-        <div className="rounded-2xl border border-[#e2ece6] dark:border-[#1d332b] bg-white dark:bg-[#12221b] p-5 shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-              Departments
-            </span>
-            <div className="rounded-xl bg-sky-50 dark:bg-sky-950/60 p-2 text-sky-600 dark:text-sky-400">
-              <Building2 className="h-5 w-5" />
-            </div>
-          </div>
-          <div className="mt-4 flex items-baseline gap-2">
-            <span className="text-3xl font-black text-slate-900 dark:text-white">
-              {isLoading ? '...' : stats?.organizationMetrics.departmentCount ?? 0}
-            </span>
-            <span className="text-xs font-medium text-slate-500">operational units</span>
-          </div>
-          <p className="mt-3 text-xs text-slate-500">
-            Program, Finance, Field Ops & Communications
-          </p>
-        </div>
+        <StatCard
+          title="Departments"
+          value={stats?.organizationMetrics.departmentCount ?? 0}
+          subtitle="units"
+          loading={isLoading}
+          accent="sky"
+          icon={<Building2 className="h-5 w-5" />}
+          footer={`${stats?.organizationMetrics.activeDepartmentCount ?? 0} active operational units`}
+        />
 
-        {/* Pending Invitations */}
-        <div className="rounded-2xl border border-[#e2ece6] dark:border-[#1d332b] bg-white dark:bg-[#12221b] p-5 shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-              Pending Invites
-            </span>
-            <div className="rounded-xl bg-amber-50 dark:bg-amber-950/60 p-2 text-amber-600 dark:text-amber-400">
-              <Mail className="h-5 w-5" />
-            </div>
-          </div>
-          <div className="mt-4 flex items-baseline gap-2">
-            <span className="text-3xl font-black text-slate-900 dark:text-white">
-              {isLoading ? '...' : stats?.organizationMetrics.pendingInvitationsCount ?? 0}
-            </span>
-            <span className="text-xs font-medium text-slate-500">awaiting acceptance</span>
-          </div>
-          <p className="mt-3 text-xs text-slate-500">
-            Secure token dispatch via Nodemailer
-          </p>
-        </div>
+        <StatCard
+          title="Pending Invitations"
+          value={stats?.organizationMetrics.pendingInvitationsCount ?? 0}
+          subtitle="pending"
+          loading={isLoading}
+          accent="amber"
+          icon={<Mail className="h-5 w-5" />}
+          footer="Token-hashed email invitations"
+        />
 
-        {/* Security & Audit Logs */}
-        <div className="rounded-2xl border border-[#e2ece6] dark:border-[#1d332b] bg-white dark:bg-[#12221b] p-5 shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-              Audit Stream
-            </span>
-            <div className="rounded-xl bg-violet-50 dark:bg-violet-950/60 p-2 text-violet-600 dark:text-violet-400">
-              <History className="h-5 w-5" />
-            </div>
-          </div>
-          <div className="mt-4 flex items-baseline gap-2">
-            <span className="text-3xl font-black text-slate-900 dark:text-white">
-              {isLoading ? '...' : stats?.organizationMetrics.recentAuditCount ?? 0}
-            </span>
-            <span className="text-xs font-medium text-slate-500">recent events</span>
-          </div>
-          <p className="mt-3 text-xs text-slate-500">
-            Immutable tenant action trail
-          </p>
-        </div>
+        <StatCard
+          title="Community Roster"
+          value={(stats?.organizationMetrics.volunteersCount ?? 0) + (stats?.organizationMetrics.membersCount ?? 0)}
+          subtitle="volunteers & members"
+          loading={isLoading}
+          accent="violet"
+          icon={<HeartHandshake className="h-5 w-5" />}
+          footer={`${stats?.organizationMetrics.volunteersCount ?? 0} volunteers • ${stats?.organizationMetrics.membersCount ?? 0} members • ${stats?.organizationMetrics.donorsCount ?? 0} donors`}
+        />
       </div>
 
-      {/* Role Distribution & Quick Actions Grid */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Role Distribution Card */}
-        <div className="rounded-2xl border border-[#e2ece6] dark:border-[#1d332b] bg-white dark:bg-[#12221b] p-6 shadow-xs lg:col-span-2">
-          <div className="flex items-center justify-between mb-4">
+      {/* Real Database Charts Grid */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        {/* Monthly Registration Trends */}
+        <div className="rounded-2xl border border-[#e2ece6] dark:border-[#1d332b] bg-white dark:bg-[#12221b] p-6 shadow-xs">
+          <div className="mb-4 flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                Role & Permissions Distribution
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <TrendingUp className="h-4 w-4 text-emerald-600" />
+                Monthly Registration Trends
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                13-Role RBAC hierarchy distribution across the organization
+                Real user registrations over the last 6 months (MongoDB aggregation)
+              </p>
+            </div>
+          </div>
+
+          {stats?.charts.monthlyRegistrations && stats.charts.monthlyRegistrations.length > 0 ? (
+            <div className="flex items-end gap-3 h-48 pt-4">
+              {stats.charts.monthlyRegistrations.map((point) => {
+                const heightPct = Math.max(8, Math.round((point.count / maxMonthlyCount) * 100));
+                return (
+                  <div key={point.month} className="flex-1 flex flex-col items-center gap-2 h-full justify-end">
+                    <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                      {point.count}
+                    </span>
+                    <div
+                      className="w-full max-w-[44px] rounded-t-lg bg-[#087F5B] dark:bg-emerald-500 transition-all"
+                      style={{ height: `${heightPct}%` }}
+                      title={`${point.month}: ${point.count} registration(s)`}
+                    />
+                    <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 text-center">
+                      {point.month}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <EmptyState
+              title="No registration history yet"
+              description="Monthly registration bars will appear automatically as users are created or accept invitations."
+            />
+          )}
+        </div>
+
+        {/* Department Distribution */}
+        <div className="rounded-2xl border border-[#e2ece6] dark:border-[#1d332b] bg-white dark:bg-[#12221b] p-6 shadow-xs">
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <BarChart3 className="h-4 w-4 text-sky-600" />
+                Department Distribution
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Assigned staff and members per organization department
               </p>
             </div>
             <button
-              onClick={() => router.push('/dashboard/admin/roles')}
-              className="flex items-center gap-1 text-xs font-bold text-emerald-600 hover:text-emerald-700"
+              type="button"
+              onClick={() => router.push('/dashboard/admin/departments')}
+              className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 hover:text-emerald-700"
             >
-              <span>View RBAC Matrix</span>
+              <span>Manage</span>
+              <ArrowUpRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
+
+          {stats?.charts.departmentDistribution && stats.charts.departmentDistribution.length > 0 ? (
+            <div className="space-y-3.5">
+              {stats.charts.departmentDistribution.map((dept) => {
+                const widthPct = Math.max(6, Math.round((dept.count / maxDeptCount) * 100));
+                return (
+                  <div key={dept.departmentId} className="space-y-1">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-semibold text-slate-800 dark:text-slate-200 truncate">
+                        {dept.name}
+                      </span>
+                      <span className="font-bold text-slate-600 dark:text-slate-300">
+                        {dept.count} member{dept.count === 1 ? '' : 's'}
+                      </span>
+                    </div>
+                    <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                      <div
+                        className="h-full rounded-full bg-sky-600 dark:bg-sky-400 transition-all"
+                        style={{ width: `${widthPct}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <EmptyState
+              title="No department assignments yet"
+              description="Create departments and assign staff members to visualize organizational distribution."
+              action={
+                <button
+                  type="button"
+                  onClick={() => router.push('/dashboard/admin/departments')}
+                  className="rounded-xl bg-[#087F5B] px-3.5 py-2 text-xs font-bold text-white hover:bg-emerald-700 transition"
+                >
+                  Setup Departments
+                </button>
+              }
+            />
+          )}
+        </div>
+      </div>
+
+      {/* Role Distribution & Quick Actions */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="rounded-2xl border border-[#e2ece6] dark:border-[#1d332b] bg-white dark:bg-[#12221b] p-6 shadow-xs lg:col-span-2">
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                Role Distribution (13-Role RBAC)
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Active user count per role • {stats?.organizationMetrics.customRolesCount ?? 0} custom role(s) defined
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => router.push('/dashboard/admin/roles')}
+              className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 hover:text-emerald-700"
+            >
+              <span>RBAC Matrix</span>
               <ArrowUpRight className="h-3.5 w-3.5" />
             </button>
           </div>
@@ -204,157 +290,118 @@ export default function AdminOverviewPage() {
             {[
               { role: 'SUPER_ADMIN', label: 'Super Admin', color: 'bg-purple-100 text-purple-800 dark:bg-purple-950/60 dark:text-purple-300' },
               { role: 'ADMIN', label: 'Admin', color: 'bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300' },
-              { role: 'EXECUTIVE_DIRECTOR', label: 'Director', color: 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300' },
+              { role: 'EXECUTIVE_DIRECTOR', label: 'Exec Director', color: 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300' },
               { role: 'MANAGER', label: 'Manager', color: 'bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300' },
-              { role: 'PROJECT_MANAGER', label: 'Project Lead', color: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300' },
+              { role: 'PROJECT_MANAGER', label: 'Project Mgr', color: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300' },
               { role: 'ACCOUNTANT', label: 'Accountant', color: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-950/60 dark:text-indigo-300' },
               { role: 'COMMUNICATIONS', label: 'Comms', color: 'bg-teal-100 text-teal-800 dark:bg-teal-950/60 dark:text-teal-300' },
               { role: 'CONTENT_EDITOR', label: 'Editor', color: 'bg-sky-100 text-sky-800 dark:bg-sky-950/60 dark:text-sky-300' },
-              { role: 'TEAM_MEMBER', label: 'Staff Member', color: 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300' },
+              { role: 'TEAM_MEMBER', label: 'Team Member', color: 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300' },
               { role: 'VOLUNTEER', label: 'Volunteer', color: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300' },
               { role: 'DONOR', label: 'Donor', color: 'bg-green-100 text-green-800 dark:bg-green-950/60 dark:text-green-300' },
               { role: 'MEMBER', label: 'Member', color: 'bg-orange-100 text-orange-800 dark:bg-orange-950/60 dark:text-orange-300' },
-            ].map((item) => {
-              const count = stats?.userMetrics.byRole[item.role] || 0;
-              return (
-                <div
-                  key={item.role}
-                  className="rounded-xl border border-slate-100 dark:border-slate-800/80 bg-slate-50/50 dark:bg-[#162720]/50 p-3"
-                >
-                  <span className={`inline-block rounded px-2 py-0.5 text-[10px] font-bold ${item.color}`}>
-                    {item.label}
-                  </span>
-                  <div className="mt-2 text-xl font-black text-slate-900 dark:text-white">
-                    {count}
-                  </div>
-                  <span className="text-[10px] text-slate-400">assigned</span>
+            ].map((item) => (
+              <div
+                key={item.role}
+                className="rounded-xl border border-slate-100 dark:border-[#1d332b] bg-slate-50/50 dark:bg-[#162720]/50 p-3"
+              >
+                <span className={`inline-block rounded px-2 py-0.5 text-[10px] font-bold ${item.color}`}>
+                  {item.label}
+                </span>
+                <div className="mt-2 text-xl font-black text-slate-900 dark:text-white">
+                  {stats?.userMetrics.byRole[item.role] || 0}
                 </div>
-              );
-            })}
+                <span className="text-[10px] text-slate-400">assigned</span>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Quick Admin Actions */}
+        {/* Quick Action Shortcuts */}
         <div className="rounded-2xl border border-[#e2ece6] dark:border-[#1d332b] bg-white dark:bg-[#12221b] p-6 shadow-xs flex flex-col justify-between">
           <div>
             <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-1">
-              Admin Quick Launch
+              Quick Actions
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
-              Frequently accessed administrative workflows
+              Direct administrative workflows
             </p>
 
-            <div className="space-y-2">
-              <button
-                onClick={() => router.push('/dashboard/admin/users')}
-                className="w-full flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-800 p-3 text-left hover:border-emerald-500 hover:bg-emerald-50/30 dark:hover:bg-emerald-950/20 transition group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="rounded-lg bg-emerald-50 dark:bg-emerald-950/60 p-2 text-emerald-600">
-                    <Users className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-slate-900 dark:text-white">Manage Users</p>
-                    <p className="text-[10px] text-slate-500">Edit roles, status & deactivation</p>
-                  </div>
-                </div>
-                <ArrowUpRight className="h-4 w-4 text-slate-400 group-hover:text-emerald-600 transition" />
-              </button>
-
-              <button
-                onClick={() => router.push('/dashboard/admin/departments')}
-                className="w-full flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-800 p-3 text-left hover:border-sky-500 hover:bg-sky-50/30 dark:hover:bg-sky-950/20 transition group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="rounded-lg bg-sky-50 dark:bg-sky-950/60 p-2 text-sky-600">
-                    <Building2 className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-slate-900 dark:text-white">Department Setup</p>
-                    <p className="text-[10px] text-slate-500">Assign heads & budgets</p>
-                  </div>
-                </div>
-                <ArrowUpRight className="h-4 w-4 text-slate-400 group-hover:text-sky-600 transition" />
-              </button>
-
-              <button
-                onClick={() => router.push('/dashboard/admin/organization')}
-                className="w-full flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-800 p-3 text-left hover:border-amber-500 hover:bg-amber-50/30 dark:hover:bg-amber-950/20 transition group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="rounded-lg bg-amber-50 dark:bg-amber-950/60 p-2 text-amber-600">
-                    <Building className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-slate-900 dark:text-white">Statutory & 80G</p>
-                    <p className="text-[10px] text-slate-500">PAN, 12A, FCRA & Darpan</p>
-                  </div>
-                </div>
-                <ArrowUpRight className="h-4 w-4 text-slate-400 group-hover:text-amber-600 transition" />
-              </button>
-            </div>
-          </div>
-
-          <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800/80">
-            <div className="flex items-center gap-2 text-xs text-emerald-600 font-semibold">
-              <CheckCircle2 className="h-4 w-4" />
-              <span>Security Baseline: Enforced</span>
+            <div className="space-y-2.5">
+              {[
+                {
+                  label: 'User Directory',
+                  sub: 'Roles, status, sessions & managers',
+                  href: '/dashboard/admin/users',
+                  icon: Users,
+                },
+                {
+                  label: 'Departments & Rosters',
+                  sub: 'Heads, budgets & team members',
+                  href: '/dashboard/admin/departments',
+                  icon: Building2,
+                },
+                {
+                  label: 'Organization Settings',
+                  sub: 'Identity, regional & security policies',
+                  href: '/dashboard/admin/organization/settings',
+                  icon: Building,
+                },
+                {
+                  label: 'Audit Trail',
+                  sub: 'Immutable security event history',
+                  href: '/dashboard/admin/audit-logs',
+                  icon: History,
+                },
+              ].map((action) => {
+                const Icon = action.icon;
+                return (
+                  <button
+                    key={action.href}
+                    type="button"
+                    onClick={() => router.push(action.href)}
+                    className="w-full flex items-center justify-between rounded-xl border border-slate-200 dark:border-[#1d332b] p-3 text-left hover:border-emerald-500 hover:bg-emerald-50/30 dark:hover:bg-emerald-950/20 transition group"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="rounded-lg bg-emerald-50 dark:bg-emerald-950/60 p-2 text-emerald-700 dark:text-emerald-400 shrink-0">
+                        <Icon className="h-4 w-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold text-slate-900 dark:text-white truncate">{action.label}</p>
+                        <p className="text-[10px] text-slate-500 truncate">{action.sub}</p>
+                      </div>
+                    </div>
+                    <ArrowUpRight className="h-4 w-4 text-slate-400 group-hover:text-emerald-600 shrink-0 transition" />
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Recent Security & Activity Audit Log */}
+      {/* Live Audit Timeline */}
       <div className="rounded-2xl border border-[#e2ece6] dark:border-[#1d332b] bg-white dark:bg-[#12221b] p-6 shadow-xs">
-        <div className="flex items-center justify-between mb-4">
+        <div className="mb-4 flex items-center justify-between">
           <div>
             <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-              Recent Organizational Activity
+              Recent Administrative Activity
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Live audit stream of administrative actions in HopeHorizon
+              Latest immutable audit records for this organization
             </p>
           </div>
           <button
+            type="button"
             onClick={() => router.push('/dashboard/admin/audit-logs')}
-            className="flex items-center gap-1 text-xs font-bold text-emerald-600 hover:text-emerald-700"
+            className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 hover:text-emerald-700"
           >
-            <span>View Full Audit Trail</span>
+            <span>Full Audit Log</span>
             <ArrowUpRight className="h-3.5 w-3.5" />
           </button>
         </div>
 
-        {stats?.recentActivity && stats.recentActivity.length > 0 ? (
-          <div className="divide-y divide-slate-100 dark:divide-slate-800/60">
-            {stats.recentActivity.map((log) => (
-              <div key={log.id} className="py-3 flex items-start justify-between gap-4">
-                <div className="flex items-start gap-3">
-                  <div className="mt-0.5 rounded-lg bg-slate-100 dark:bg-[#172b22] p-1.5 text-slate-600 dark:text-slate-300">
-                    <ShieldCheck className="h-3.5 w-3.5" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-slate-800 dark:text-slate-100">
-                      {log.actorName}{' '}
-                      <span className="font-normal text-slate-500">({log.actorRole})</span>
-                    </p>
-                    <p className="text-[11px] text-slate-600 dark:text-slate-300">{log.details || log.action}</p>
-                    <p className="text-[10px] text-slate-400">
-                      IP: {log.ipAddress || '127.0.0.1'} &bull; Resource: {log.resource}
-                    </p>
-                  </div>
-                </div>
-
-                <span className="text-[11px] text-slate-400 shrink-0">
-                  {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </span>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="py-8 text-center text-xs text-slate-400">
-            No administrative events recorded yet. New actions will stream here live.
-          </div>
-        )}
+        <ActivityTimeline items={stats?.recentActivity || []} />
       </div>
     </div>
   );
