@@ -47,7 +47,17 @@ export type PermissionKey =
   | 'certificates.issue'
   | 'reports.export_financial'
   | 'audit_logs.view'
-  | 'settings.manage';
+  | 'settings.manage'
+  | 'organizations.manage'
+  | 'departments.manage'
+  | 'teams.manage'
+  | 'programs.manage'
+  | 'campaigns.manage'
+  | 'volunteers.manage'
+  | 'members.manage'
+  | 'events.manage'
+  | 'notifications.manage'
+  | 'compliance.manage';
 
 export interface Program {
   id: string;
