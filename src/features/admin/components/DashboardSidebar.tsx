@@ -32,6 +32,15 @@ import {
   UsersRound,
   ShieldAlert,
   PieChart,
+  Landmark,
+  BookOpen,
+  FolderTree,
+  Receipt,
+  Scale,
+  Wallet,
+  Briefcase,
+  FileSpreadsheet,
+  FileCheck2,
 } from 'lucide-react';
 import { UserRole } from '@/types';
 import { AdminNavIconKey, getAuthorizedAdminNav } from '../config/navigation';
@@ -59,6 +68,17 @@ const ICON_MAP: Record<AdminNavIconKey, React.ComponentType<{ className?: string
   beneficiaries: UsersRound,
   safeguarding: ShieldAlert,
   stakeholders: PieChart,
+  'finance-dashboard': Wallet,
+  'chart-of-accounts': FolderTree,
+  journals: BookOpen,
+  ledger: Scale,
+  expenses: Receipt,
+  vendors: Briefcase,
+  banking: Landmark,
+  budgets: BarChart3,
+  grants: Award,
+  'financial-reports': FileSpreadsheet,
+  compliance: FileCheck2,
   users: Users,
   roles: ShieldCheck,
   departments: Building2,
@@ -90,11 +110,12 @@ export function DashboardSidebar({
   const router = useRouter();
 
   const items = getAuthorizedAdminNav(role);
-  const groups: Array<'Core' | 'Operations' | 'Fundraising' | 'Stakeholders' | 'Organization' | 'Security'> = [
+  const groups: Array<'Core' | 'Operations' | 'Fundraising' | 'Stakeholders' | 'Finance' | 'Organization' | 'Security'> = [
     'Core',
     'Operations',
     'Fundraising',
     'Stakeholders',
+    'Finance',
     'Organization',
     'Security',
   ];

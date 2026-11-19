@@ -17,3 +17,4 @@ export * from './milestone.repository';
 export * from './project-operations.repository';
 export * from './fundraising.repository';
 export * from './stakeholder.repository';
+export * from './finance.repository';

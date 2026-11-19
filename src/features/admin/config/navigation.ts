@@ -23,6 +23,17 @@ export type AdminNavIconKey =
   | 'beneficiaries'
   | 'safeguarding'
   | 'stakeholders'
+  | 'finance-dashboard'
+  | 'chart-of-accounts'
+  | 'journals'
+  | 'ledger'
+  | 'expenses'
+  | 'vendors'
+  | 'banking'
+  | 'budgets'
+  | 'grants'
+  | 'financial-reports'
+  | 'compliance'
   | 'users'
   | 'roles'
   | 'departments'
@@ -38,7 +49,7 @@ export interface AdminNavItem {
   href: string;
   icon: AdminNavIconKey;
   exact?: boolean;
-  group: 'Core' | 'Operations' | 'Fundraising' | 'Stakeholders' | 'Organization' | 'Security';
+  group: 'Core' | 'Operations' | 'Fundraising' | 'Stakeholders' | 'Finance' | 'Organization' | 'Security';
   requiredPermissions: PermissionKey[];
   description: string;
 }
@@ -260,6 +271,107 @@ export const ADMIN_NAVIGATION_ITEMS: AdminNavItem[] = [
     group: 'Stakeholders',
     requiredPermissions: ['volunteers.view', 'members.view', 'beneficiaries.view', 'privacy.reports.view'],
     description: 'Volunteer, membership & anonymized beneficiary dashboards',
+  },
+  // Phase 10: Finance, Accounting, Expense & Compliance Management
+  {
+    id: 'finance-dashboard',
+    name: 'Finance Dashboard',
+    href: '/dashboard/admin/finance',
+    icon: 'finance-dashboard',
+    exact: true,
+    group: 'Finance',
+    requiredPermissions: ['finance.reports.view', 'finance.ledger.view', 'finance.accounts.view'],
+    description: 'Ledger-derived income, expenses, budgets, grants & compliance KPIs',
+  },
+  {
+    id: 'chart-of-accounts',
+    name: 'Chart of Accounts',
+    href: '/dashboard/admin/finance/accounts',
+    icon: 'chart-of-accounts',
+    group: 'Finance',
+    requiredPermissions: ['finance.accounts.view', 'finance.accounts.manage'],
+    description: 'Hierarchical NGO Chart of Accounts & system account controls',
+  },
+  {
+    id: 'journals',
+    name: 'Journals & Periods',
+    href: '/dashboard/admin/finance/journals',
+    icon: 'journals',
+    group: 'Finance',
+    requiredPermissions: ['finance.journals.view', 'finance.journals.create', 'finance.journals.post'],
+    description: 'Double-entry vouchers, approvals, posting, reversals & periods',
+  },
+  {
+    id: 'ledger',
+    name: 'General Ledger',
+    href: '/dashboard/admin/finance/ledger',
+    icon: 'ledger',
+    group: 'Finance',
+    requiredPermissions: ['finance.ledger.view', 'finance.reports.view'],
+    description: 'Posted general ledger register & balanced trial balance',
+  },
+  {
+    id: 'expenses',
+    name: 'Expenses',
+    href: '/dashboard/admin/finance/expenses',
+    icon: 'expenses',
+    group: 'Finance',
+    requiredPermissions: ['finance.expenses.view', 'finance.expenses.create', 'finance.expenses.approve'],
+    description: 'Expense claims, threshold approvals & payment posting',
+  },
+  {
+    id: 'vendors',
+    name: 'Vendors & Bills',
+    href: '/dashboard/admin/finance/vendors',
+    icon: 'vendors',
+    group: 'Finance',
+    requiredPermissions: ['finance.vendors.view', 'finance.vendors.manage'],
+    description: 'Vendor directory, encrypted bank details & payable bills',
+  },
+  {
+    id: 'banking',
+    name: 'Bank & Reconcile',
+    href: '/dashboard/admin/finance/banking',
+    icon: 'banking',
+    group: 'Finance',
+    requiredPermissions: ['finance.bank_accounts.view', 'finance.reconciliation.manage'],
+    description: 'Masked bank registry, CSV statement import & reconciliation',
+  },
+  {
+    id: 'budgets',
+    name: 'Budgets',
+    href: '/dashboard/admin/finance/budgets',
+    icon: 'budgets',
+    group: 'Finance',
+    requiredPermissions: ['finance.budgets.view', 'finance.budgets.manage', 'project_budget.view'],
+    description: 'Org, department, program & project budgets vs ledger actuals',
+  },
+  {
+    id: 'grants',
+    name: 'Grants & Funds',
+    href: '/dashboard/admin/finance/grants',
+    icon: 'grants',
+    group: 'Finance',
+    requiredPermissions: ['finance.grants.view', 'finance.grants.manage'],
+    description: 'Restricted fund allocations, grant awards & reporting deadlines',
+  },
+  {
+    id: 'financial-reports',
+    name: 'Financial Reports',
+    href: '/dashboard/admin/finance/reports',
+    icon: 'financial-reports',
+    group: 'Finance',
+    requiredPermissions: ['finance.reports.view', 'finance.reports.export'],
+    description: 'Income & Expense, Balance Sheet, Cash Flow & CSV export',
+  },
+  {
+    id: 'compliance',
+    name: 'NGO Compliance',
+    href: '/dashboard/admin/compliance',
+    icon: 'compliance',
+    group: 'Finance',
+    requiredPermissions: ['compliance.view', 'compliance.manage', 'compliance.verify'],
+    description: '12A/80G/FCRA/Audit registry, deadlines & verification status',
   },
   // Organization Governance
   {

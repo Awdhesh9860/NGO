@@ -115,6 +115,26 @@ This directory contains the complete technical architecture, security specificat
 13. **[Consent Management & Data Retention](file:///s:/Project/NGO/docs/security/CONSENT_MANAGEMENT.md)**: Purpose-specific consent, non-bundled media/storytelling rules, withdrawal safety, and anonymization.
 14. **[Stakeholder Module Development Guidelines](file:///s:/Project/NGO/docs/development/STAKEHOLDER_MODULE_GUIDELINES.md)**: Multi-developer squad ownership, invariants, and verification standards.
 
+---
+
+### 💰 Finance, Accounting, Expense & Compliance Suite (Phase 10)
+
+1. **[Finance Management Architecture](file:///s:/Project/NGO/docs/modules/FINANCE_MANAGEMENT.md)**: 16 tenant-scoped collections, Phase 07/08 integration boundaries, and integer minor-unit precision.
+2. **[Chart of Accounts Module](file:///s:/Project/NGO/docs/modules/CHART_OF_ACCOUNTS.md)**: Hierarchical NGO CoA, system account protection, posted-usage deletion guard, and default seeding.
+3. **[Double-Entry Accounting & Periods](file:///s:/Project/NGO/docs/modules/DOUBLE_ENTRY_ACCOUNTING.md)**: Mandatory DR = CR validation, immutable posted journals, reversals, period locks, and MongoDB transactions.
+4. **[General Ledger & Income Integration](file:///s:/Project/NGO/docs/modules/GENERAL_LEDGER.md)**: Posted-only ledger registers and idempotent Phase 08 verified donation & refund sync.
+5. **[Expense Management & Approvals](file:///s:/Project/NGO/docs/modules/EXPENSE_MANAGEMENT.md)**: 8-state expense lifecycle, role approval thresholds, no-self-approval, and automatic payment posting.
+6. **[Vendor & Bill Management](file:///s:/Project/NGO/docs/modules/VENDOR_MANAGEMENT.md)**: Encrypted vendor payout info, masked display, duplicate bill prevention, and payable balances.
+7. **[Bank Accounts & Reconciliation](file:///s:/Project/NGO/docs/modules/BANK_RECONCILIATION.md)**: AES-256-GCM bank registry, CSV import with duplicate detection, and manual reconciliation sessions.
+8. **[Multi-Level Budget Management](file:///s:/Project/NGO/docs/modules/BUDGET_MANAGEMENT.md)**: Org/department/program/project budgets bridged to Phase 07 `ProjectBudgetEntry` with ledger-derived actuals.
+9. **[Fund Allocation & Restricted Funds](file:///s:/Project/NGO/docs/modules/FUND_ALLOCATION.md)**: Donor/grant restriction enforcement, source-to-use traceability, and utilization caps.
+10. **[Grant Management Foundation](file:///s:/Project/NGO/docs/modules/GRANT_MANAGEMENT.md)**: 8-state grant lifecycle, ledger-posted tranche receipts, and reporting deadlines.
+11. **[Financial Reporting & Statements](file:///s:/Project/NGO/docs/modules/FINANCIAL_REPORTING.md)**: Ledger-derived Trial Balance, Income & Expense, Balance Sheet, Cash Flow, and CSV export defense.
+12. **[NGO Compliance & Deadlines](file:///s:/Project/NGO/docs/modules/NGO_COMPLIANCE.md)**: Configurable 12A/80G/FCRA/Audit registry separating recorded documents from independently verified compliance.
+13. **[Financial Data Security](file:///s:/Project/NGO/docs/security/FINANCIAL_DATA_SECURITY.md)**: Separation of duties matrix, AES-256-GCM encryption, masking, and CSV/document security.
+14. **[Finance Module Development Guidelines](file:///s:/Project/NGO/docs/development/FINANCE_MODULE_GUIDELINES.md)**: Multi-developer squad ownership, engineering invariants, and verification commands.
+
+
 
 
 
