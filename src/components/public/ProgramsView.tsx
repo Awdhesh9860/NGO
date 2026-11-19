@@ -1,5 +1,7 @@
 import React from 'react';
 import { useDatabase } from '../../context/DatabaseContext';
+import { usePublicPrograms } from '@/features/programs/hooks/usePublicPrograms';
+import { usePublicProjects } from '@/features/projects/hooks/usePublicProjects';
 import {
   GraduationCap,
   Droplets,
@@ -18,7 +20,40 @@ interface ProgramsViewProps {
 }
 
 export const ProgramsView: React.FC<ProgramsViewProps> = ({ onOpenDonate, onNavigate }) => {
-  const { programs, projects } = useDatabase();
+  const { programs: fallbackPrograms, projects: fallbackProjects } = useDatabase();
+  const { publishedPrograms, loadedFromApi } = usePublicPrograms();
+  const { publishedProjects } = usePublicProjects();
+
+  const programs = loadedFromApi
+    ? publishedPrograms.map((p) => ({
+        id: p.id,
+        title: p.title,
+        slug: p.slug,
+        category: p.category,
+        description: p.shortDescription,
+        objectives: p.objectives,
+        targetBeneficiaries: `${p.targetBeneficiaries.toLocaleString('en-IN')}+`,
+        iconName: 'Heart',
+        image: p.coverImage || '',
+        stats: [
+          { label: 'Target Reach', value: p.targetBeneficiaries.toLocaleString('en-IN') },
+          { label: 'Reached', value: p.actualBeneficiaries.toLocaleString('en-IN') },
+          { label: 'Regions', value: String(p.geographicCoverage?.length || 1) },
+        ],
+        budget: 0, // Internal program budget is intentionally never exposed publicly
+        status: p.status.toLowerCase() as 'active' | 'planned' | 'completed',
+      }))
+    : fallbackPrograms;
+
+  const projects = loadedFromApi
+    ? publishedProjects.map((pr) => ({
+        id: pr.slug || pr.id,
+        programId: pr.program?.id || '',
+        title: pr.name,
+        location: pr.location || pr.state || 'India',
+        status: pr.status.toLowerCase(),
+      }))
+    : fallbackProjects;
 
   const getProgramIcon = (iconName: string) => {
     switch (iconName) {

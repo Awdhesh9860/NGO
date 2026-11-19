@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDatabase } from '../../context/DatabaseContext';
+import { PublicProjectRecord } from '@/features/projects/hooks/usePublicProjects';
 import {
   MapPin,
   Calendar,
@@ -26,7 +27,60 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
   onOpenDonate
 }) => {
   const { projects } = useDatabase();
-  const project = projects.find((p) => p.id === projectId || p.slug === projectId) || projects[0];
+  const [apiProject, setApiProject] = useState<PublicProjectRecord | null>(null);
+
+  useEffect(() => {
+    if (!projectId) return;
+    fetch(`/api/v1/public/projects/${encodeURIComponent(projectId)}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((payload) => {
+        if (payload?.success && payload.data) {
+          setApiProject(payload.data);
+        }
+      })
+      .catch(() => {});
+  }, [projectId]);
+
+  const fallbackProject = projects.find((p) => p.id === projectId || p.slug === projectId) || projects[0];
+  const project = apiProject
+    ? {
+        id: apiProject.id,
+        programId: apiProject.program?.id || '',
+        programTitle: apiProject.program?.title || 'Field Initiative',
+        title: apiProject.name,
+        slug: apiProject.slug,
+        description: apiProject.detailedDescription || apiProject.shortDescription,
+        objectives: apiProject.expectedOutcomes,
+        location: apiProject.location || [apiProject.district, apiProject.state].filter(Boolean).join(', ') || 'India',
+        startDate: '',
+        endDate: '',
+        status: apiProject.status.toLowerCase() as 'active' | 'planned' | 'completed',
+        budget: 0, // Internal budget is strictly hidden publicly
+        fundingGoal: 100,
+        amountRaised: apiProject.progressPercentage,
+        beneficiariesCount: apiProject.beneficiaryReach.actualCount || apiProject.beneficiaryReach.targetCount,
+        managerId: '',
+        managerName: 'Field Implementation Team',
+        teamMemberIds: [],
+        images: [
+          ...apiProject.images,
+          ...(apiProject.publicPhotos || []).map((ph) => ph.fileUrl),
+        ],
+        milestones: (apiProject.milestones || []).map((m, idx) => ({
+          id: `ms-${idx}`,
+          projectId: apiProject.id,
+          title: m.title,
+          description: '',
+          targetDate: m.targetDate,
+          status: m.status.toLowerCase() as 'pending' | 'in_progress' | 'completed',
+          progressPercentage: m.completionPercentage,
+          completed: m.status === 'COMPLETED',
+          completedAt: m.status === 'COMPLETED' ? m.targetDate : undefined,
+        })),
+        impactStats: apiProject.keyDeliverables.map((d, i) => ({ label: `Deliverable ${i + 1}`, value: d })),
+        category: apiProject.category,
+      }
+    : fallbackProject;
 
   if (!project) {
     return (

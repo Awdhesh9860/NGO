@@ -5,7 +5,7 @@ import { User, IUserDocument } from '@/server/database/models/User';
 import { AUTH_COOKIE_NAME } from '@/server/security/cookies';
 import { AuthenticationError, AuthorizationError } from '@/server/errors';
 import { UserRole, PermissionKey } from '@/types';
-import { checkRolePermission } from './permissions';
+import { checkRolePermission, checkRoleAnyPermission } from './permissions';
 import connectToDatabase from '@/server/database/connection';
 
 export interface AuthenticatedContext {
@@ -107,6 +107,28 @@ export async function requirePermission(
   if (!checkRolePermission(context.user.role, permission)) {
     throw new AuthorizationError(
       `Access denied. Missing required permission '${permission}'`
+    );
+  }
+
+  return context;
+}
+
+/**
+ * Grants access if the user holds at least one of the specified permissions
+ */
+export async function requireAnyPermission(
+  req: NextRequest,
+  permissions: PermissionKey[]
+): Promise<AuthenticatedContext> {
+  const context = await requireAuthentication(req);
+
+  if (context.user.role === 'SUPER_ADMIN') {
+    return context;
+  }
+
+  if (!checkRoleAnyPermission(context.user.role, permissions)) {
+    throw new AuthorizationError(
+      `Access denied. Missing any required permission from [${permissions.join(', ')}]`
     );
   }
 

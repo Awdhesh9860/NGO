@@ -3,6 +3,11 @@ import { checkRoleAnyPermission } from '@/server/authorization/permissions';
 
 export type AdminNavIconKey =
   | 'overview'
+  | 'programs'
+  | 'projects'
+  | 'tasks'
+  | 'milestones'
+  | 'project-reports'
   | 'users'
   | 'roles'
   | 'departments'
@@ -18,13 +23,13 @@ export interface AdminNavItem {
   href: string;
   icon: AdminNavIconKey;
   exact?: boolean;
-  group: 'Core' | 'Organization' | 'Security';
+  group: 'Core' | 'Operations' | 'Organization' | 'Security';
   requiredPermissions: PermissionKey[];
   description: string;
 }
 
 /**
- * Configuration-driven administration navigation.
+ * Configuration-driven administration & operations navigation.
  * Visibility is strictly filtered by role permissions; API routes enforce the same permissions server-side.
  */
 export const ADMIN_NAVIGATION_ITEMS: AdminNavItem[] = [
@@ -56,6 +61,53 @@ export const ADMIN_NAVIGATION_ITEMS: AdminNavItem[] = [
     requiredPermissions: ['users.manage'],
     description: 'Invite staff, resend or revoke tokens',
   },
+  // Phase 07: Operations (Programs, Projects, Tasks, Milestones, Reports)
+  {
+    id: 'programs',
+    name: 'Programs',
+    href: '/dashboard/admin/programs',
+    icon: 'programs',
+    group: 'Operations',
+    requiredPermissions: ['programs.view', 'programs.manage'],
+    description: 'Strategic NGO programs, KPIs & approvals',
+  },
+  {
+    id: 'projects',
+    name: 'Projects',
+    href: '/dashboard/admin/projects',
+    icon: 'projects',
+    group: 'Operations',
+    requiredPermissions: ['projects.view', 'projects.manage', 'projects.view_assigned'],
+    description: 'Field projects, teams, budgets, risks & documents',
+  },
+  {
+    id: 'tasks',
+    name: 'Tasks',
+    href: '/dashboard/admin/tasks',
+    icon: 'tasks',
+    group: 'Operations',
+    requiredPermissions: ['tasks.view', 'tasks.assign_manage', 'tasks.update_assigned'],
+    description: 'Kanban boards, task assignments & overdue tracking',
+  },
+  {
+    id: 'milestones',
+    name: 'Milestones',
+    href: '/dashboard/admin/milestones',
+    icon: 'milestones',
+    group: 'Operations',
+    requiredPermissions: ['milestones.manage', 'projects.view'],
+    description: 'Project deliverables & target date progress',
+  },
+  {
+    id: 'project-reports',
+    name: 'Project Reports',
+    href: '/dashboard/admin/project-reports',
+    icon: 'project-reports',
+    group: 'Operations',
+    requiredPermissions: ['project_reports.view', 'projects.view'],
+    description: 'Operational analytics, budget utilization & alerts',
+  },
+  // Organization Governance
   {
     id: 'roles',
     name: 'Roles & Permissions',
@@ -93,6 +145,7 @@ export const ADMIN_NAVIGATION_ITEMS: AdminNavItem[] = [
     requiredPermissions: ['settings.manage', 'organizations.manage'],
     description: 'Regional, statutory, security & notifications',
   },
+  // Security & Compliance
   {
     id: 'audit-logs',
     name: 'Audit Logs',
@@ -118,12 +171,16 @@ export const ADMIN_ACCESS_ROLES: UserRole[] = [
   'ADMIN',
   'EXECUTIVE_DIRECTOR',
   'MANAGER',
+  'PROJECT_MANAGER',
   'ACCOUNTANT',
   'COMMUNICATIONS',
+  'TEAM_MEMBER',
 ];
 
+const NON_CONSOLE_PORTAL_ROLES: UserRole[] = ['GUEST', 'DONOR', 'MEMBER', 'VOLUNTEER'];
+
 export function getAuthorizedAdminNav(role: UserRole): AdminNavItem[] {
-  if (role === 'GUEST') return [];
+  if (NON_CONSOLE_PORTAL_ROLES.includes(role)) return [];
   if (role === 'SUPER_ADMIN') return ADMIN_NAVIGATION_ITEMS;
   return ADMIN_NAVIGATION_ITEMS.filter((item) =>
     checkRoleAnyPermission(role, item.requiredPermissions)

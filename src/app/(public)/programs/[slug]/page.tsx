@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useDatabase } from '@/context/DatabaseContext';
+import { PublicProgramRecord } from '@/features/programs/hooks/usePublicPrograms';
 import { useUIStore } from '@/lib/ui-store';
 import { useViewNavigation } from '@/hooks/useViewNavigation';
 import {
@@ -30,7 +31,55 @@ export default function ProgramDetailPage() {
   const openDonate = useUIStore((s) => s.openDonate);
   const onNavigate = useViewNavigation();
 
-  const program = programs.find((p) => p.slug === slug || p.id === slug) || programs[0];
+  const [apiProgram, setApiProgram] = useState<PublicProgramRecord | null>(null);
+  const [apiLinkedProjects, setApiLinkedProjects] = useState<
+    Array<{
+      id: string;
+      name: string;
+      slug: string;
+      category?: string;
+      shortDescription?: string;
+      location: string;
+      status: string;
+      actualBeneficiaries?: number;
+      images?: string[];
+    }>
+  >([]);
+
+  useEffect(() => {
+    if (!slug) return;
+    fetch(`/api/v1/public/programs/${encodeURIComponent(slug)}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((payload) => {
+        if (payload?.success && payload.data?.program) {
+          setApiProgram(payload.data.program);
+          setApiLinkedProjects(payload.data.projects || []);
+        }
+      })
+      .catch(() => {});
+  }, [slug]);
+
+  const fallbackProgram = programs.find((p) => p.slug === slug || p.id === slug) || programs[0];
+  const program = apiProgram
+    ? {
+        id: apiProgram.id,
+        title: apiProgram.title,
+        slug: apiProgram.slug,
+        category: apiProgram.category,
+        description: apiProgram.detailedDescription || apiProgram.shortDescription,
+        objectives: apiProgram.objectives,
+        targetBeneficiaries: `${apiProgram.targetBeneficiaries.toLocaleString('en-IN')}+`,
+        iconName: 'Heart',
+        image: apiProgram.coverImage || '',
+        stats: [
+          { label: 'Target Beneficiaries', value: apiProgram.targetBeneficiaries.toLocaleString('en-IN') },
+          { label: 'Reached To Date', value: apiProgram.actualBeneficiaries.toLocaleString('en-IN') },
+          { label: 'Regions Covered', value: String(apiProgram.geographicCoverage?.length || 1) },
+        ],
+        budget: 0,
+        status: apiProgram.status.toLowerCase() as 'active' | 'planned' | 'completed',
+      }
+    : fallbackProgram;
 
   if (!program) {
     return (
@@ -44,7 +93,20 @@ export default function ProgramDetailPage() {
     );
   }
 
-  const linkedProjects = projects.filter((p) => p.programId === program.id || p.programTitle === program.title);
+  const linkedProjects = apiProgram
+    ? apiLinkedProjects.map((p) => ({
+        id: p.slug || p.id,
+        title: p.name,
+        category: p.category || apiProgram.category,
+        description: p.shortDescription || '',
+        location: p.location || 'India',
+        status: p.status.toLowerCase(),
+        beneficiariesCount: p.actualBeneficiaries || 0,
+        images: p.images && p.images.length > 0
+          ? p.images
+          : ['https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=1000'],
+      }))
+    : projects.filter((p) => p.programId === program.id || p.programTitle === program.title);
 
   const getProgramIcon = (iconName: string) => {
     switch (iconName) {
@@ -97,8 +159,8 @@ export default function ProgramDetailPage() {
 
             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 w-full lg:w-80 flex-shrink-0 space-y-4">
               <div className="flex items-center justify-between text-xs text-emerald-200">
-                <span className="font-semibold uppercase tracking-wider">Annual Program Budget</span>
-                <span className="font-bold text-white text-base">₹{(program.budget || 850000).toLocaleString('en-IN')}</span>
+                <span className="font-semibold uppercase tracking-wider">Target Community Reach</span>
+                <span className="font-bold text-white text-base">{program.targetBeneficiaries}</span>
               </div>
               <button
                 onClick={() => openDonate()}

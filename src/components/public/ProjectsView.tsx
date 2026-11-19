@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useDatabase } from '../../context/DatabaseContext';
+import { usePublicProjects } from '@/features/projects/hooks/usePublicProjects';
 import {
   MapPin,
   Calendar,
@@ -18,12 +19,44 @@ interface ProjectsViewProps {
 }
 
 export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, onOpenDonate }) => {
-  const { projects } = useDatabase();
+  const { projects: fallbackProjects } = useDatabase();
+  const { publishedProjects, loadedFromApi } = usePublicProjects();
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
 
+  const projects = loadedFromApi
+    ? publishedProjects.map((p) => ({
+        id: p.slug || p.id,
+        programId: p.program?.id || '',
+        programTitle: p.program?.title || '',
+        title: p.name,
+        slug: p.slug,
+        description: p.shortDescription,
+        objectives: p.expectedOutcomes,
+        location: p.location || [p.district, p.state].filter(Boolean).join(', ') || 'India',
+        startDate: '',
+        endDate: '',
+        status: p.status.toLowerCase() as 'active' | 'planned' | 'completed',
+        budget: 0, // Internal budget is strictly hidden on public pages
+        fundingGoal: 100,
+        amountRaised: p.progressPercentage,
+        beneficiariesCount: p.beneficiaryReach.actualCount || p.beneficiaryReach.targetCount,
+        managerId: '',
+        managerName: 'Field Implementation Team',
+        teamMemberIds: [],
+        images: p.images.length > 0 ? p.images : ['https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=1000'],
+        milestones: [],
+        impactStats: [],
+        category: p.category,
+      }))
+    : fallbackProjects;
+
   const filteredProjects = projects.filter((p) => {
-    const matchStatus = selectedStatus === 'ALL' || p.status === selectedStatus;
+    const normalizedStatus = p.status.toUpperCase();
+    const matchStatus =
+      selectedStatus === 'ALL' ||
+      normalizedStatus === selectedStatus ||
+      (selectedStatus === 'IN_PROGRESS' && normalizedStatus === 'ACTIVE');
     const matchCat = selectedCategory === 'ALL' || p.category === selectedCategory;
     return matchStatus && matchCat;
   });
@@ -103,12 +136,14 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, onOpenDo
                   {project.description}
                 </p>
 
-                {/* Progress & Budget */}
+                {/* Progress */}
                 <div className="rounded-2xl bg-slate-50 p-3.5 space-y-2 text-xs">
                   <div className="flex justify-between font-medium">
-                    <span className="text-slate-600">Funding Progress</span>
+                    <span className="text-slate-600">{loadedFromApi ? 'Delivery Progress' : 'Funding Progress'}</span>
                     <span className="font-bold text-emerald-700">
-                      ${project.amountRaised.toLocaleString('en-US')} / ${project.fundingGoal.toLocaleString('en-US')}
+                      {loadedFromApi
+                        ? `${Math.min(100, project.amountRaised)}%`
+                        : `$${project.amountRaised.toLocaleString('en-US')} / $${project.fundingGoal.toLocaleString('en-US')}`}
                     </span>
                   </div>
                   <div className="h-2 w-full rounded-full bg-slate-200">

@@ -65,4 +65,19 @@ This directory contains the complete technical architecture, security specificat
 8. **[Administrative Security Architecture](file:///s:/Project/NGO/docs/security/ADMIN_SECURITY.md)**: Server-side guards, privilege escalation defense, and tenant isolation.
 9. **[Admin Module Development Guidelines](file:///s:/Project/NGO/docs/development/ADMIN_MODULE_GUIDELINES.md)**: Multi-developer squad ownership, boundaries, and local verification commands.
 
+---
+
+### 📋 Program & Project Operations Suite (Phase 7)
+
+1. **[Program Management Module](file:///s:/Project/NGO/docs/modules/PROGRAM_MANAGEMENT.md)**: Multi-year programs, lifecycle state machine, KPIs, and budget rollups.
+2. **[Project Management Module](file:///s:/Project/NGO/docs/modules/PROJECT_MANAGEMENT.md)**: Grassroots field projects, team workload, geolocation, risks, and beneficiary safeguarding.
+3. **[Task Management Module](file:///s:/Project/NGO/docs/modules/TASK_MANAGEMENT.md)**: Kanban boards, priority tracking, assignee permissions, and overdue alerts.
+4. **[Milestone Management Module](file:///s:/Project/NGO/docs/modules/MILESTONE_MANAGEMENT.md)**: Deliverables, target dates, and automatic project progress recalculation.
+5. **[Project & Program Approval Workflow](file:///s:/Project/NGO/docs/modules/PROJECT_APPROVAL_WORKFLOW.md)**: Multi-stage approvals, no-self-approval rule, rejection/resubmission history.
+6. **[Project Budget Planning & Tracking](file:///s:/Project/NGO/docs/modules/PROJECT_BUDGET.md)**: Category-level planned vs actual expenditure calculations and variance alerts.
+7. **[Project Documents & Media](file:///s:/Project/NGO/docs/modules/PROJECT_DOCUMENTS.md)**: Storage adapter, MIME/size validation, visibility rules, and signed URLs.
+8. **[Project Access Control & Safeguarding](file:///s:/Project/NGO/docs/security/PROJECT_ACCESS_CONTROL.md)**: 13-role operational matrix, tenant boundaries, and public/private separation.
+9. **[Program & Project Development Guidelines](file:///s:/Project/NGO/docs/development/PROGRAM_PROJECT_MODULE_GUIDELINES.md)**: Feature-based squad ownership and verification rules.
+
+
 

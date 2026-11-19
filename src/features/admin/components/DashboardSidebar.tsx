@@ -4,6 +4,11 @@ import React from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
+  Layers,
+  FolderKanban,
+  CheckSquare,
+  Flag,
+  BarChart3,
   Users,
   ShieldCheck,
   Building2,
@@ -19,6 +24,11 @@ import { OrganizationSwitcher } from './OrganizationSwitcher';
 
 const ICON_MAP: Record<AdminNavIconKey, React.ComponentType<{ className?: string }>> = {
   overview: LayoutDashboard,
+  programs: Layers,
+  projects: FolderKanban,
+  tasks: CheckSquare,
+  milestones: Flag,
+  'project-reports': BarChart3,
   users: Users,
   roles: ShieldCheck,
   departments: Building2,
@@ -50,7 +60,12 @@ export function DashboardSidebar({
   const router = useRouter();
 
   const items = getAuthorizedAdminNav(role);
-  const groups: Array<'Core' | 'Organization' | 'Security'> = ['Core', 'Organization', 'Security'];
+  const groups: Array<'Core' | 'Operations' | 'Organization' | 'Security'> = [
+    'Core',
+    'Operations',
+    'Organization',
+    'Security',
+  ];
 
   const isActive = (href: string, exact = false) => {
     if (exact) return pathname === href;
@@ -88,7 +103,7 @@ export function DashboardSidebar({
                             router.push(item.href);
                             onClose();
                           }}
-                          className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold transition ${
+                          className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition ${
                             active
                               ? 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300 shadow-xs'
                               : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#172b22] hover:text-slate-900 dark:hover:text-white'

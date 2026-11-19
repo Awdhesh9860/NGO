@@ -11,6 +11,7 @@ import {
   EmptyState,
   PermissionGate,
 } from '@/features/admin';
+import { projectReportsApiService, OperationalAnalyticsData } from '@/features/project-reports';
 import {
   Users,
   Building2,
@@ -26,11 +27,14 @@ import {
   HeartHandshake,
   BarChart3,
   TrendingUp,
+  Layers,
+  FolderKanban,
 } from 'lucide-react';
 
 export default function AdminOverviewPage() {
   const router = useRouter();
   const [stats, setStats] = useState<AdminExecutiveStats | null>(null);
+  const [opsAnalytics, setOpsAnalytics] = useState<OperationalAnalyticsData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -38,11 +42,17 @@ export default function AdminOverviewPage() {
     try {
       setIsLoading(true);
       setError(null);
-      const res = await adminApiService.getExecutiveStats();
+      const [res, opsRes] = await Promise.all([
+        adminApiService.getExecutiveStats(),
+        projectReportsApiService.getOperationalAnalytics().catch(() => ({ success: false, data: undefined })),
+      ]);
       if (res.success && res.data) {
         setStats(res.data);
       } else {
         setError(res.error?.message || 'Failed to load executive statistics');
+      }
+      if (opsRes.success && opsRes.data) {
+        setOpsAnalytics(opsRes.data);
       }
     } catch {
       setError('Unable to connect to administration service. Ensure you have an active authenticated session.');
@@ -152,6 +162,46 @@ export default function AdminOverviewPage() {
           accent="violet"
           icon={<HeartHandshake className="h-5 w-5" />}
           footer={`${stats?.organizationMetrics.volunteersCount ?? 0} volunteers • ${stats?.organizationMetrics.membersCount ?? 0} members • ${stats?.organizationMetrics.donorsCount ?? 0} donors`}
+        />
+      </div>
+
+      {/* Phase 07 Real Program & Project Operations Summary */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          title="Active Programs"
+          value={opsAnalytics?.programOverview.active ?? 0}
+          subtitle={`of ${opsAnalytics?.programOverview.total ?? 0}`}
+          loading={isLoading}
+          accent="emerald"
+          icon={<Layers className="h-5 w-5" />}
+          footer={`${opsAnalytics?.programOverview.pendingApproval ?? 0} awaiting approval`}
+        />
+        <StatCard
+          title="Active Projects"
+          value={opsAnalytics?.projectOverview.active ?? 0}
+          subtitle={`of ${opsAnalytics?.projectOverview.total ?? 0}`}
+          loading={isLoading}
+          accent="sky"
+          icon={<FolderKanban className="h-5 w-5" />}
+          footer={`${opsAnalytics?.projectOverview.completed ?? 0} completed • ${opsAnalytics?.projectOverview.overdue ?? 0} overdue`}
+        />
+        <StatCard
+          title="Budget Utilization"
+          value={`${opsAnalytics?.budgetOverview.utilizationPercentage ?? 0}%`}
+          subtitle="recorded spend"
+          loading={isLoading}
+          accent="amber"
+          icon={<BarChart3 className="h-5 w-5" />}
+          footer={`₹${(opsAnalytics?.budgetOverview.totalActualExpenditure ?? 0).toLocaleString('en-IN')} / ₹${(opsAnalytics?.budgetOverview.totalApprovedBudget ?? 0).toLocaleString('en-IN')}`}
+        />
+        <StatCard
+          title="Pending Approvals"
+          value={opsAnalytics?.attentionRequired.pendingApprovals.length ?? 0}
+          subtitle="requests"
+          loading={isLoading}
+          accent="rose"
+          icon={<AlertCircle className="h-5 w-5" />}
+          footer={`${opsAnalytics?.attentionRequired.overdueTasks.length ?? 0} overdue tasks • ${opsAnalytics?.attentionRequired.overdueMilestones.length ?? 0} overdue milestones`}
         />
       </div>
 
