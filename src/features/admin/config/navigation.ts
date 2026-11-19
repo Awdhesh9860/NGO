@@ -16,6 +16,13 @@ export type AdminNavIconKey =
   | 'receipts'
   | 'refunds'
   | 'fundraising'
+  | 'volunteers'
+  | 'volunteer-apps'
+  | 'members'
+  | 'member-plans'
+  | 'beneficiaries'
+  | 'safeguarding'
+  | 'stakeholders'
   | 'users'
   | 'roles'
   | 'departments'
@@ -31,7 +38,7 @@ export interface AdminNavItem {
   href: string;
   icon: AdminNavIconKey;
   exact?: boolean;
-  group: 'Core' | 'Operations' | 'Fundraising' | 'Organization' | 'Security';
+  group: 'Core' | 'Operations' | 'Fundraising' | 'Stakeholders' | 'Organization' | 'Security';
   requiredPermissions: PermissionKey[];
   description: string;
 }
@@ -187,6 +194,72 @@ export const ADMIN_NAVIGATION_ITEMS: AdminNavItem[] = [
     group: 'Fundraising',
     requiredPermissions: ['fundraising.analytics.view'],
     description: 'Net vs gross revenue, retention & campaign performance',
+  },
+  // Phase 09: Volunteers, Members, Beneficiaries & Safeguarding
+  {
+    id: 'volunteers',
+    name: 'Volunteers',
+    href: '/dashboard/admin/volunteers',
+    icon: 'volunteers',
+    exact: true,
+    group: 'Stakeholders',
+    requiredPermissions: ['volunteers.view', 'volunteers.manage'],
+    description: 'Volunteer profiles, verification, assignments & hours',
+  },
+  {
+    id: 'volunteer-applications',
+    name: 'Volunteer Applications',
+    href: '/dashboard/admin/volunteers/applications',
+    icon: 'volunteer-apps',
+    group: 'Stakeholders',
+    requiredPermissions: ['volunteers.view', 'volunteers.manage'],
+    description: 'Review volunteer registrations, interviews & approvals',
+  },
+  {
+    id: 'members',
+    name: 'Members',
+    href: '/dashboard/admin/members',
+    icon: 'members',
+    exact: true,
+    group: 'Stakeholders',
+    requiredPermissions: ['members.view', 'members.manage'],
+    description: 'Member directory, approvals, renewals & status',
+  },
+  {
+    id: 'membership-plans',
+    name: 'Membership Plans',
+    href: '/dashboard/admin/members/plans',
+    icon: 'member-plans',
+    group: 'Stakeholders',
+    requiredPermissions: ['members.view', 'members.manage'],
+    description: 'Configurable membership tiers, fees & validity',
+  },
+  {
+    id: 'beneficiaries',
+    name: 'Beneficiaries',
+    href: '/dashboard/admin/beneficiaries',
+    icon: 'beneficiaries',
+    group: 'Stakeholders',
+    requiredPermissions: ['beneficiaries.view', 'beneficiaries.manage'],
+    description: 'Privacy-gated registration, eligibility, enrollment & assistance',
+  },
+  {
+    id: 'safeguarding',
+    name: 'Safeguarding & Consent',
+    href: '/dashboard/admin/safeguarding',
+    icon: 'safeguarding',
+    group: 'Stakeholders',
+    requiredPermissions: ['safeguarding.view', 'safeguarding.manage', 'consent.view'],
+    description: 'Child protection controls, consent & anonymization',
+  },
+  {
+    id: 'stakeholders-analytics',
+    name: 'Stakeholder Analytics',
+    href: '/dashboard/admin/stakeholders',
+    icon: 'stakeholders',
+    group: 'Stakeholders',
+    requiredPermissions: ['volunteers.view', 'members.view', 'beneficiaries.view', 'privacy.reports.view'],
+    description: 'Volunteer, membership & anonymized beneficiary dashboards',
   },
   // Organization Governance
   {

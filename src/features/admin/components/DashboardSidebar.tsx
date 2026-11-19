@@ -25,6 +25,13 @@ import {
   FileText,
   RotateCcw,
   LineChart,
+  UserCheck,
+  ClipboardList,
+  Award,
+  BadgeCheck,
+  UsersRound,
+  ShieldAlert,
+  PieChart,
 } from 'lucide-react';
 import { UserRole } from '@/types';
 import { AdminNavIconKey, getAuthorizedAdminNav } from '../config/navigation';
@@ -45,6 +52,13 @@ const ICON_MAP: Record<AdminNavIconKey, React.ComponentType<{ className?: string
   receipts: FileText,
   refunds: RotateCcw,
   fundraising: LineChart,
+  volunteers: UserCheck,
+  'volunteer-apps': ClipboardList,
+  members: Award,
+  'member-plans': BadgeCheck,
+  beneficiaries: UsersRound,
+  safeguarding: ShieldAlert,
+  stakeholders: PieChart,
   users: Users,
   roles: ShieldCheck,
   departments: Building2,
@@ -76,10 +90,11 @@ export function DashboardSidebar({
   const router = useRouter();
 
   const items = getAuthorizedAdminNav(role);
-  const groups: Array<'Core' | 'Operations' | 'Fundraising' | 'Organization' | 'Security'> = [
+  const groups: Array<'Core' | 'Operations' | 'Fundraising' | 'Stakeholders' | 'Organization' | 'Security'> = [
     'Core',
     'Operations',
     'Fundraising',
+    'Stakeholders',
     'Organization',
     'Security',
   ];

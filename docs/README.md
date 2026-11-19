@@ -96,5 +96,25 @@ This directory contains the complete technical architecture, security specificat
 11. **[Donor Data Privacy & Protection](file:///s:/Project/NGO/docs/security/DONOR_DATA_PRIVACY.md)**: `donors.view_sensitive` field masking, anonymity enforcement, and export auditing.
 12. **[Fundraising Module Development Guidelines](file:///s:/Project/NGO/docs/development/FUNDRAISING_MODULE_GUIDELINES.md)**: Squad ownership, money precision standards, and PR verification checklist.
 
+---
+
+### 🤝 Volunteer, Member & Beneficiary Management Suite (Phase 9)
+
+1. **[Volunteer Management Module](file:///s:/Project/NGO/docs/modules/VOLUNTEER_MANAGEMENT.md)**: Volunteer profiles, configurable verification checklists, and lifecycle controls.
+2. **[Volunteer Applications Workflow](file:///s:/Project/NGO/docs/modules/VOLUNTEER_APPLICATIONS.md)**: Public intake, Zod validation, duplicate prevention, and 7-state human review.
+3. **[Volunteer Assignments Module](file:///s:/Project/NGO/docs/modules/VOLUNTEER_ASSIGNMENTS.md)**: Program/project allocation, verification gates, and schedule overlap validation.
+4. **[Volunteer Attendance & Hours](file:///s:/Project/NGO/docs/modules/VOLUNTEER_ATTENDANCE.md)**: 5-state attendance approval, zero GPS surveillance, and strictly approved hour totals.
+5. **[Volunteer Certificates Module](file:///s:/Project/NGO/docs/modules/VOLUNTEER_CERTIFICATES.md)**: Verifiable certificates derived from approved hours and PII-safe public lookup.
+6. **[Membership Management Module](file:///s:/Project/NGO/docs/modules/MEMBERSHIP_MANAGEMENT.md)**: Configurable per-tenant plans, integer minor-unit fees, and 9-state membership lifecycle.
+7. **[Membership Renewals Workflow](file:///s:/Project/NGO/docs/modules/MEMBERSHIP_RENEWALS.md)**: Expiry and grace period tracking, paid renewal confirmation gates, and reminder dedupe.
+8. **[Beneficiary Management Module](file:///s:/Project/NGO/docs/modules/BENEFICIARY_MANAGEMENT.md)**: Purpose-limited individual/household intake, human eligibility verification, and enrollment.
+9. **[Beneficiary Case Management](file:///s:/Project/NGO/docs/modules/BENEFICIARY_CASE_MANAGEMENT.md)**: 6-state case lifecycle, restricted `CaseNote` collection, and safeguarding escalations.
+10. **[Beneficiary Assistance Tracking](file:///s:/Project/NGO/docs/modules/BENEFICIARY_ASSISTANCE.md)**: Actual service delivery ledger strictly separated from donations and project budgets.
+11. **[Beneficiary Data Privacy & Protection](file:///s:/Project/NGO/docs/security/BENEFICIARY_DATA_PRIVACY.md)**: Least-privilege RBAC, redacted listings, field-gated profiles, and export audit trails.
+12. **[Child & Vulnerable Person Safeguarding](file:///s:/Project/NGO/docs/security/CHILD_SAFEGUARDING.md)**: Guardian verification, child identity redaction, restricted notes, and zero public exposure.
+13. **[Consent Management & Data Retention](file:///s:/Project/NGO/docs/security/CONSENT_MANAGEMENT.md)**: Purpose-specific consent, non-bundled media/storytelling rules, withdrawal safety, and anonymization.
+14. **[Stakeholder Module Development Guidelines](file:///s:/Project/NGO/docs/development/STAKEHOLDER_MODULE_GUIDELINES.md)**: Multi-developer squad ownership, invariants, and verification standards.
+
+
 
 
