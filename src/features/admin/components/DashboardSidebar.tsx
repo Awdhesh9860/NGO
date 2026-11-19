@@ -17,6 +17,14 @@ import {
   Settings,
   History,
   Bell,
+  Megaphone,
+  HeartHandshake,
+  HandCoins,
+  CreditCard,
+  Repeat,
+  FileText,
+  RotateCcw,
+  LineChart,
 } from 'lucide-react';
 import { UserRole } from '@/types';
 import { AdminNavIconKey, getAuthorizedAdminNav } from '../config/navigation';
@@ -29,6 +37,14 @@ const ICON_MAP: Record<AdminNavIconKey, React.ComponentType<{ className?: string
   tasks: CheckSquare,
   milestones: Flag,
   'project-reports': BarChart3,
+  campaigns: Megaphone,
+  donors: HeartHandshake,
+  donations: HandCoins,
+  payments: CreditCard,
+  recurring: Repeat,
+  receipts: FileText,
+  refunds: RotateCcw,
+  fundraising: LineChart,
   users: Users,
   roles: ShieldCheck,
   departments: Building2,
@@ -60,9 +76,10 @@ export function DashboardSidebar({
   const router = useRouter();
 
   const items = getAuthorizedAdminNav(role);
-  const groups: Array<'Core' | 'Operations' | 'Organization' | 'Security'> = [
+  const groups: Array<'Core' | 'Operations' | 'Fundraising' | 'Organization' | 'Security'> = [
     'Core',
     'Operations',
+    'Fundraising',
     'Organization',
     'Security',
   ];

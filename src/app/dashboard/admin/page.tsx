@@ -12,6 +12,8 @@ import {
   PermissionGate,
 } from '@/features/admin';
 import { projectReportsApiService, OperationalAnalyticsData } from '@/features/project-reports';
+import { donationApiService, FundraisingAnalyticsData } from '@/features/donations';
+import { formatMinorCurrency } from '@/lib/money';
 import {
   Users,
   Building2,
@@ -29,12 +31,15 @@ import {
   TrendingUp,
   Layers,
   FolderKanban,
+  HandCoins,
+  Megaphone,
 } from 'lucide-react';
 
 export default function AdminOverviewPage() {
   const router = useRouter();
   const [stats, setStats] = useState<AdminExecutiveStats | null>(null);
   const [opsAnalytics, setOpsAnalytics] = useState<OperationalAnalyticsData | null>(null);
+  const [fundraisingAnalytics, setFundraisingAnalytics] = useState<FundraisingAnalyticsData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -42,9 +47,10 @@ export default function AdminOverviewPage() {
     try {
       setIsLoading(true);
       setError(null);
-      const [res, opsRes] = await Promise.all([
+      const [res, opsRes, fundRes] = await Promise.all([
         adminApiService.getExecutiveStats(),
         projectReportsApiService.getOperationalAnalytics().catch(() => ({ success: false, data: undefined })),
+        donationApiService.getFundraisingAnalytics().catch(() => ({ success: false, data: undefined })),
       ]);
       if (res.success && res.data) {
         setStats(res.data);
@@ -53,6 +59,9 @@ export default function AdminOverviewPage() {
       }
       if (opsRes.success && opsRes.data) {
         setOpsAnalytics(opsRes.data);
+      }
+      if (fundRes.success && fundRes.data) {
+        setFundraisingAnalytics(fundRes.data);
       }
     } catch {
       setError('Unable to connect to administration service. Ensure you have an active authenticated session.');
@@ -204,6 +213,57 @@ export default function AdminOverviewPage() {
           footer={`${opsAnalytics?.attentionRequired.overdueTasks.length ?? 0} overdue tasks • ${opsAnalytics?.attentionRequired.overdueMilestones.length ?? 0} overdue milestones`}
         />
       </div>
+
+      {/* Phase 08 Role-Gated Fundraising & Donations Executive Summary */}
+      <PermissionGate permission="fundraising.analytics.view">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <StatCard
+            title="Net Verified Donations"
+            value={formatMinorCurrency(
+              fundraisingAnalytics?.overview.netDonationsMinor ?? 0,
+              fundraisingAnalytics?.currency || 'INR'
+            )}
+            subtitle="net of refunds"
+            loading={isLoading}
+            accent="emerald"
+            icon={<HandCoins className="h-5 w-5" />}
+            footer={`${fundraisingAnalytics?.overview.successfulDonationCount ?? 0} verified • ${formatMinorCurrency(
+              fundraisingAnalytics?.overview.refundedAmountMinor ?? 0,
+              fundraisingAnalytics?.currency || 'INR'
+            )} refunded`}
+          />
+          <StatCard
+            title="Pending Verification"
+            value={formatMinorCurrency(
+              fundraisingAnalytics?.overview.pendingAmountMinor ?? 0,
+              fundraisingAnalytics?.currency || 'INR'
+            )}
+            subtitle={`${fundraisingAnalytics?.overview.pendingDonationCount ?? 0} pending`}
+            loading={isLoading}
+            accent="amber"
+            icon={<AlertCircle className="h-5 w-5" />}
+            footer="Excluded from verified net totals until confirmed"
+          />
+          <StatCard
+            title="Active Campaigns"
+            value={fundraisingAnalytics?.overview.activeCampaignsCount ?? 0}
+            subtitle="live fundraising"
+            loading={isLoading}
+            accent="sky"
+            icon={<Megaphone className="h-5 w-5" />}
+            footer={`${fundraisingAnalytics?.overview.activeRecurringCount ?? 0} active recurring mandates`}
+          />
+          <StatCard
+            title="Donor Retention"
+            value={`${fundraisingAnalytics?.donorInsights.retentionPercentage ?? 0}%`}
+            subtitle={`${fundraisingAnalytics?.donorInsights.totalDonors ?? 0} CRM donors`}
+            loading={isLoading}
+            accent="violet"
+            icon={<HeartHandshake className="h-5 w-5" />}
+            footer={`${fundraisingAnalytics?.donorInsights.repeatDonors ?? 0} repeat • ${fundraisingAnalytics?.donorInsights.majorDonors ?? 0} major donors`}
+          />
+        </div>
+      </PermissionGate>
 
       {/* Real Database Charts Grid */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">

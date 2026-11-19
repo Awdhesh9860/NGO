@@ -26,7 +26,13 @@ export interface IOrganizationDocument extends Document {
   statutory: {
     panNumber?: string;
     section80GNumber?: string;
+    section80GValidFrom?: string;
+    section80GValidTo?: string;
+    is80GVerified?: boolean;
     section12ANumber?: string;
+    section12AValidFrom?: string;
+    section12AValidTo?: string;
+    is12AVerified?: boolean;
     fcraNumber?: string;
     darpanId?: string;
     taxExemptionPercentage: number;
@@ -99,7 +105,13 @@ const OrganizationSchema = new Schema<IOrganizationDocument>(
     statutory: {
       panNumber: { type: String },
       section80GNumber: { type: String },
+      section80GValidFrom: { type: String },
+      section80GValidTo: { type: String },
+      is80GVerified: { type: Boolean, default: false },
       section12ANumber: { type: String },
+      section12AValidFrom: { type: String },
+      section12AValidTo: { type: String },
+      is12AVerified: { type: Boolean, default: false },
       fcraNumber: { type: String },
       darpanId: { type: String },
       taxExemptionPercentage: { type: Number, default: 50 },

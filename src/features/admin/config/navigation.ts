@@ -8,6 +8,14 @@ export type AdminNavIconKey =
   | 'tasks'
   | 'milestones'
   | 'project-reports'
+  | 'campaigns'
+  | 'donors'
+  | 'donations'
+  | 'payments'
+  | 'recurring'
+  | 'receipts'
+  | 'refunds'
+  | 'fundraising'
   | 'users'
   | 'roles'
   | 'departments'
@@ -23,7 +31,7 @@ export interface AdminNavItem {
   href: string;
   icon: AdminNavIconKey;
   exact?: boolean;
-  group: 'Core' | 'Operations' | 'Organization' | 'Security';
+  group: 'Core' | 'Operations' | 'Fundraising' | 'Organization' | 'Security';
   requiredPermissions: PermissionKey[];
   description: string;
 }
@@ -106,6 +114,79 @@ export const ADMIN_NAVIGATION_ITEMS: AdminNavItem[] = [
     group: 'Operations',
     requiredPermissions: ['project_reports.view', 'projects.view'],
     description: 'Operational analytics, budget utilization & alerts',
+  },
+  // Phase 08: Fundraising & Donation Management
+  {
+    id: 'campaigns',
+    name: 'Campaigns',
+    href: '/dashboard/admin/campaigns',
+    icon: 'campaigns',
+    group: 'Fundraising',
+    requiredPermissions: ['campaigns.view', 'campaigns.create', 'campaigns.update'],
+    description: 'Fundraising campaigns, approvals & publishing',
+  },
+  {
+    id: 'donors',
+    name: 'Donors',
+    href: '/dashboard/admin/donors',
+    icon: 'donors',
+    group: 'Fundraising',
+    requiredPermissions: ['donors.view', 'donors.manage'],
+    description: 'Donor CRM, segments & lifetime impact',
+  },
+  {
+    id: 'donations',
+    name: 'Donations',
+    href: '/dashboard/admin/donations',
+    icon: 'donations',
+    group: 'Fundraising',
+    requiredPermissions: ['donations.view_all', 'donations.verify', 'donations.manage'],
+    description: 'Donation ledger & manual UPI/Bank verification',
+  },
+  {
+    id: 'payments',
+    name: 'Payments',
+    href: '/dashboard/admin/payments',
+    icon: 'payments',
+    group: 'Fundraising',
+    requiredPermissions: ['payments.view', 'payments.reconcile'],
+    description: 'Gateway monitoring, webhooks & reconciliation',
+  },
+  {
+    id: 'recurring-donations',
+    name: 'Recurring Donations',
+    href: '/dashboard/admin/recurring-donations',
+    icon: 'recurring',
+    group: 'Fundraising',
+    requiredPermissions: ['donations.view_all', 'donations.manage'],
+    description: 'Provider-mandated monthly/yearly plans',
+  },
+  {
+    id: 'receipts',
+    name: 'Receipts',
+    href: '/dashboard/admin/receipts',
+    icon: 'receipts',
+    group: 'Fundraising',
+    requiredPermissions: ['receipts.view', 'receipts.issue'],
+    description: 'Official receipts & verified 80G/12A compliance',
+  },
+  {
+    id: 'refunds',
+    name: 'Refunds',
+    href: '/dashboard/admin/refunds',
+    icon: 'refunds',
+    group: 'Fundraising',
+    requiredPermissions: ['refunds.view', 'refunds.request', 'refunds.approve'],
+    description: 'Two-stage refund approvals & partial/full processing',
+  },
+  {
+    id: 'fundraising-analytics',
+    name: 'Fundraising Analytics',
+    href: '/dashboard/admin/fundraising',
+    icon: 'fundraising',
+    group: 'Fundraising',
+    requiredPermissions: ['fundraising.analytics.view'],
+    description: 'Net vs gross revenue, retention & campaign performance',
   },
   // Organization Governance
   {

@@ -79,5 +79,22 @@ This directory contains the complete technical architecture, security specificat
 8. **[Project Access Control & Safeguarding](file:///s:/Project/NGO/docs/security/PROJECT_ACCESS_CONTROL.md)**: 13-role operational matrix, tenant boundaries, and public/private separation.
 9. **[Program & Project Development Guidelines](file:///s:/Project/NGO/docs/development/PROGRAM_PROJECT_MODULE_GUIDELINES.md)**: Feature-based squad ownership and verification rules.
 
+---
+
+### 💛 Campaign, Fundraising & Donation Suite (Phase 8)
+
+1. **[Fundraising Architecture Overview](file:///s:/Project/NGO/docs/modules/FUNDRAISING.md)**: Integer minor-unit precision, 10 tenant-scoped collections, and end-to-end invariants.
+2. **[Campaign Management Module](file:///s:/Project/NGO/docs/modules/CAMPAIGN_MANAGEMENT.md)**: 9-state campaign lifecycle, approval workflow, updates, and public visibility.
+3. **[Donor Management (CRM) Module](file:///s:/Project/NGO/docs/modules/DONOR_MANAGEMENT.md)**: Verified lifetime giving, deterministic donor segmentation, and export audit.
+4. **[Donation Management Module](file:///s:/Project/NGO/docs/modules/DONATION_MANAGEMENT.md)**: 7-state donation ledger, idempotency keys, and manual UPI/Bank Transfer verification.
+5. **[Payment Integration Architecture](file:///s:/Project/NGO/docs/modules/PAYMENT_INTEGRATION.md)**: Razorpay, Stripe, UPI, and Bank Transfer adapters with honest status reporting.
+6. **[Recurring Donations Module](file:///s:/Project/NGO/docs/modules/RECURRING_DONATIONS.md)**: Provider-mandated subscriptions (`MONTHLY`/`QUARTERLY`/`YEARLY`) without simulated billing.
+7. **[Donation Receipts & 80G/12A Compliance](file:///s:/Project/NGO/docs/modules/DONATION_RECEIPTS.md)**: Sequential receipt numbering, duplicate prevention, and strict verified 80G/12A gating.
+8. **[Refund Management Module](file:///s:/Project/NGO/docs/modules/REFUND_MANAGEMENT.md)**: Two-stage separation of duties, no self-approval, and remaining refundable balance caps.
+9. **[Fundraising Analytics & Reporting](file:///s:/Project/NGO/docs/modules/FUNDRAISING_ANALYTICS.md)**: Real MongoDB integer aggregations for gross, pending, refunded, net totals, and retention.
+10. **[Payment & Financial Security](file:///s:/Project/NGO/docs/security/PAYMENT_SECURITY.md)**: Timing-safe HMAC verification, replay protection, webhook idempotency, and out-of-order defense.
+11. **[Donor Data Privacy & Protection](file:///s:/Project/NGO/docs/security/DONOR_DATA_PRIVACY.md)**: `donors.view_sensitive` field masking, anonymity enforcement, and export auditing.
+12. **[Fundraising Module Development Guidelines](file:///s:/Project/NGO/docs/development/FUNDRAISING_MODULE_GUIDELINES.md)**: Squad ownership, money precision standards, and PR verification checklist.
+
 
 

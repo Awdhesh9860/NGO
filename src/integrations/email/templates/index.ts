@@ -7,3 +7,4 @@ export * from './invitation.template';
 export * from './security-alert.template';
 export * from './admin-account.template';
 export * from './project-workflow.template';
+export * from './fundraising.template';
