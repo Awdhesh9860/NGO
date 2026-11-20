@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { resetPasswordSchema } from '@/features/authentication/schemas/auth.schema';
 import { authService } from '@/server/services/auth.service';
+import { enforceRateLimit } from '@/server/security/rate-limit';
 import { successResponse, HTTP_STATUS } from '@/lib/api-response';
 import { handleRouteError } from '@/server/errors';
 
 export async function POST(req: NextRequest) {
   try {
+    await enforceRateLimit(req, 'AUTH_OTP_RESET');
     const rawBody = await req.json();
     const validated = resetPasswordSchema.parse(rawBody);
 

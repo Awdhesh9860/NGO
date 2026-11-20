@@ -46,7 +46,7 @@ export const FounderCard: React.FC<FounderCardProps> = ({ onNavigate }) => {
           <Quote className="h-8 w-8 text-emerald-600/30" />
 
           <p className="text-sm sm:text-base text-slate-700 leading-relaxed italic font-normal">
-            "We started this work with one simple conviction: every child and family deserves a fair chance in life. When we give a child a book, install a safe water tap, or help a mother earn her own income, we are not performing charity — we are upholding human dignity. I am deeply thankful to every volunteer, teacher, and donor who walks this path with us."
+            &ldquo;We started this work with one simple conviction: every child and family deserves a fair chance in life. When we give a child a book, install a safe water tap, or help a mother earn her own income, we are not performing charity — we are upholding human dignity. I am deeply thankful to every volunteer, teacher, and donor who walks this path with us.&rdquo;
           </p>
 
           <div className="pt-2 flex flex-wrap items-center gap-4">

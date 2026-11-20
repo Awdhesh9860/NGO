@@ -94,7 +94,7 @@ export const PartnersView: React.FC<PartnersViewProps> = ({ onNavigate }) => {
               <div className="h-10 w-10 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center">
                 <Users className="h-5 w-5" />
               </div>
-              <h3 className="text-sm font-bold text-slate-900">[Women's Federation Partner]</h3>
+              <h3 className="text-sm font-bold text-slate-900">[Women&apos;s Federation Partner]</h3>
               <p className="text-xs text-slate-500 leading-relaxed">
                 Connects over 24 grassroots self-help groups with tailoring training and micro-finance literacy sessions.
               </p>
@@ -162,13 +162,13 @@ export const PartnersView: React.FC<PartnersViewProps> = ({ onNavigate }) => {
             <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100 space-y-2">
               <span className="font-bold text-slate-900 text-sm block">Clean Water for 12 Villages</span>
               <p>
-                "Working with [CSR Partner Company], we installed 12 solar aquifer deep wells in less than eight months. Their team visited the sites alongside our volunteers to inspect groundwater testing records."
+                &ldquo;Working with [CSR Partner Company], we installed 12 solar aquifer deep wells in less than eight months. Their team visited the sites alongside our volunteers to inspect groundwater testing records.&rdquo;
               </p>
             </div>
             <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100 space-y-2">
               <span className="font-bold text-slate-900 text-sm block">Digital Literacy in 5 High Schools</span>
               <p>
-                "In collaboration with [Institutional Partner], over 600 rural high school students now practice keyboard typing, internet research, and basic document formatting every week."
+                &ldquo;In collaboration with [Institutional Partner], over 600 rural high school students now practice keyboard typing, internet research, and basic document formatting every week.&rdquo;
               </p>
             </div>
           </div>
@@ -180,7 +180,7 @@ export const PartnersView: React.FC<PartnersViewProps> = ({ onNavigate }) => {
             Join Our Network
           </span>
           <h2 className="text-2xl sm:text-3xl font-black">
-            Let's Build Meaningful Impact Together
+            Let&apos;s Build Meaningful Impact Together
           </h2>
           <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
             Whether through CSR funding, employee volunteering, equipment donations, or community programs, we welcome partners who value transparency and action.

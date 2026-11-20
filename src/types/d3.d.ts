@@ -5,11 +5,11 @@ declare module 'd3' {
 
   export const schemeTableau10: readonly string[];
 
-  export function select<GElement extends any = any, Datum = any>(
+  export function select<GElement = any, Datum = any>(
     selector: any
   ): any;
 
-  export function selectAll<GElement extends any = any, Datum = any>(
+  export function selectAll<GElement = any, Datum = any>(
     selector: any
   ): any;
 

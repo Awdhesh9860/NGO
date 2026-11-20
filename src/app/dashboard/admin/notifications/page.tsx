@@ -45,7 +45,10 @@ export default function AdminNotificationsPage() {
   }, []);
 
   useEffect(() => {
-    loadNotifications();
+    const id = setTimeout(() => {
+      void loadNotifications();
+    }, 0);
+    return () => clearTimeout(id);
   }, [loadNotifications]);
 
   const filtered =

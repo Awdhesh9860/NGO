@@ -4,6 +4,7 @@ import { resolveTenant } from '@/server/tenant/tenant-resolver';
 import { stakeholderRepository } from '@/server/repositories/stakeholder.repository';
 import { membershipService } from '@/server/services/membership.service';
 import { createMembershipApplicationSchema } from '@/features/membership/schemas/membership.schema';
+import { enforceRateLimit } from '@/server/security/rate-limit';
 import { NotFoundError } from '@/lib/error-handler';
 import { successResponse, HTTP_STATUS } from '@/lib/api-response';
 import { handleRouteError } from '@/server/errors';
@@ -33,6 +34,7 @@ export async function GET(req: NextRequest) {
  */
 export async function POST(req: NextRequest) {
   try {
+    await enforceRateLimit(req, 'PUBLIC_FORM');
     const authContext = await getAuthenticatedContext(req).catch(() => null);
     const tenant = await resolveTenant(req, authContext?.user.organizationId.toString());
     if (!tenant) throw new NotFoundError('Active organization could not be resolved');

@@ -5,6 +5,8 @@ dist/
 out/
 next-env.d.ts
 coverage/
+.storage/
+firebase-applet-config.json
 .DS_Store
 *.log
 .env*

@@ -11,17 +11,17 @@ function VerifyEmailContent() {
   const token = searchParams.get('token');
   const email = searchParams.get('email');
 
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>(
+    token && email ? 'loading' : 'idle'
+  );
   const [message, setMessage] = useState<string>('');
 
   useEffect(() => {
     if (!token || !email) {
-      setStatus('idle');
       return;
     }
 
     let isMounted = true;
-    setStatus('loading');
 
     authApi
       .verifyEmail({ token, email })

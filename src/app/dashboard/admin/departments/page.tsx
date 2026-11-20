@@ -92,7 +92,10 @@ export default function AdminDepartmentsPage() {
   }, [search, statusFilter]);
 
   useEffect(() => {
-    loadDepartments();
+    const id = setTimeout(() => {
+      void loadDepartments();
+    }, 0);
+    return () => clearTimeout(id);
   }, [loadDepartments]);
 
   useEffect(() => {

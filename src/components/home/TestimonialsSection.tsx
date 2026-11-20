@@ -58,7 +58,7 @@ export const TestimonialsSection: React.FC = () => {
               </div>
 
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed italic">
-                "{item.quote}"
+                &ldquo;{item.quote}&rdquo;
               </p>
             </div>
 

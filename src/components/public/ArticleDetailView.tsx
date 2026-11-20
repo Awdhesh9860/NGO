@@ -80,7 +80,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
         <p>{article.content}</p>
 
         <p>
-          "The transformation has been remarkable," explains local village council representative Sunita Devi. "When families have reliable water and school electricity, girls stay enrolled through secondary grades instead of spending four hours fetching pond water."
+          &ldquo;The transformation has been remarkable,&rdquo; explains local village council representative Sunita Devi. &ldquo;When families have reliable water and school electricity, girls stay enrolled through secondary grades instead of spending four hours fetching pond water.&rdquo;
         </p>
 
         <p>

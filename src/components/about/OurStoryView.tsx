@@ -230,7 +230,7 @@ export const OurStoryView: React.FC<OurStoryViewProps> = ({ onNavigate, onOpenDo
             </div>
 
             <blockquote className="rounded-2xl bg-emerald-50/80 border-l-4 border-emerald-600 p-4 sm:p-5 text-xs sm:text-sm text-emerald-950 font-medium italic">
-              "We realized early on that charity creates dependency, but community respect creates self-reliance. From our very first meeting, we pledged to walk with families as partners, not benefactors."
+              &ldquo;We realized early on that charity creates dependency, but community respect creates self-reliance. From our very first meeting, we pledged to walk with families as partners, not benefactors.&rdquo;
             </blockquote>
           </div>
 

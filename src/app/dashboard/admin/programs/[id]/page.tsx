@@ -67,7 +67,9 @@ export default function AdminProgramDetailPage() {
   }, [programId]);
 
   useEffect(() => {
-    loadDetail();
+    const id = setTimeout(() => {
+      void loadDetail();
+    }, 0);
     adminApiService
       .getUsers({ limit: 100 })
       .then((res) => {
@@ -80,6 +82,7 @@ export default function AdminProgramDetailPage() {
         }
       })
       .catch(() => {});
+    return () => clearTimeout(id);
   }, [loadDetail]);
 
   const handleTransition = async (nextStatus: string) => {

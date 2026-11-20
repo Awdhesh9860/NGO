@@ -1,17 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { verifyAuthToken } from '@/server/auth/jwt';
 import { authService } from '@/server/services/auth.service';
 import { AUTH_COOKIE_NAME, getAuthCookieOptions } from '@/server/security/cookies';
+import { enforceRateLimit } from '@/server/security/rate-limit';
 import { successResponse, HTTP_STATUS } from '@/lib/api-response';
-import { handleRouteError, AuthenticationError, ValidationError } from '@/server/errors';
+import { handleRouteError, AuthenticationError } from '@/server/errors';
+
+const twoFactorLoginSchema = z.object({
+  tempToken: z.string().min(10, 'Temporary 2FA token is required'),
+  code: z
+    .string()
+    .trim()
+    .min(6, '2FA verification code must be at least 6 characters')
+    .max(16, '2FA verification code is too long'),
+});
 
 export async function POST(req: NextRequest) {
   try {
-    const { tempToken, code } = await req.json();
-
-    if (!tempToken || !code) {
-      throw new ValidationError('Temporary token and 2FA code are required');
-    }
+    await enforceRateLimit(req, 'AUTH_2FA');
+    const rawBody = await req.json();
+    const { tempToken, code } = twoFactorLoginSchema.parse(rawBody);
 
     const payload = await verifyAuthToken(tempToken);
     if (!payload || payload.sessionId !== 'pre-2fa-temp') {

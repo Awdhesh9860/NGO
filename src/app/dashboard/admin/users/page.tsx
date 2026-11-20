@@ -93,7 +93,10 @@ export default function AdminUsersPage() {
   }, [page, search, roleFilter, statusFilter, deptFilter, sortBy, sortOrder]);
 
   useEffect(() => {
-    loadUsers();
+    const id = setTimeout(() => {
+      void loadUsers();
+    }, 0);
+    return () => clearTimeout(id);
   }, [loadUsers]);
 
   useEffect(() => {

@@ -71,7 +71,10 @@ export default function AdminOverviewPage() {
   };
 
   useEffect(() => {
-    fetchStats();
+    const id = setTimeout(() => {
+      void fetchStats();
+    }, 0);
+    return () => clearTimeout(id);
   }, []);
 
   const maxMonthlyCount = Math.max(

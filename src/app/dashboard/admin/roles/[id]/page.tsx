@@ -57,7 +57,10 @@ export default function AdminRoleDetailPage() {
   }, [roleId]);
 
   useEffect(() => {
-    loadRole();
+    const id = setTimeout(() => {
+      void loadRole();
+    }, 0);
+    return () => clearTimeout(id);
   }, [loadRole]);
 
   const togglePermission = (key: string) => {

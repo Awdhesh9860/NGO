@@ -24,7 +24,7 @@ export const AboutFinalCta: React.FC<AboutFinalCtaProps> = ({ onOpenDonate, onNa
         </h2>
 
         <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
-          You can support our work through your time, skills, partnership or donation. Every helping hand creates real, lasting change in someone's life.
+          You can support our work through your time, skills, partnership or donation. Every helping hand creates real, lasting change in someone&apos;s life.
         </p>
 
         <div className="pt-2 flex flex-wrap justify-center gap-3 text-xs font-bold">

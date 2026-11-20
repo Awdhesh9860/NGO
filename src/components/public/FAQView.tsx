@@ -278,7 +278,7 @@ export const FAQView: React.FC<FAQViewProps> = ({ onNavigate }) => {
             <HelpCircle className="h-10 w-10 text-slate-300 mx-auto" />
             <h3 className="text-base font-bold text-slate-900">No Questions Found</h3>
             <p className="text-xs text-slate-500">
-              We couldn't find any questions matching "{searchQuery}". Please try another word or contact our team directly.
+              We couldn&apos;t find any questions matching &ldquo;{searchQuery}&rdquo;. Please try another word or contact our team directly.
             </p>
           </div>
         ) : (

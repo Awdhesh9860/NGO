@@ -90,7 +90,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenDonate }) 
     panOrTaxId: '',
     amount: '',
     campaignTitle: 'General Social Welfare Fund',
-    paymentGateway: 'bank_transfer' as any,
+    paymentGateway: 'bank_transfer' as Donation['paymentGateway'],
     notes: 'Offline wire contribution entered by admin'
   });
 
@@ -120,7 +120,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenDonate }) 
     recipientEmail: '',
     title: 'Certificate of Outstanding Volunteer Service',
     description: 'For dedicated frontline service supporting rural education and clean water deployments.',
-    type: 'VOLUNTEER' as any
+    type: 'VOLUNTEER' as Certificate['type']
   });
 
   // Totals calculations

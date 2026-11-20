@@ -1,5 +1,6 @@
 import { SignJWT, jwtVerify } from 'jose';
 import { UserRole } from '@/types';
+import { getJwtSecret } from '@/config/environment';
 
 export interface AuthTokenPayload {
   userId: string;
@@ -9,13 +10,14 @@ export interface AuthTokenPayload {
   organizationId: string;
 }
 
-const DEFAULT_JWT_SECRET = 'hopehorizon-dev-insecure-jwt-secret-min-32-chars-key-2026';
-const JWT_SECRET = process.env.JWT_SECRET || DEFAULT_JWT_SECRET;
-const JWT_EXPIRATION = process.env.SESSION_MAX_AGE ? `${process.env.SESSION_MAX_AGE}s` : '7d';
+function getJwtExpiration(): string {
+  return process.env.SESSION_MAX_AGE ? `${process.env.SESSION_MAX_AGE}s` : '7d';
+}
 
 function getJwtKey(): Uint8Array {
-  // Use Uint8Array constructed in current execution context
-  const buf = Buffer.from(JWT_SECRET, 'utf-8');
+  // Resolve dynamically so production fail-closed checks and secret rotation are respected
+  const secret = getJwtSecret();
+  const buf = Buffer.from(secret, 'utf-8');
   const uint8 = new Uint8Array(buf.length);
   for (let i = 0; i < buf.length; i++) {
     uint8[i] = buf[i];
@@ -31,7 +33,7 @@ export async function signAuthToken(payload: AuthTokenPayload): Promise<string> 
   return await new SignJWT({ ...payload })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime(JWT_EXPIRATION)
+    .setExpirationTime(getJwtExpiration())
     .setIssuer('hopehorizon-auth')
     .setAudience('hopehorizon-app')
     .sign(key);

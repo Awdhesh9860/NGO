@@ -169,10 +169,21 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [language, setLanguageState] = useState<Language>('en');
 
   useEffect(() => {
-    const saved = localStorage.getItem('hh_ngo_language');
-    if (saved === 'hi' || saved === 'en' || saved === 'bn') {
-      setLanguageState(saved);
-    }
+    let active = true;
+    Promise.resolve().then(() => {
+      if (!active) return;
+      try {
+        const saved = localStorage.getItem('hh_ngo_language');
+        if (saved === 'hi' || saved === 'en' || saved === 'bn') {
+          setLanguageState(saved);
+        }
+      } catch {
+        // Ignore localStorage access issues
+      }
+    });
+    return () => {
+      active = false;
+    };
   }, []);
 
   const setLanguage = (lang: Language) => {

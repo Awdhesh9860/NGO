@@ -64,7 +64,10 @@ export default function AdminProjectsPage() {
   }, [search, statusFilter, programFilter, categoryFilter, priorityFilter]);
 
   useEffect(() => {
-    loadProjects();
+    const id = setTimeout(() => {
+      void loadProjects();
+    }, 0);
+    return () => clearTimeout(id);
   }, [loadProjects]);
 
   useEffect(() => {

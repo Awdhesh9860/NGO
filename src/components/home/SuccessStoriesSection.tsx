@@ -74,7 +74,7 @@ export const SuccessStoriesSection: React.FC<SuccessStoriesSectionProps> = ({ on
               </h3>
 
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed italic">
-                "{story.quote}"
+                &ldquo;{story.quote}&rdquo;
               </p>
             </div>
 

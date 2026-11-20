@@ -72,7 +72,7 @@ export const LegalView: React.FC<LegalViewProps> = ({ initialTab = '80g' }) => {
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
-                  <strong>Direct Form 10BE Filing:</strong> Annual Statement of Donations is directly uploaded to the Income Tax Department's portal.
+                  <strong>Direct Form 10BE Filing:</strong> Annual Statement of Donations is directly uploaded to the Income Tax Department&apos;s portal.
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
@@ -115,7 +115,7 @@ export const LegalView: React.FC<LegalViewProps> = ({ initialTab = '80g' }) => {
             </p>
             <h3 className="font-bold text-slate-900 text-sm">Anonymous Giving Option</h3>
             <p>
-              Donors who select the "Make my donation anonymous" checkbox will be withheld from all public donor walls and impact acknowledgments.
+              Donors who select the &ldquo;Make my donation anonymous&rdquo; checkbox will be withheld from all public donor walls and impact acknowledgments.
             </p>
           </div>
         )}

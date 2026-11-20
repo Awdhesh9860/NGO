@@ -99,6 +99,61 @@ export const GoogleSheetsHub: React.FC<GoogleSheetsHubProps> = ({ onNavigate, co
   });
   const [isProcessingAction, setIsProcessingAction] = useState<boolean>(false);
 
+  const getErrorMessage = (err: unknown, fallback = 'An unexpected error occurred.'): string =>
+    err instanceof Error ? err.message : fallback;
+
+  // Load sheet cell values
+  const loadSheetValues = async (sheetId: string, range: string) => {
+    setIsLoadingRows(true);
+    try {
+      const res = await getSpreadsheetValues(sheetId, range);
+      setSheetRows(res.values || []);
+    } catch (err: unknown) {
+      console.error('Error loading values:', err);
+      error('Could not read cells', getErrorMessage(err));
+    } finally {
+      setIsLoadingRows(false);
+    }
+  };
+
+  // Select spreadsheet to inspect
+  const handleSelectSpreadsheet = async (sheetId: string) => {
+    setSelectedSpreadsheetId(sheetId);
+    setIsLoadingRows(true);
+    try {
+      const meta = await getSpreadsheetMetadata(sheetId);
+      setActiveMetadata(meta);
+      const firstTab = meta.sheets[0]?.title || 'Sheet1';
+      setSelectedTab(firstTab);
+      await loadSheetValues(sheetId, `${firstTab}!A1:Z50`);
+    } catch (err: unknown) {
+      console.error('Error loading spreadsheet:', err);
+      error('Failed to load Sheet', getErrorMessage(err));
+    } finally {
+      setIsLoadingRows(false);
+    }
+  };
+
+  // Load Google Drive spreadsheets
+  const handleLoadDriveSpreadsheets = async () => {
+    setIsLoadingDrive(true);
+    try {
+      const files = await listDriveSpreadsheets();
+      setSpreadsheets(files);
+      if (files.length > 0 && !selectedSpreadsheetId) {
+        handleSelectSpreadsheet(files[0].id);
+      }
+    } catch (err: unknown) {
+      console.error('Error fetching drive spreadsheets:', err);
+      const msg = getErrorMessage(err, '');
+      if (msg && !msg.includes('Not signed in')) {
+        error('Could not load Google Spreadsheets', msg);
+      }
+    } finally {
+      setIsLoadingDrive(false);
+    }
+  };
+
   // Initialize listener on mount
   useEffect(() => {
     const unsubscribe = initGoogleAuth(
@@ -112,41 +167,35 @@ export const GoogleSheetsHub: React.FC<GoogleSheetsHubProps> = ({ onNavigate, co
       }
     );
 
-    // Also check current memory token
-    const token = getGoogleAccessToken();
-    if (token) {
-      setHasToken(true);
-    }
+    let active = true;
+    Promise.resolve().then(() => {
+      if (!active) return;
+      const token = getGoogleAccessToken();
+      if (token) {
+        setHasToken(true);
+      }
+    });
 
-    return () => unsubscribe();
+    return () => {
+      active = false;
+      unsubscribe();
+    };
   }, []);
 
   // When token becomes available, fetch Drive spreadsheets automatically
   useEffect(() => {
-    if (hasToken) {
-      handleLoadDriveSpreadsheets();
-    }
+    if (!hasToken) return;
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) {
+        void handleLoadDriveSpreadsheets();
+      }
+    });
+    return () => {
+      active = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasToken]);
-
-  // Load Google Drive spreadsheets
-  const handleLoadDriveSpreadsheets = async () => {
-    setIsLoadingDrive(true);
-    try {
-      const files = await listDriveSpreadsheets();
-      setSpreadsheets(files);
-      if (files.length > 0 && !selectedSpreadsheetId) {
-        handleSelectSpreadsheet(files[0].id);
-      }
-    } catch (err: any) {
-      console.error('Error fetching drive spreadsheets:', err);
-      // Non-blocking notification
-      if (err.message && !err.message.includes('Not signed in')) {
-        error('Could not load Google Spreadsheets', err.message);
-      }
-    } finally {
-      setIsLoadingDrive(false);
-    }
-  };
 
   // Google Sign In Handler
   const handleGoogleSignIn = async () => {
@@ -156,9 +205,9 @@ export const GoogleSheetsHub: React.FC<GoogleSheetsHubProps> = ({ onNavigate, co
       setGoogleUser(result.user);
       setHasToken(true);
       success('Connected to Google Workspace', `Signed in as ${result.user.displayName || result.user.email}`);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Sign in failure:', err);
-      error('Google Sign In Failed', err.message || 'Please check popup permissions.');
+      error('Google Sign In Failed', getErrorMessage(err, 'Please check popup permissions.'));
     } finally {
       setIsSigningIn(false);
     }
@@ -175,40 +224,8 @@ export const GoogleSheetsHub: React.FC<GoogleSheetsHubProps> = ({ onNavigate, co
       setSheetRows([]);
       setSelectedSpreadsheetId(null);
       info('Disconnected from Google', 'Access token removed from memory.');
-    } catch (err: any) {
-      error('Sign Out Failed', err.message);
-    }
-  };
-
-  // Select spreadsheet to inspect
-  const handleSelectSpreadsheet = async (sheetId: string) => {
-    setSelectedSpreadsheetId(sheetId);
-    setIsLoadingRows(true);
-    try {
-      const meta = await getSpreadsheetMetadata(sheetId);
-      setActiveMetadata(meta);
-      const firstTab = meta.sheets[0]?.title || 'Sheet1';
-      setSelectedTab(firstTab);
-      await loadSheetValues(sheetId, `${firstTab}!A1:Z50`);
-    } catch (err: any) {
-      console.error('Error loading spreadsheet:', err);
-      error('Failed to load Sheet', err.message);
-    } finally {
-      setIsLoadingRows(false);
-    }
-  };
-
-  // Load sheet cell values
-  const loadSheetValues = async (sheetId: string, range: string) => {
-    setIsLoadingRows(true);
-    try {
-      const res = await getSpreadsheetValues(sheetId, range);
-      setSheetRows(res.values || []);
-    } catch (err: any) {
-      console.error('Error loading values:', err);
-      error('Could not read cells', err.message);
-    } finally {
-      setIsLoadingRows(false);
+    } catch (err: unknown) {
+      error('Sign Out Failed', getErrorMessage(err));
     }
   };
 
@@ -346,9 +363,9 @@ export const GoogleSheetsHub: React.FC<GoogleSheetsHubProps> = ({ onNavigate, co
     try {
       await confirmModal.onConfirm();
       setConfirmModal((prev) => ({ ...prev, isOpen: false }));
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Action failed:', err);
-      error('Operation Failed', err.message || 'Could not complete Google Sheets action.');
+      error('Operation Failed', getErrorMessage(err, 'Could not complete Google Sheets action.'));
     } finally {
       setIsProcessingAction(false);
     }

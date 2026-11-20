@@ -6,18 +6,46 @@ on:
   pull_request:
     branches: [main, develop]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  test:
-    name: Run Unit Tests & Lint
+  quality-and-security:
+    name: TypeCheck, Lint, Unit Tests, Audit & Build
     runs-on: ubuntu-latest
+    env:
+      NODE_ENV: test
+      JWT_SECRET: ci-test-jwt-secret-placeholder-minimum-32-chars-2026
+      FINANCIAL_ENCRYPTION_KEY: ci-test-financial-encryption-key-min-32-chars-2026
+      STORAGE_SIGNING_SECRET: ci-test-storage-signing-secret-min-32-chars-2026
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
+
       - name: Install Dependencies
         run: npm ci
-      - name: Run Vitest Unit Tests
+
+      - name: TypeScript Strict Typecheck
+        run: npx tsc --noEmit
+
+      - name: Full-Repository ESLint
+        run: npm run lint
+
+      - name: Vitest Unit & Security Suites
         run: npm run test:run
+
+      - name: Dependency Security Audit (High/Critical)
+        run: npm audit --audit-level=high
+        continue-on-error: false
+
+      - name: Production Next.js Build
+        env:
+          NODE_ENV: production
+          MONGODB_URI: mongodb://127.0.0.1:27017/hopehorizon_ci_build
+        run: npm run build

@@ -107,7 +107,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenDonate = () =>
             </div>
 
             <p className="text-xs text-slate-400 leading-relaxed">
-              A legally incorporated, statutory public charitable trust dedicated to sustainable clean water access, rural girls' education, rapid frontline disaster response, and women's economic sovereignty.
+              A legally incorporated, statutory public charitable trust dedicated to sustainable clean water access, rural girls&apos; education, rapid frontline disaster response, and women&apos;s economic sovereignty.
             </p>
 
             <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-3.5 text-[11px] space-y-1.5 text-slate-400">

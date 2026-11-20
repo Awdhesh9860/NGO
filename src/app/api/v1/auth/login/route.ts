@@ -3,11 +3,13 @@ import { loginSchema } from '@/features/authentication/schemas/auth.schema';
 import { authService } from '@/server/services/auth.service';
 import { resolveTenant } from '@/server/tenant/tenant-resolver';
 import { AUTH_COOKIE_NAME, getAuthCookieOptions } from '@/server/security/cookies';
+import { enforceRateLimit } from '@/server/security/rate-limit';
 import { successResponse, HTTP_STATUS } from '@/lib/api-response';
 import { handleRouteError } from '@/server/errors';
 
 export async function POST(req: NextRequest) {
   try {
+    await enforceRateLimit(req, 'AUTH_LOGIN');
     const rawBody = await req.json();
     const validated = loginSchema.parse(rawBody);
 

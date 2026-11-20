@@ -3,12 +3,14 @@ import { getAuthenticatedContext } from '@/server/authorization/guards';
 import { resolveTenant } from '@/server/tenant/tenant-resolver';
 import { donationPaymentService } from '@/server/services/donation-payment.service';
 import { verifyPaymentSchema } from '@/features/donations/schemas/donation.schema';
+import { enforceRateLimit } from '@/server/security/rate-limit';
 import { NotFoundError } from '@/lib/error-handler';
 import { successResponse, HTTP_STATUS } from '@/lib/api-response';
 import { handleRouteError } from '@/server/errors';
 
 export async function POST(req: NextRequest) {
   try {
+    await enforceRateLimit(req, 'PAYMENT_VERIFY');
     const authContext = await getAuthenticatedContext(req).catch(() => null);
     const tenant = await resolveTenant(req, authContext?.user.organizationId.toString());
     if (!tenant) {

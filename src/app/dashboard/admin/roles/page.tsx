@@ -66,7 +66,10 @@ export default function AdminRolesPage() {
   }, []);
 
   useEffect(() => {
-    loadRoles();
+    const id = setTimeout(() => {
+      void loadRoles();
+    }, 0);
+    return () => clearTimeout(id);
   }, [loadRoles]);
 
   const modules = Array.from(new Set(catalog.map((p) => p.module)));

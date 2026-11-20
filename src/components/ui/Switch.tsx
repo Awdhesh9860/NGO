@@ -24,7 +24,8 @@ export const Switch: React.FC<SwitchProps> = ({
 }) => {
   const [internalChecked, setInternalChecked] = React.useState(defaultChecked);
   const isChecked = checked !== undefined ? checked : internalChecked;
-  const switchId = id || React.useId();
+  const generatedId = React.useId();
+  const switchId = id || generatedId;
 
   const handleToggle = () => {
     if (disabled) return;

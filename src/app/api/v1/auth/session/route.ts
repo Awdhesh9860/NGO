@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAuthenticatedContext } from '@/server/authorization/guards';
-import { ROLE_PERMISSIONS } from '@/server/authorization/permissions';
+import { getAuthenticatedContext, resolveEffectivePermissions } from '@/server/authorization/guards';
 import { successResponse, HTTP_STATUS } from '@/lib/api-response';
 
 export async function GET(req: NextRequest) {
@@ -19,7 +18,7 @@ export async function GET(req: NextRequest) {
     }
 
     const { user, sessionId } = authContext;
-    const permissions = ROLE_PERMISSIONS[user.role] || [];
+    const permissions = await resolveEffectivePermissions(user);
 
     return NextResponse.json(
       successResponse({

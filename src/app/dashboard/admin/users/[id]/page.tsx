@@ -99,7 +99,10 @@ export default function AdminUserDetailPage() {
   }, [userId]);
 
   useEffect(() => {
-    loadData();
+    const id = setTimeout(() => {
+      void loadData();
+    }, 0);
+    return () => clearTimeout(id);
   }, [loadData]);
 
   const handleSave = async (e: React.FormEvent) => {

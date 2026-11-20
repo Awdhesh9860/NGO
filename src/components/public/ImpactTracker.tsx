@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import * as d3 from 'd3';
 import { useDatabase } from '../../context/DatabaseContext';
@@ -240,16 +239,16 @@ export const ImpactTracker: React.FC<ImpactTrackerProps> = ({ onOpenDonate, onNa
     // Area generator
     const areaGenerator = d3
       .area<TimeSeriesPoint>()
-      .x((d) => xScale(d.date))
+      .x((d: TimeSeriesPoint) => xScale(d.date))
       .y0(innerHeight)
-      .y1((d) => yScale(d.cumulativeAmount))
+      .y1((d: TimeSeriesPoint) => yScale(d.cumulativeAmount))
       .curve(d3.curveMonotoneX);
 
     // Line generator
     const lineGenerator = d3
       .line<TimeSeriesPoint>()
-      .x((d) => xScale(d.date))
-      .y((d) => yScale(d.cumulativeAmount))
+      .x((d: TimeSeriesPoint) => xScale(d.date))
+      .y((d: TimeSeriesPoint) => yScale(d.cumulativeAmount))
       .curve(d3.curveMonotoneX);
 
     // Append Area Path
@@ -272,8 +271,8 @@ export const ImpactTracker: React.FC<ImpactTrackerProps> = ({ onOpenDonate, onNa
       .enter()
       .append('circle')
       .attr('class', 'data-circle')
-      .attr('cx', (d) => xScale(d.date))
-      .attr('cy', (d) => yScale(d.cumulativeAmount))
+      .attr('cx', (d: TimeSeriesPoint) => xScale(d.date))
+      .attr('cy', (d: TimeSeriesPoint) => yScale(d.cumulativeAmount))
       .attr('r', 4)
       .attr('fill', '#ffffff')
       .attr('stroke', '#059669')
@@ -283,7 +282,7 @@ export const ImpactTracker: React.FC<ImpactTrackerProps> = ({ onOpenDonate, onNa
     const xAxis = d3
       .axisBottom<Date>(xScale)
       .ticks(6)
-      .tickFormat((d) => d3.timeFormat('%b %y')(d));
+      .tickFormat((d: Date) => d3.timeFormat('%b %y')(d));
 
     g.append('g')
       .attr('transform', `translate(0,${innerHeight})`)
@@ -297,7 +296,7 @@ export const ImpactTracker: React.FC<ImpactTrackerProps> = ({ onOpenDonate, onNa
     const yAxis = d3
       .axisLeft<d3.NumberValue>(yScale)
       .ticks(5)
-      .tickFormat((d) => `$${d3.format('.2s')(Number(d)).replace('G', 'B')}`);
+      .tickFormat((d: d3.NumberValue) => `$${d3.format('.2s')(Number(d)).replace('G', 'B')}`);
 
     g.append('g')
       .call(yAxis)
@@ -360,7 +359,7 @@ export const ImpactTracker: React.FC<ImpactTrackerProps> = ({ onOpenDonate, onNa
       .attr('fill', 'transparent')
       .on('mouseenter', () => tooltipG.style('display', null))
       .on('mouseleave', () => tooltipG.style('display', 'none'))
-      .on('mousemove', (event) => {
+      .on('mousemove', (event: MouseEvent) => {
         const [xPos] = d3.pointer(event);
         const x0 = xScale.invert(xPos);
         const i = bisectDate(timeSeriesData, x0, 1);
@@ -407,7 +406,7 @@ export const ImpactTracker: React.FC<ImpactTrackerProps> = ({ onOpenDonate, onNa
 
     const pie = d3
       .pie<CategoryAllocation>()
-      .value((d) => d.amount)
+      .value((d: CategoryAllocation) => d.amount)
       .sort(null)
       .padAngle(0.03);
 
@@ -431,17 +430,17 @@ export const ImpactTracker: React.FC<ImpactTrackerProps> = ({ onOpenDonate, onNa
 
     arcs
       .append('path')
-      .attr('d', arc as any)
-      .attr('fill', (d) => d.data.color)
+      .attr('d', arc)
+      .attr('fill', (d: { data: CategoryAllocation }) => d.data.color)
       .attr('stroke', '#ffffff')
       .attr('stroke-width', 2)
       .style('transition', 'all 0.2s ease')
-      .on('mouseenter', function (event, d) {
-        d3.select(this).attr('d', hoverArc as any);
+      .on('mouseenter', function (this: SVGPathElement, _event: unknown, d: { data: CategoryAllocation }) {
+        d3.select(this).attr('d', hoverArc);
         setHoveredSlice(d.data);
       })
-      .on('mouseleave', function () {
-        d3.select(this).attr('d', arc as any);
+      .on('mouseleave', function (this: SVGPathElement) {
+        d3.select(this).attr('d', arc);
       });
 
     // Center Summary Text in Donut
@@ -528,7 +527,7 @@ export const ImpactTracker: React.FC<ImpactTrackerProps> = ({ onOpenDonate, onNa
       .enter()
       .append('rect')
       .attr('class', 'bg-bar')
-      .attr('y', (d) => yScale(d.title) || 0)
+      .attr('y', (d: ProjectBarData) => yScale(d.title) || 0)
       .attr('x', 0)
       .attr('height', yScale.bandwidth())
       .attr('width', innerWidth)
@@ -541,12 +540,12 @@ export const ImpactTracker: React.FC<ImpactTrackerProps> = ({ onOpenDonate, onNa
       .enter()
       .append('rect')
       .attr('class', 'progress-bar')
-      .attr('y', (d) => yScale(d.title) || 0)
+      .attr('y', (d: ProjectBarData) => yScale(d.title) || 0)
       .attr('x', 0)
       .attr('height', yScale.bandwidth())
-      .attr('width', (d) => xScale(d.fundingPct))
+      .attr('width', (d: ProjectBarData) => xScale(d.fundingPct))
       .attr('rx', 6)
-      .attr('fill', (d) => (d.fundingPct >= 100 ? '#059669' : '#10b981'))
+      .attr('fill', (d: ProjectBarData) => (d.fundingPct >= 100 ? '#059669' : '#10b981'))
       .style('transition', 'width 0.8s ease');
 
     // Bar Percentage Labels
@@ -554,12 +553,12 @@ export const ImpactTracker: React.FC<ImpactTrackerProps> = ({ onOpenDonate, onNa
       .data(projectData)
       .enter()
       .append('text')
-      .attr('y', (d) => (yScale(d.title) || 0) + yScale.bandwidth() / 2 + 4)
-      .attr('x', (d) => Math.min(innerWidth - 45, Math.max(10, xScale(d.fundingPct) - 35)))
-      .attr('fill', (d) => (xScale(d.fundingPct) > 40 ? '#ffffff' : '#0f172a'))
+      .attr('y', (d: ProjectBarData) => (yScale(d.title) || 0) + yScale.bandwidth() / 2 + 4)
+      .attr('x', (d: ProjectBarData) => Math.min(innerWidth - 45, Math.max(10, xScale(d.fundingPct) - 35)))
+      .attr('fill', (d: ProjectBarData) => (xScale(d.fundingPct) > 40 ? '#ffffff' : '#0f172a'))
       .attr('font-size', '11px')
       .attr('font-weight', 'bold')
-      .text((d) => `${Math.round(d.fundingPct)}%`);
+      .text((d: ProjectBarData) => `${Math.round(d.fundingPct)}%`);
 
     // Y Axis (Project titles)
     g.append('g')
@@ -573,7 +572,7 @@ export const ImpactTracker: React.FC<ImpactTrackerProps> = ({ onOpenDonate, onNa
     // X Axis
     g.append('g')
       .attr('transform', `translate(0,${innerHeight})`)
-      .call(d3.axisBottom(xScale).ticks(5).tickFormat((d) => `${d}%`))
+      .call(d3.axisBottom(xScale).ticks(5).tickFormat((d: d3.NumberValue) => `${d}%`))
       .attr('color', '#64748b')
       .attr('font-size', '11px')
       .select('.domain')

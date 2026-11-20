@@ -3,36 +3,60 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { initializeApp, getApps, getApp } from 'firebase/app';
+import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import {
   getAuth,
   signInWithPopup,
   signOut,
   GoogleAuthProvider,
   onAuthStateChanged,
-  User
+  Auth,
+  User,
 } from 'firebase/auth';
-import firebaseConfig from '../../firebase-applet-config.json';
 import { Donation, Volunteer, Project } from '../types';
 
-// All requested Google Workspace scopes
 export const WORKSPACE_SCOPES = [
   'https://www.googleapis.com/auth/drive',
   'https://www.googleapis.com/auth/drive.file',
   'https://www.googleapis.com/auth/drive.readonly',
   'https://www.googleapis.com/auth/spreadsheets',
-  'https://www.googleapis.com/auth/spreadsheets.readonly'
+  'https://www.googleapis.com/auth/spreadsheets.readonly',
 ];
 
-// Initialize Firebase App safely (singleton)
-const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-export const googleAuth = getAuth(app);
+function getFirebasePublicConfig() {
+  return {
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || '',
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || '',
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || '',
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || '',
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '',
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || '',
+  };
+}
 
-// Provider with workspace scopes
+export function isGoogleWorkspaceConfigured(): boolean {
+  const cfg = getFirebasePublicConfig();
+  return Boolean(cfg.apiKey && cfg.projectId && cfg.appId);
+}
+
+let cachedApp: FirebaseApp | null = null;
+let cachedAuth: Auth | null = null;
+
+function getGoogleAuthClient(): Auth | null {
+  if (!isGoogleWorkspaceConfigured()) return null;
+  if (!cachedApp) {
+    cachedApp = getApps().length > 0 ? getApp() : initializeApp(getFirebasePublicConfig());
+  }
+  if (!cachedAuth) {
+    cachedAuth = getAuth(cachedApp);
+  }
+  return cachedAuth;
+}
+
 const provider = new GoogleAuthProvider();
 WORKSPACE_SCOPES.forEach((scope) => provider.addScope(scope));
 
-// In-memory access token cache (MANDATORY: never stored in localStorage or sessionStorage)
+// In-memory access token cache (never stored in localStorage or sessionStorage)
 let cachedAccessToken: string | null = null;
 let isSigningIn = false;
 
@@ -55,19 +79,33 @@ export interface SheetMetadata {
   }[];
 }
 
-/**
- * Initialize Auth State Listener
- */
+interface RawGoogleSheetItem {
+  properties: {
+    sheetId: number;
+    title: string;
+    gridProperties?: {
+      rowCount?: number;
+      columnCount?: number;
+    };
+  };
+}
+
+export type SheetCellValue = string | number | boolean | null | undefined;
+
 export const initGoogleAuth = (
   onSuccess?: (user: User, token: string) => void,
   onFailure?: () => void
 ) => {
-  return onAuthStateChanged(googleAuth, async (user: User | null) => {
+  const auth = getGoogleAuthClient();
+  if (!auth) {
+    if (onFailure) onFailure();
+    return () => {};
+  }
+
+  return onAuthStateChanged(auth, async (user: User | null) => {
     if (user && cachedAccessToken) {
       if (onSuccess) onSuccess(user, cachedAccessToken);
     } else if (user && !isSigningIn) {
-      // User signed in but token was memory-cleared (e.g. on fresh page load)
-      // They can click Sign in with Google to retrieve token
       if (onFailure) onFailure();
     } else {
       cachedAccessToken = null;
@@ -76,15 +114,19 @@ export const initGoogleAuth = (
   });
 };
 
-/**
- * Sign In with Google Popup
- */
 export const signInWithGoogle = async (): Promise<{ user: User; accessToken: string }> => {
+  const auth = getGoogleAuthClient();
+  if (!auth) {
+    throw new Error(
+      'Google Workspace integration is not configured. Set NEXT_PUBLIC_FIREBASE_* environment variables.'
+    );
+  }
+
   try {
     isSigningIn = true;
-    const result = await signInWithPopup(googleAuth, provider);
+    const result = await signInWithPopup(auth, provider);
     const credential = GoogleAuthProvider.credentialFromResult(result);
-    
+
     if (!credential?.accessToken) {
       throw new Error('Could not retrieve access token from Google sign-in.');
     }
@@ -92,93 +134,79 @@ export const signInWithGoogle = async (): Promise<{ user: User; accessToken: str
     cachedAccessToken = credential.accessToken;
     return {
       user: result.user,
-      accessToken: cachedAccessToken
+      accessToken: cachedAccessToken,
     };
-  } catch (err) {
-    console.error('Google Sign In Error:', err);
-    throw err;
   } finally {
     isSigningIn = false;
   }
 };
 
-/**
- * Sign Out Google & Clear Memory Token
- */
 export const signOutGoogle = async (): Promise<void> => {
-  await signOut(googleAuth);
+  const auth = getGoogleAuthClient();
+  if (auth) {
+    await signOut(auth);
+  }
   cachedAccessToken = null;
 };
 
-/**
- * Get current in-memory access token
- */
-export const getGoogleAccessToken = (): string | null => {
-  return cachedAccessToken;
-};
+export const getGoogleAccessToken = (): string | null => cachedAccessToken;
 
-/**
- * List Google Spreadsheets from user's Drive
- */
 export const listDriveSpreadsheets = async (): Promise<DriveSpreadsheetFile[]> => {
   const token = getGoogleAccessToken();
   if (!token) throw new Error('Not signed in to Google or missing access token.');
 
-  const query = encodeURIComponent("mimeType='application/vnd.google-apps.spreadsheet' and trashed=false");
+  const query = encodeURIComponent(
+    "mimeType='application/vnd.google-apps.spreadsheet' and trashed=false"
+  );
   const fields = encodeURIComponent('files(id,name,modifiedTime,webViewLink,owners)');
   const url = `https://www.googleapis.com/drive/v3/files?q=${query}&fields=${fields}&orderBy=modifiedTime%20desc&pageSize=20`;
 
   const res = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
+    headers: { Authorization: `Bearer ${token}` },
   });
 
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.error?.message || `Failed to fetch Google Spreadsheets (${res.status})`);
+    throw new Error(
+      errorData.error?.message || `Failed to fetch Google Spreadsheets (${res.status})`
+    );
   }
 
   const data = await res.json();
   return (data.files || []) as DriveSpreadsheetFile[];
 };
 
-/**
- * Fetch Spreadsheet Metadata & Tab List
- */
 export const getSpreadsheetMetadata = async (spreadsheetId: string): Promise<SheetMetadata> => {
   const token = getGoogleAccessToken();
   if (!token) throw new Error('Not signed in to Google or missing access token.');
 
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}?fields=spreadsheetId,properties.title,sheets.properties`;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(spreadsheetId)}?fields=spreadsheetId,properties.title,sheets.properties`;
 
   const res = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
+    headers: { Authorization: `Bearer ${token}` },
   });
 
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.error?.message || `Failed to fetch spreadsheet metadata (${res.status})`);
+    throw new Error(
+      errorData.error?.message || `Failed to fetch spreadsheet metadata (${res.status})`
+    );
   }
 
   const data = await res.json();
+  const rawSheets = (data.sheets || []) as RawGoogleSheetItem[];
   return {
     spreadsheetId: data.spreadsheetId,
     title: data.properties?.title || 'Untitled Spreadsheet',
-    sheets: (data.sheets || []).map((s: any) => ({
+    sheets: rawSheets.map((s) => ({
       sheetId: s.properties.sheetId,
       title: s.properties.title,
       rowCount: s.properties.gridProperties?.rowCount || 0,
-      columnCount: s.properties.gridProperties?.columnCount || 0
-    }))
+      columnCount: s.properties.gridProperties?.columnCount || 0,
+    })),
   };
 };
 
-/**
- * Read Rows from a Google Sheet
- */
 export const getSpreadsheetValues = async (
   spreadsheetId: string,
   range: string
@@ -187,63 +215,60 @@ export const getSpreadsheetValues = async (
   if (!token) throw new Error('Not signed in to Google or missing access token.');
 
   const encodedRange = encodeURIComponent(range);
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodedRange}`;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(spreadsheetId)}/values/${encodedRange}`;
 
   const res = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
+    headers: { Authorization: `Bearer ${token}` },
   });
 
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.error?.message || `Failed to read spreadsheet values (${res.status})`);
+    throw new Error(
+      errorData.error?.message || `Failed to read spreadsheet values (${res.status})`
+    );
   }
 
   const data = await res.json();
   return {
     range: data.range,
-    values: data.values || []
+    values: data.values || [],
   };
 };
 
-/**
- * Create a new Google Spreadsheet in the user's Drive with optional headers and rows
- */
 export const createSpreadsheet = async (
   title: string,
   headers?: string[],
-  initialRows?: any[][]
+  initialRows?: SheetCellValue[][]
 ): Promise<{ spreadsheetId: string; spreadsheetUrl: string }> => {
   const token = getGoogleAccessToken();
   if (!token) throw new Error('Not signed in to Google or missing access token.');
 
-  const body: any = {
-    properties: {
-      title
-    }
+  const body: { properties: { title: string } } = {
+    properties: { title },
   };
 
   const res = await fetch('https://sheets.googleapis.com/v4/spreadsheets', {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify(body)
+    body: JSON.stringify(body),
   });
 
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.error?.message || `Failed to create Google Spreadsheet (${res.status})`);
+    throw new Error(
+      errorData.error?.message || `Failed to create Google Spreadsheet (${res.status})`
+    );
   }
 
   const data = await res.json();
-  const spreadsheetId = data.spreadsheetId;
-  const spreadsheetUrl = data.spreadsheetUrl || `https://docs.google.com/spreadsheets/d/${spreadsheetId}/edit`;
+  const spreadsheetId = data.spreadsheetId as string;
+  const spreadsheetUrl =
+    (data.spreadsheetUrl as string) || `https://docs.google.com/spreadsheets/d/${spreadsheetId}/edit`;
 
-  // If headers or initial rows are provided, populate Sheet1
-  const rowsToInsert: any[][] = [];
+  const rowsToInsert: SheetCellValue[][] = [];
   if (headers && headers.length > 0) {
     rowsToInsert.push(headers);
   }
@@ -258,46 +283,40 @@ export const createSpreadsheet = async (
   return { spreadsheetId, spreadsheetUrl };
 };
 
-/**
- * Append Rows to a Spreadsheet (with valueInputOption=USER_ENTERED)
- */
 export const appendSpreadsheetValues = async (
   spreadsheetId: string,
   range: string,
-  values: any[][]
+  values: SheetCellValue[][]
 ): Promise<{ updatedRows: number; updatedRange: string }> => {
   const token = getGoogleAccessToken();
   if (!token) throw new Error('Not signed in to Google or missing access token.');
 
   const encodedRange = encodeURIComponent(range);
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodedRange}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(spreadsheetId)}/values/${encodedRange}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
 
   const res = await fetch(url, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      values
-    })
+    body: JSON.stringify({ values }),
   });
 
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.error?.message || `Failed to append values to spreadsheet (${res.status})`);
+    throw new Error(
+      errorData.error?.message || `Failed to append values to spreadsheet (${res.status})`
+    );
   }
 
   const data = await res.json();
   return {
     updatedRows: data.updates?.updatedRows || values.length,
-    updatedRange: data.updates?.updatedRange || range
+    updatedRange: data.updates?.updatedRange || range,
   };
 };
 
-/**
- * Specialized Exporter: Export NGO Donations to a Google Sheet
- */
 export const exportDonationsToSheet = async (
   donations: Donation[],
   existingSpreadsheetId?: string,
@@ -313,10 +332,10 @@ export const exportDonationsToSheet = async (
     'Campaign / Cause',
     '80G Receipt Number',
     'Tax Exemption Status',
-    'Payment Status'
+    'Payment Status',
   ];
 
-  const rows = donations.map((d) => [
+  const rows: SheetCellValue[][] = donations.map((d) => [
     d.id,
     d.createdAt,
     d.donorName,
@@ -326,7 +345,7 @@ export const exportDonationsToSheet = async (
     d.campaignTitle || 'General Fund',
     d.receiptNumber || 'N/A',
     d.taxExemptionEligible ? '80G Verified' : 'Standard',
-    d.status
+    d.status,
   ]);
 
   if (existingSpreadsheetId) {
@@ -334,7 +353,7 @@ export const exportDonationsToSheet = async (
     return {
       spreadsheetId: existingSpreadsheetId,
       url: `https://docs.google.com/spreadsheets/d/${existingSpreadsheetId}/edit`,
-      rowsCount: rows.length
+      rowsCount: rows.length,
     };
   }
 
@@ -342,13 +361,10 @@ export const exportDonationsToSheet = async (
   return {
     spreadsheetId: created.spreadsheetId,
     url: created.spreadsheetUrl,
-    rowsCount: rows.length
+    rowsCount: rows.length,
   };
 };
 
-/**
- * Specialized Exporter: Export NGO Volunteers to a Google Sheet
- */
 export const exportVolunteersToSheet = async (
   volunteers: Volunteer[],
   existingSpreadsheetId?: string,
@@ -363,10 +379,10 @@ export const exportVolunteersToSheet = async (
     'Primary Skills',
     'Availability',
     'Location',
-    'Status'
+    'Status',
   ];
 
-  const rows = volunteers.map((v) => [
+  const rows: SheetCellValue[][] = volunteers.map((v) => [
     v.id,
     v.joinedDate,
     v.name,
@@ -375,7 +391,7 @@ export const exportVolunteersToSheet = async (
     v.skills.join(', '),
     v.availability,
     v.location,
-    v.status
+    v.status,
   ]);
 
   if (existingSpreadsheetId) {
@@ -383,7 +399,7 @@ export const exportVolunteersToSheet = async (
     return {
       spreadsheetId: existingSpreadsheetId,
       url: `https://docs.google.com/spreadsheets/d/${existingSpreadsheetId}/edit`,
-      rowsCount: rows.length
+      rowsCount: rows.length,
     };
   }
 
@@ -391,13 +407,10 @@ export const exportVolunteersToSheet = async (
   return {
     spreadsheetId: created.spreadsheetId,
     url: created.spreadsheetUrl,
-    rowsCount: rows.length
+    rowsCount: rows.length,
   };
 };
 
-/**
- * Specialized Exporter: Export NGO Projects to a Google Sheet
- */
 export const exportProjectsToSheet = async (
   projects: Project[],
   existingSpreadsheetId?: string,
@@ -412,10 +425,10 @@ export const exportProjectsToSheet = async (
     'Direct Beneficiaries',
     'Location / District',
     'Status',
-    'Completion %'
+    'Completion %',
   ];
 
-  const rows = projects.map((p) => [
+  const rows: SheetCellValue[][] = projects.map((p) => [
     p.id,
     p.title,
     p.category,
@@ -424,7 +437,7 @@ export const exportProjectsToSheet = async (
     p.beneficiariesCount,
     p.location,
     p.status,
-    p.budget > 0 ? `${Math.round((p.amountRaised / p.budget) * 100)}%` : '0%'
+    p.budget > 0 ? `${Math.round((p.amountRaised / p.budget) * 100)}%` : '0%',
   ]);
 
   if (existingSpreadsheetId) {
@@ -432,7 +445,7 @@ export const exportProjectsToSheet = async (
     return {
       spreadsheetId: existingSpreadsheetId,
       url: `https://docs.google.com/spreadsheets/d/${existingSpreadsheetId}/edit`,
-      rowsCount: rows.length
+      rowsCount: rows.length,
     };
   }
 
@@ -440,6 +453,6 @@ export const exportProjectsToSheet = async (
   return {
     spreadsheetId: created.spreadsheetId,
     url: created.spreadsheetUrl,
-    rowsCount: rows.length
+    rowsCount: rows.length,
   };
 };

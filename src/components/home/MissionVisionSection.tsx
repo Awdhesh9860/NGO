@@ -19,7 +19,7 @@ export const MissionVisionSection: React.FC = () => {
               Our Mission
             </h3>
             <p className="text-sm text-slate-600 leading-relaxed">
-              "We work side by side with local families to bring quality schooling, safe drinking water, healthcare camps, and practical job skills to communities in need, ensuring human dignity, self-reliance, and generational opportunity."
+              &ldquo;We work side by side with local families to bring quality schooling, safe drinking water, healthcare camps, and practical job skills to communities in need, ensuring human dignity, self-reliance, and generational opportunity.&rdquo;
             </p>
           </div>
 
@@ -52,7 +52,7 @@ export const MissionVisionSection: React.FC = () => {
               Our Vision
             </h3>
             <p className="text-sm text-slate-600 leading-relaxed">
-              "A world where every child can learn in a safe classroom, every family has access to clean water and healthcare, and every community has the tools, confidence, and resources to thrive independently."
+              &ldquo;A world where every child can learn in a safe classroom, every family has access to clean water and healthcare, and every community has the tools, confidence, and resources to thrive independently.&rdquo;
             </p>
           </div>
 

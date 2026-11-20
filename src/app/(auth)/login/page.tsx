@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
 import { authApi } from '@/features/authentication';
+import { UserRole } from '@/types';
 import {
   Lock,
   Mail,
@@ -21,9 +22,25 @@ import {
 } from 'lucide-react';
 import { RoleBadge } from '@/components/common/RoleBadge';
 
+function getSafeRedirectTarget(): string {
+  if (typeof window === 'undefined') return '/dashboard';
+  const redirect = new URLSearchParams(window.location.search).get('redirect');
+  // Prevent open-redirect attacks: only allow single-slash internal paths
+  if (redirect && redirect.startsWith('/') && !redirect.startsWith('//') && !redirect.includes('://')) {
+    return redirect;
+  }
+  return '/dashboard';
+}
+
 export default function LoginPage() {
   const router = useRouter();
-  const { switchUser, allUsers } = useAuth();
+  const {
+    switchUser,
+    allUsers,
+    isDemoPersonasEnabled,
+    refreshSession,
+    setAuthenticatedUser,
+  } = useAuth();
   const { showToast } = useToast();
 
   const [activeTab, setActiveTab] = useState<'credentials' | 'personas'>('credentials');
@@ -47,8 +64,7 @@ export default function LoginPage() {
       const res = await authApi.login({ email, password });
 
       if (!res.success) {
-        setErrorMessage(res.error?.message || 'Login failed. Please verify your credentials.');
-        setIsLoading(false);
+        setErrorMessage(res.error?.message || 'Invalid email or password. Please verify your credentials.');
         return;
       }
 
@@ -56,25 +72,31 @@ export default function LoginPage() {
         setRequires2FA(true);
         setTempToken(res.data.tempToken || null);
         showToast('Two-factor authentication required. Enter your code.', 'info');
-        setIsLoading(false);
         return;
       }
 
-      showToast('Logged in successfully! Redirecting...', 'success');
-      router.push('/dashboard');
-    } catch {
-      // Fallback for dev mode / local mock login
-      const mockSuccess = allUsers.some((u) => u.email.toLowerCase() === email.toLowerCase());
-      if (mockSuccess) {
-        const found = allUsers.find((u) => u.email.toLowerCase() === email.toLowerCase());
-        if (found) {
-          switchUser(found.id);
-          showToast(`Logged in as ${found.name} (${found.role})`, 'success');
-          router.push('/dashboard');
-          return;
-        }
+      if (res.data?.user) {
+        setAuthenticatedUser({
+          id: res.data.user.id,
+          name: res.data.user.name,
+          email: res.data.user.email,
+          role: res.data.user.role as UserRole,
+          phone: res.data.user.phone,
+          avatar: res.data.user.avatar,
+          status: 'active',
+          createdAt: new Date().toISOString(),
+          organizationId: res.data.user.organizationId,
+        });
       }
-      setErrorMessage('Invalid email or password. Please try again.');
+
+      // Authoritatively hydrate permissions from the newly issued HTTP-only JWT cookie
+      await refreshSession();
+
+      showToast('Logged in successfully! Redirecting...', 'success');
+      router.push(getSafeRedirectTarget());
+    } catch {
+      // Never fall back to passwordless mock login when authentication API is unreachable
+      setErrorMessage('Unable to complete sign-in. Please verify your credentials or try again shortly.');
     } finally {
       setIsLoading(false);
     }
@@ -91,12 +113,12 @@ export default function LoginPage() {
       const res = await authApi.verify2FALogin(tempToken, twoFactorCode);
       if (!res.success) {
         setErrorMessage(res.error?.message || 'Invalid 2FA code. Please retry.');
-        setIsLoading(false);
         return;
       }
 
+      await refreshSession();
       showToast('Two-factor authentication verified! Redirecting...', 'success');
-      router.push('/dashboard');
+      router.push(getSafeRedirectTarget());
     } catch {
       setErrorMessage('Verification failed. Please try again.');
     } finally {
@@ -105,14 +127,15 @@ export default function LoginPage() {
   };
 
   const handleSelectPersona = (user: (typeof allUsers)[0]) => {
+    if (!isDemoPersonasEnabled) return;
     switchUser(user.id);
-    showToast(`Switched active session to ${user.name} (${user.role})`, 'success');
+    showToast(`Switched active sandbox session to ${user.name} (${user.role})`, 'success');
     router.push('/dashboard');
   };
 
   return (
     <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden transition-all">
-      {/* Tab Switcher: Direct Sign In vs Demo Personas */}
+      {/* Tab Switcher: Direct Sign In (+ Dev Sandbox Personas ONLY when explicitly enabled) */}
       <div className="flex border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
         <button
           type="button"
@@ -129,27 +152,32 @@ export default function LoginPage() {
           <Lock className="w-3.5 h-3.5" />
           Sign In
         </button>
-        <button
-          type="button"
-          onClick={() => {
-            setActiveTab('personas');
-            setErrorMessage(null);
-          }}
-          className={`flex-1 py-3 text-xs font-semibold uppercase tracking-wider text-center transition-colors flex items-center justify-center gap-2 ${
-            activeTab === 'personas'
-              ? 'text-emerald-700 dark:text-emerald-400 border-b-2 border-emerald-600 bg-white dark:bg-slate-900'
-              : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
-          }`}
-        >
-          <Users className="w-3.5 h-3.5" />
-          13 Roles & Demo Personas
-        </button>
+
+        {isDemoPersonasEnabled && (
+          <button
+            type="button"
+            onClick={() => {
+              setActiveTab('personas');
+              setErrorMessage(null);
+            }}
+            className={`flex-1 py-3 text-xs font-semibold uppercase tracking-wider text-center transition-colors flex items-center justify-center gap-2 ${
+              activeTab === 'personas'
+                ? 'text-emerald-700 dark:text-emerald-400 border-b-2 border-emerald-600 bg-white dark:bg-slate-900'
+                : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            <Users className="w-3.5 h-3.5" />
+            Dev Personas
+          </button>
+        )}
       </div>
 
       <div className="p-6 sm:p-8">
-        {/* Error Alert Box */}
         {errorMessage && (
-          <div className="mb-6 p-4 rounded-xl bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 text-sm flex items-start gap-3">
+          <div
+            role="alert"
+            className="mb-6 p-4 rounded-xl bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 text-sm flex items-start gap-3"
+          >
             <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5 text-red-500" />
             <div>
               <p className="font-semibold">Authentication Error</p>
@@ -158,18 +186,22 @@ export default function LoginPage() {
           </div>
         )}
 
-        {/* Credentials Tab */}
         {activeTab === 'credentials' && !requires2FA && (
           <form onSubmit={handleCredentialsLogin} className="space-y-5">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+              <label
+                htmlFor="login-email"
+                className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5"
+              >
                 Email Address
               </label>
               <div className="relative">
                 <Mail className="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input
+                  id="login-email"
                   type="email"
                   required
+                  autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@organization.org"
@@ -180,7 +212,10 @@ export default function LoginPage() {
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                <label
+                  htmlFor="login-password"
+                  className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300"
+                >
                   Password
                 </label>
                 <Link
@@ -193,15 +228,18 @@ export default function LoginPage() {
               <div className="relative">
                 <Lock className="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input
+                  id="login-password"
                   type={showPassword ? 'text' : 'password'}
                   required
+                  autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
+                  placeholder="••••••••"
                   className="w-full pl-11 pr-11 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                 />
                 <button
                   type="button"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
                 >
@@ -242,7 +280,6 @@ export default function LoginPage() {
           </form>
         )}
 
-        {/* 2FA Step */}
         {activeTab === 'credentials' && requires2FA && (
           <form onSubmit={handle2FASubmit} className="space-y-5">
             <div className="text-center space-y-2">
@@ -258,17 +295,21 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5 text-center">
+              <label
+                htmlFor="login-2fa-code"
+                className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5 text-center"
+              >
                 Security Code
               </label>
               <input
+                id="login-2fa-code"
                 type="text"
                 required
-                maxLength={8}
+                maxLength={12}
                 value={twoFactorCode}
                 onChange={(e) => setTwoFactorCode(e.target.value.trim())}
                 placeholder="000000"
-                className="w-full text-center tracking-widest font-mono text-2xl py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+                className="w-full text-center tracking-widest font-mono text-2xl py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
               />
             </div>
 
@@ -284,7 +325,7 @@ export default function LoginPage() {
                 </>
               ) : (
                 <>
-                  Confirm Code & Sign In
+                  Confirm Code &amp; Sign In
                   <ShieldCheck className="w-4 h-4" />
                 </>
               )}
@@ -305,13 +346,12 @@ export default function LoginPage() {
           </form>
         )}
 
-        {/* Demo Personas Tab (All 13 Roles) */}
-        {activeTab === 'personas' && (
+        {isDemoPersonasEnabled && activeTab === 'personas' && (
           <div className="space-y-4">
             <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 text-xs text-amber-800 dark:text-amber-300 flex items-start gap-2.5">
               <Sparkles className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
               <p>
-                <strong>Developer Persona Switcher:</strong> Instantly switch between any of the 13 role-based personas to evaluate administrative controls, portal views, and permissions.
+                <strong>Local Development Sandbox Only:</strong> Demo persona switching is disabled in production builds.
               </p>
             </div>
 

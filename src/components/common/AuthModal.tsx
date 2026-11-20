@@ -496,7 +496,7 @@ export const AuthModal: React.FC = () => {
                   className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
                 />
                 <span>
-                  I agree to HopeHorizon's Ethical Charter, Code of Conduct & Privacy Policy.
+                  I agree to HopeHorizon&apos;s Ethical Charter, Code of Conduct &amp; Privacy Policy.
                 </span>
               </div>
 

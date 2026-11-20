@@ -25,7 +25,7 @@ export const TransparencySection: React.FC<TransparencySectionProps> = ({ onNavi
             </h2>
 
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
-              You deserve to know exactly how your donation is used. 88% of every rupee is spent directly on children's schooling, meals, and clean water. Our accounts are checked by independent Chartered Accountants every year and free for anyone to download.
+              You deserve to know exactly how your donation is used. 88% of every rupee is spent directly on children&apos;s schooling, meals, and clean water. Our accounts are checked by independent Chartered Accountants every year and free for anyone to download.
             </p>
 
             {/* Badges / Document categories */}

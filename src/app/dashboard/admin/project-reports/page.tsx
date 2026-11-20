@@ -44,7 +44,10 @@ export default function AdminProjectReportsPage() {
   };
 
   useEffect(() => {
-    loadAnalytics();
+    const id = setTimeout(() => {
+      void loadAnalytics();
+    }, 0);
+    return () => clearTimeout(id);
   }, []);
 
   const handleExportSummary = () => {

@@ -1,4 +1,4 @@
-'use client';
+//////////////////////////////////////////////////////////////////'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
 import {
@@ -69,7 +69,10 @@ export default function AdminTasksPage() {
   }, [search, projectFilter, statusFilter, priorityFilter, overdueOnly]);
 
   useEffect(() => {
-    loadTasks();
+    const id = setTimeout(() => {
+      void loadTasks();
+    }, 0);
+    return () => clearTimeout(id);
   }, [loadTasks]);
 
   useEffect(() => {

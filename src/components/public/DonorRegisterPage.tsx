@@ -298,7 +298,7 @@ export const DonorRegisterPage: React.FC<DonorRegisterPageProps> = ({
                       <button
                         key={type.id}
                         type="button"
-                        onClick={() => setDonorType(type.id as any)}
+                        onClick={() => setDonorType(type.id as 'individual' | 'corporate' | 'patron')}
                         className={`p-3.5 rounded-2xl border text-left transition ${
                           isSelected
                             ? 'border-emerald-600 bg-emerald-50/60 ring-2 ring-emerald-500/20'
@@ -572,7 +572,7 @@ export const DonorRegisterPage: React.FC<DonorRegisterPageProps> = ({
                         <button
                           key={cadence.id}
                           type="button"
-                          onClick={() => setGivingFrequency(cadence.id as any)}
+                          onClick={() => setGivingFrequency(cadence.id as 'monthly' | 'one_time' | 'annual')}
                           className={`p-3 rounded-2xl border text-left transition ${
                             isSelected
                               ? 'border-emerald-600 bg-emerald-50/60 ring-1 ring-emerald-500'
@@ -720,7 +720,7 @@ export const DonorRegisterPage: React.FC<DonorRegisterPageProps> = ({
                         className="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 mt-0.5"
                       />
                       <p className="text-xs text-slate-600">
-                        I confirm that all contributions are from legitimate funds and agree to HopeHorizon's{' '}
+                        I confirm that all contributions are from legitimate funds and agree to HopeHorizon&apos;s{' '}
                         <button
                           type="button"
                           onClick={() => onNavigate('legal')}

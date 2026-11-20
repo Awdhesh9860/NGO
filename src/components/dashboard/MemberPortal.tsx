@@ -137,7 +137,7 @@ export const MemberPortal: React.FC = () => {
 
           <div className="rounded-3xl bg-slate-900 p-6 text-white space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-400">
-              Executive Director's Confidential Briefing
+              Executive Director&apos;s Confidential Briefing
             </h4>
             <p className="text-xs text-slate-300 leading-relaxed">
               Read the Q1 confidential status memorandum detailing grassroots government permissions, FCRA regulatory renewal progress, and supply chain logistics.

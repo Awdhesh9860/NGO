@@ -19,7 +19,7 @@ export const VisionSection: React.FC = () => {
         </h2>
 
         <blockquote className="relative text-2xl sm:text-4xl lg:text-5xl font-black max-w-4xl mx-auto leading-tight text-white tracking-tight">
-          "A future where every person has the opportunity to live with dignity, learn, grow and build a better life."
+          &ldquo;A future where every person has the opportunity to live with dignity, learn, grow and build a better life.&rdquo;
         </blockquote>
 
         <p className="relative text-xs sm:text-sm text-slate-300 max-w-2xl mx-auto leading-relaxed">

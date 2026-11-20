@@ -1,15 +1,13 @@
 import crypto from 'crypto';
 import { ValidationError } from '@/lib/error-handler';
 import { toMinorUnits } from '@/lib/money';
+import { getFinancialEncryptionSecret } from '@/config/environment';
 
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 12;
 
 function getDerivedKey(): Buffer {
-  const secret =
-    process.env.FINANCIAL_ENCRYPTION_KEY ||
-    process.env.JWT_SECRET ||
-    'dev-only-financial-encryption-key-do-not-use-in-prod';
+  const secret = getFinancialEncryptionSecret();
   return crypto.createHash('sha256').update(secret).digest();
 }
 

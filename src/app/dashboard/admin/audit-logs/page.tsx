@@ -78,7 +78,10 @@ export default function AdminAuditLogsPage() {
   }, [page, search, action, resource, startDate, endDate]);
 
   useEffect(() => {
-    loadLogs();
+    const id = setTimeout(() => {
+      void loadLogs();
+    }, 0);
+    return () => clearTimeout(id);
   }, [loadLogs]);
 
   const handleExportCsv = () => {

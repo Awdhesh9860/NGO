@@ -20,7 +20,7 @@ interface AdminLayoutProps {
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const router = useRouter();
-  const { currentUser, logout } = useAuth();
+  const { currentUser, logout, isAuthLoading } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [org, setOrg] = useState<AdminOrganization | null>(null);
 
@@ -28,7 +28,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const hasAdminPortalAccess = ADMIN_ACCESS_ROLES.includes(role);
 
   useEffect(() => {
-    if (!hasAdminPortalAccess) return;
+    if (isAuthLoading || !hasAdminPortalAccess) return;
     adminApiService
       .getOrganization()
       .then((res) => {
@@ -37,7 +37,20 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         }
       })
       .catch(() => {});
-  }, [hasAdminPortalAccess]);
+  }, [hasAdminPortalAccess, isAuthLoading]);
+
+  if (isAuthLoading) {
+    return (
+      <div className="min-h-screen bg-[#f8faf9] dark:bg-[#0c1813] flex items-center justify-center p-6">
+        <div className="text-center space-y-2">
+          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-emerald-600 border-t-transparent" />
+          <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
+            Verifying organization session...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (!hasAdminPortalAccess) {
     return (

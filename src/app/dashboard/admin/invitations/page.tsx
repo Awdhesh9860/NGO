@@ -81,7 +81,10 @@ export default function AdminInvitationsPage() {
   }, [page, search, statusFilter, roleFilter]);
 
   useEffect(() => {
-    loadInvitations();
+    const id = setTimeout(() => {
+      void loadInvitations();
+    }, 0);
+    return () => clearTimeout(id);
   }, [loadInvitations]);
 
   useEffect(() => {

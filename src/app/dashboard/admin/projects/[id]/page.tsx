@@ -121,7 +121,9 @@ export default function AdminProjectDetailPage() {
   }, [projectId]);
 
   useEffect(() => {
-    loadWorkspace();
+    const id = setTimeout(() => {
+      void loadWorkspace();
+    }, 0);
     adminApiService
       .getUsers({ limit: 100 })
       .then((res) => {

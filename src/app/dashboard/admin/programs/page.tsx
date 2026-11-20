@@ -58,7 +58,10 @@ export default function AdminProgramsPage() {
   }, [search, statusFilter, categoryFilter]);
 
   useEffect(() => {
-    loadPrograms();
+    const id = setTimeout(() => {
+      void loadPrograms();
+    }, 0);
+    return () => clearTimeout(id);
   }, [loadPrograms]);
 
   useEffect(() => {

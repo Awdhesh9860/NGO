@@ -18,34 +18,35 @@ const THEME_STORAGE_KEY = 'hh_ngo_theme_preference';
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setThemeState] = useState<Theme>('light');
-  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('light');
+  const [systemPrefersDark, setSystemPrefersDark] = useState<boolean>(false);
+
+  const resolvedTheme: ResolvedTheme =
+    theme === 'system' ? (systemPrefersDark ? 'dark' : 'light') : theme;
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(THEME_STORAGE_KEY) as Theme | null;
-      if (stored && (stored === 'light' || stored === 'dark' || stored === 'system')) {
-        setThemeState(stored);
+    let active = true;
+    Promise.resolve().then(() => {
+      if (!active) return;
+      try {
+        const stored = localStorage.getItem(THEME_STORAGE_KEY) as Theme | null;
+        if (stored === 'light' || stored === 'dark' || stored === 'system') {
+          setThemeState(stored);
+        }
+        if (typeof window !== 'undefined') {
+          setSystemPrefersDark(window.matchMedia('(prefers-color-scheme: dark)').matches);
+        }
+      } catch {
+        // Ignore storage/mediaQuery access issues
       }
-    } catch {
-      // Ignore localStorage access issues
-    }
+    });
+    return () => {
+      active = false;
+    };
   }, []);
 
   useEffect(() => {
     const root = document.documentElement;
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
-    const computeResolvedTheme = (): ResolvedTheme => {
-      if (theme === 'system') {
-        return mediaQuery.matches ? 'dark' : 'light';
-      }
-      return theme;
-    };
-
-    const resolved = computeResolvedTheme();
-    setResolvedTheme(resolved);
-
-    if (resolved === 'dark') {
+    if (resolvedTheme === 'dark') {
       root.classList.add('dark');
       root.setAttribute('data-theme', 'dark');
     } else {
@@ -53,23 +54,14 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       root.setAttribute('data-theme', 'light');
     }
 
-    const handleSystemChange = () => {
-      if (theme === 'system') {
-        const nextResolved = mediaQuery.matches ? 'dark' : 'light';
-        setResolvedTheme(nextResolved);
-        if (nextResolved === 'dark') {
-          root.classList.add('dark');
-          root.setAttribute('data-theme', 'dark');
-        } else {
-          root.classList.remove('dark');
-          root.setAttribute('data-theme', 'light');
-        }
-      }
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleSystemChange = (event: MediaQueryListEvent) => {
+      setSystemPrefersDark(event.matches);
     };
 
     mediaQuery.addEventListener('change', handleSystemChange);
     return () => mediaQuery.removeEventListener('change', handleSystemChange);
-  }, [theme]);
+  }, [resolvedTheme]);
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);

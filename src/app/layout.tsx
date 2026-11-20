@@ -3,6 +3,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { SITE_CONFIG } from '../config/site';
 import { Providers } from './providers';
+import { serializeJsonLd } from '../components/common/JsonLd';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -85,8 +86,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script
           type="application/ld+json"
-          // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
         />
       </head>
       <body className="overflow-x-hidden antialiased bg-slate-50 text-slate-900">

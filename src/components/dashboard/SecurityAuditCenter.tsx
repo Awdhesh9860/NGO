@@ -369,7 +369,7 @@ export const SecurityAuditCenter: React.FC = () => {
             <div className="flex items-center gap-2">
               <select
                 value={selectedRoleFilter}
-                onChange={(e) => setSelectedRoleFilter(e.target.value as any)}
+                onChange={(e) => setSelectedRoleFilter(e.target.value as UserRole | 'ALL')}
                 className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 outline-hidden"
               >
                 <option value="ALL">All Roles</option>

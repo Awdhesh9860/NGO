@@ -1,11 +1,16 @@
+import mongoose from 'mongoose';
 import { NextRequest } from 'next/server';
 import { verifyAuthToken, AuthTokenPayload } from '@/server/auth/jwt';
 import { validateSession } from '@/server/auth/session';
 import { User, IUserDocument } from '@/server/database/models/User';
+import { Role } from '@/server/database/models/Role';
 import { AUTH_COOKIE_NAME } from '@/server/security/cookies';
 import { AuthenticationError, AuthorizationError } from '@/server/errors';
 import { UserRole, PermissionKey } from '@/types';
-import { checkRolePermission, checkRoleAnyPermission } from './permissions';
+import {
+  ROLE_PERMISSIONS,
+  PLATFORM_PROTECTED_PERMISSIONS,
+} from './permissions';
 import connectToDatabase from '@/server/database/connection';
 
 export interface AuthenticatedContext {
@@ -29,6 +34,75 @@ export function extractAuthToken(req: NextRequest): string | null {
   }
 
   return null;
+}
+
+/**
+ * Resolves the authoritative permission set for a user by evaluating:
+ *  1) SUPER_ADMIN platform wildcard
+ *  2) Active tenant-scoped custom MongoDB Role (`user.customRoleId`)
+ *  3) Active tenant-scoped system-role override in MongoDB (`Role.key === user.role`)
+ *  4) Built-in static `ROLE_PERMISSIONS[user.role]` fallback
+ *
+ * Non-SUPER_ADMIN roles can NEVER obtain `PLATFORM_PROTECTED_PERMISSIONS` even via custom roles.
+ */
+export async function resolveEffectivePermissions(
+  user: Pick<IUserDocument, 'role' | 'organizationId' | 'customRoleId'>
+): Promise<PermissionKey[]> {
+  if (user.role === 'SUPER_ADMIN') {
+    return [...(ROLE_PERMISSIONS.SUPER_ADMIN || [])];
+  }
+
+  const staticFallback = ROLE_PERMISSIONS[user.role] || [];
+  let resolvedPermissions: PermissionKey[] = staticFallback;
+
+  try {
+    const canQueryRole =
+      mongoose.connection.readyState === 1 || typeof (Role.findOne as { mock?: unknown })?.mock === 'object';
+
+    if (canQueryRole && user.organizationId) {
+      let dbRole: { permissions?: string[]; status?: string } | null = null;
+
+      if (user.customRoleId) {
+        const queryResult = Role.findOne({
+          _id: user.customRoleId,
+          organizationId: user.organizationId,
+          status: 'active',
+        });
+        dbRole =
+          queryResult && typeof (queryResult as { lean?: () => Promise<unknown> }).lean === 'function'
+            ? ((await (queryResult as { lean: () => Promise<unknown> }).lean()) as {
+                permissions?: string[];
+                status?: string;
+              } | null)
+            : ((await queryResult) as { permissions?: string[]; status?: string } | null);
+      }
+
+      if (!dbRole) {
+        const queryResult = Role.findOne({
+          organizationId: user.organizationId,
+          key: user.role,
+          status: 'active',
+        });
+        dbRole =
+          queryResult && typeof (queryResult as { lean?: () => Promise<unknown> }).lean === 'function'
+            ? ((await (queryResult as { lean: () => Promise<unknown> }).lean()) as {
+                permissions?: string[];
+                status?: string;
+              } | null)
+            : ((await queryResult) as { permissions?: string[]; status?: string } | null);
+      }
+
+      if (dbRole && Array.isArray(dbRole.permissions)) {
+        resolvedPermissions = dbRole.permissions as PermissionKey[];
+      }
+    }
+  } catch {
+    // Graceful fallback to static system defaults if Role lookup fails in unit test mocks
+    resolvedPermissions = staticFallback;
+  }
+
+  // Hard security invariant: non-SUPER_ADMIN roles cannot inherit platform-protected permissions
+  return resolvedPermissions.filter((perm) => !PLATFORM_PROTECTED_PERMISSIONS.includes(perm));
 }
 
 /**
@@ -91,7 +165,8 @@ export async function requireRole(
 }
 
 /**
- * Permission-based access control guard: throws 403 AuthorizationError if user lacks permission
+ * Permission-based access control guard: evaluates both system defaults and custom tenant MongoDB Roles.
+ * Throws 403 AuthorizationError if user lacks permission.
  */
 export async function requirePermission(
   req: NextRequest,
@@ -99,12 +174,12 @@ export async function requirePermission(
 ): Promise<AuthenticatedContext> {
   const context = await requireAuthentication(req);
 
-  // SUPER_ADMIN has all permissions
   if (context.user.role === 'SUPER_ADMIN') {
     return context;
   }
 
-  if (!checkRolePermission(context.user.role, permission)) {
+  const effectivePermissions = await resolveEffectivePermissions(context.user);
+  if (!effectivePermissions.includes(permission)) {
     throw new AuthorizationError(
       `Access denied. Missing required permission '${permission}'`
     );
@@ -115,6 +190,7 @@ export async function requirePermission(
 
 /**
  * Grants access if the user holds at least one of the specified permissions
+ * (evaluated against custom tenant MongoDB Roles + built-in defaults).
  */
 export async function requireAnyPermission(
   req: NextRequest,
@@ -126,7 +202,9 @@ export async function requireAnyPermission(
     return context;
   }
 
-  if (!checkRoleAnyPermission(context.user.role, permissions)) {
+  const effectivePermissions = await resolveEffectivePermissions(context.user);
+  const hasAny = permissions.some((p) => effectivePermissions.includes(p));
+  if (!hasAny) {
     throw new AuthorizationError(
       `Access denied. Missing any required permission from [${permissions.join(', ')}]`
     );

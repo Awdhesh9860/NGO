@@ -57,8 +57,15 @@ export class ConflictError extends AppError {
 }
 
 export class RateLimitError extends AppError {
-  constructor(message: string = 'Rate limit exceeded. Please retry later.') {
-    super(message, HTTP_STATUS.TOO_MANY_REQUESTS, 'RATE_LIMIT_EXCEEDED');
+  public readonly retryAfterSeconds?: number;
+
+  constructor(
+    message: string = 'Rate limit exceeded. Please retry later.',
+    retryAfterSeconds?: number,
+    details?: Record<string, unknown>
+  ) {
+    super(message, HTTP_STATUS.TOO_MANY_REQUESTS, 'RATE_LIMIT_EXCEEDED', details);
+    this.retryAfterSeconds = retryAfterSeconds;
   }
 }
 

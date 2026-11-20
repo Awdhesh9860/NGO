@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { requireAnyPermission, requirePermission } from '@/server/authorization/guards';
 import { accountingService } from '@/server/services/accounting.service';
 import { toAdminActor } from '@/server/services/admin.service';
 import { successResponse, HTTP_STATUS } from '@/lib/api-response';
 import { handleRouteError } from '@/server/errors';
-import { ValidationError } from '@/lib/error-handler';
+
+const incomeSyncSchema = z.object({
+  sourceType: z.enum(['DONATION', 'REFUND']),
+  sourceId: z.string().trim().min(1, 'sourceId is required'),
+});
 
 export async function GET(req: NextRequest) {
   try {
@@ -41,17 +46,15 @@ export async function POST(req: NextRequest) {
     const orgId = authContext.user.organizationId.toString();
     const actor = toAdminActor(authContext.user, req);
     const body = await req.json();
+    const validated = incomeSyncSchema.parse(body);
 
-    if (body?.sourceType === 'DONATION' && typeof body.sourceId === 'string') {
-      const synced = await accountingService.syncVerifiedDonationToLedger(orgId, body.sourceId, actor);
-      return NextResponse.json(successResponse(synced, undefined, orgId), { status: HTTP_STATUS.CREATED });
-    }
-    if (body?.sourceType === 'REFUND' && typeof body.sourceId === 'string') {
-      const synced = await accountingService.syncProcessedRefundToLedger(orgId, body.sourceId, actor);
+    if (validated.sourceType === 'DONATION') {
+      const synced = await accountingService.syncVerifiedDonationToLedger(orgId, validated.sourceId, actor);
       return NextResponse.json(successResponse(synced, undefined, orgId), { status: HTTP_STATUS.CREATED });
     }
 
-    throw new ValidationError('Body must include sourceType ("DONATION" or "REFUND") and sourceId');
+    const synced = await accountingService.syncProcessedRefundToLedger(orgId, validated.sourceId, actor);
+    return NextResponse.json(successResponse(synced, undefined, orgId), { status: HTTP_STATUS.CREATED });
   } catch (error) {
     return handleRouteError(error);
   }

@@ -4,8 +4,12 @@ import { UserRole } from '../../types';
 import { Users, Shield, Check, ChevronDown, Sparkles } from 'lucide-react';
 
 export const PersonaSwitcher: React.FC = () => {
-  const { currentUser, switchUser, allUsers } = useAuth();
+  const { currentUser, switchUser, allUsers, isDemoPersonasEnabled } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+
+  if (!isDemoPersonasEnabled) {
+    return null;
+  }
 
   const getRoleBadgeColor = (role: UserRole) => {
     switch (role) {

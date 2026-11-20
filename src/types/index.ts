@@ -29,6 +29,7 @@ export interface User {
   givingInterests?: string[];
   givingFrequency?: string;
   isAnonymous?: boolean;
+  organizationId?: string;
 }
 
 export type PermissionKey =

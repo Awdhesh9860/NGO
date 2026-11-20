@@ -68,7 +68,7 @@ export const FounderMessageView: React.FC<FounderMessageViewProps> = ({ onNaviga
             <div className="bg-slate-50 border border-slate-200/80 rounded-3xl p-6 sm:p-8 space-y-3">
               <Quote className="h-8 w-8 text-emerald-600/30" />
               <p className="text-base sm:text-lg font-bold text-slate-900 italic leading-snug">
-                "When you sit on the mud veranda of a village family and listen without rushing, you quickly discover that people do not want pity. They want a fair chance."
+                &ldquo;When you sit on the mud veranda of a village family and listen without rushing, you quickly discover that people do not want pity. They want a fair chance.&rdquo;
               </p>
             </div>
 
@@ -81,7 +81,7 @@ export const FounderMessageView: React.FC<FounderMessageViewProps> = ({ onNaviga
                 Over a decade ago, I met a 9-year-old girl named Sunita who walked four kilometers every morning carrying two heavy containers of water before school even began. By the time classes started, she was too exhausted to focus. Soon after, she stopped attending school altogether.
               </p>
               <p>
-                Seeing that broken promise of potential broke my heart. The solution wasn't complicated — a solar-powered water filtration plant in her village hamlet solved the water problem for 400 families, and Sunita returned to the front row of her classroom.
+                Seeing that broken promise of potential broke my heart. The solution wasn&apos;t complicated — a solar-powered water filtration plant in her village hamlet solved the water problem for 400 families, and Sunita returned to the front row of her classroom.
               </p>
             </div>
 
@@ -91,7 +91,7 @@ export const FounderMessageView: React.FC<FounderMessageViewProps> = ({ onNaviga
                 What Our Journey Has Taught Us
               </h3>
               <p>
-                We have learned that lasting change is slow, deliberate, and respectful. We do not arrive in a village as saviors with pre-packaged answers. We form local mothers' committees and train young people to manage their own facilities. That way, when our teams step back, the clean water keeps flowing and the school stays full.
+                We have learned that lasting change is slow, deliberate, and respectful. We do not arrive in a village as saviors with pre-packaged answers. We form local mothers&apos; committees and train young people to manage their own facilities. That way, when our teams step back, the clean water keeps flowing and the school stays full.
               </p>
             </div>
 

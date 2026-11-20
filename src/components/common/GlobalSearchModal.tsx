@@ -141,7 +141,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
 
           {trimmed && totalResults === 0 && (
             <div className="py-8 text-center text-slate-500">
-              <p className="text-sm">No results found for "{query}".</p>
+              <p className="text-sm">No results found for &ldquo;{query}&rdquo;.</p>
               <p className="text-xs text-slate-400 mt-1">Try keywords like education, water, flood, report, or event.</p>
             </div>
           )}

@@ -109,13 +109,40 @@ interface DatabaseContextType {
 
   // Compatibility aliases
   volunteerApplications: Volunteer[];
-  addProject: (projectData: any) => Project;
-  addCampaign: (campaignData: any) => Campaign;
-  addReport: (reportData: any) => any;
-  addAuditLog: (logData: any) => void;
+  addProject: (
+    projectData: Partial<Omit<Project, 'milestones'>> & {
+      title: string;
+      fundingGoal?: number;
+      managerName?: string;
+      milestones?: Array<Partial<Project['milestones'][number]> & { id: string; title: string }>;
+    }
+  ) => Project;
+  addCampaign: (
+    campaignData: Partial<Campaign> & { title: string; targetAmount: number }
+  ) => Campaign;
+  addReport: <T>(reportData: T) => T;
+  addAuditLog: (logData: {
+    actorId?: string;
+    userId?: string;
+    actorName?: string;
+    userName?: string;
+    actorRole?: string;
+    action?: string;
+    resource?: string;
+    entityType?: string;
+    details?: string;
+    resourceId?: string;
+    entityId?: string;
+  }) => void;
   memberships: Member[];
-  addMembership: (memberData: any) => Member;
-  updateMilestoneStatus: (projectId: string, milestoneId: string, status: any) => void;
+  addMembership: (
+    memberData: Omit<Member, 'id' | 'memberId' | 'status' | 'startDate' | 'expiryDate' | 'digitalCardQr'>
+  ) => Member;
+  updateMilestoneStatus: (
+    projectId: string,
+    milestoneId: string,
+    status: Project['milestones'][number]['status'] | boolean
+  ) => void;
 }
 
 const DatabaseContext = createContext<DatabaseContextType | undefined>(undefined);
@@ -764,29 +791,94 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   // Compatibility methods
-  const addProject = (projectData: any) => createProject(projectData);
-  const addCampaign = (campaignData: any) => createCampaign(campaignData);
-  const addReport = (reportData: any) => reportData;
-  const addAuditLog = (logData: any) => {
+  const addProject = (
+    projectData: Partial<Omit<Project, 'milestones'>> & {
+      title: string;
+      fundingGoal?: number;
+      managerName?: string;
+      milestones?: Array<Partial<Project['milestones'][number]> & { id: string; title: string }>;
+    }
+  ) =>
+    createProject({
+      slug: projectData.slug || projectData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      title: projectData.title,
+      programId: projectData.programId || 'prog-1',
+      programTitle: projectData.programTitle || 'General Social Impact Program',
+      category: projectData.category || 'General Welfare',
+      location: projectData.location || 'India',
+      status: projectData.status || 'active',
+      startDate: projectData.startDate || new Date().toISOString().split('T')[0],
+      endDate: projectData.endDate || '',
+      budget: projectData.budget ?? projectData.fundingGoal ?? 0,
+      fundingGoal: projectData.fundingGoal ?? projectData.budget ?? 0,
+      beneficiariesCount: projectData.beneficiariesCount ?? 0,
+      description: projectData.description || '',
+      objectives: projectData.objectives || [],
+      managerId: projectData.managerId || 'usr-manager',
+      managerName: projectData.managerName || 'Program Coordinator',
+      teamMemberIds: projectData.teamMemberIds || [],
+      images: projectData.images || [],
+      impactStats: projectData.impactStats || [],
+    });
+  const addCampaign = (
+    campaignData: Partial<Campaign> & { title: string; targetAmount: number }
+  ) =>
+    createCampaign({
+      slug: campaignData.slug || campaignData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      title: campaignData.title,
+      category: campaignData.category || 'General',
+      targetAmount: campaignData.targetAmount,
+      startDate: campaignData.startDate || new Date().toISOString().split('T')[0],
+      endDate: campaignData.endDate || '',
+      status: campaignData.status || 'active',
+      isUrgent: Boolean(campaignData.isUrgent),
+      image: campaignData.image || '',
+      description: campaignData.description || '',
+      beneficiaryInfo: campaignData.beneficiaryInfo || '',
+    });
+  const addReport = <T,>(reportData: T) => reportData;
+  const addAuditLog = (logData: {
+    actorId?: string;
+    userId?: string;
+    actorName?: string;
+    userName?: string;
+    actorRole?: string;
+    action?: string;
+    resource?: string;
+    entityType?: string;
+    details?: string;
+    resourceId?: string;
+    entityId?: string;
+  }) => {
     recordAuditLog(
-      logData.actorId || 'system',
+      logData.actorId || logData.userId || 'system',
       logData.actorName || logData.userName || 'Anonymous',
       logData.actorRole || 'VOLUNTEER',
       logData.action || 'ACTIVITY',
-      logData.resource || 'General',
+      logData.resource || logData.entityType || 'General',
       logData.details || '',
-      logData.resourceId
+      logData.resourceId || logData.entityId
     );
   };
-  const addMembership = (memberData: any) => addMemberRegistration(memberData);
-  const updateMilestoneStatus = (projectId: string, milestoneId: string, status: any) => {
+  const addMembership = (
+    memberData: Omit<Member, 'id' | 'memberId' | 'status' | 'startDate' | 'expiryDate' | 'digitalCardQr'>
+  ) => addMemberRegistration(memberData);
+  const updateMilestoneStatus = (
+    projectId: string,
+    milestoneId: string,
+    status: Project['milestones'][number]['status'] | boolean
+  ) => {
+    const resolvedStatus: Project['milestones'][number]['status'] =
+      typeof status === 'boolean' ? (status ? 'completed' : 'pending') : status;
     setProjects((prev) =>
       prev.map((proj) => {
         if (proj.id !== projectId) return proj;
         return {
           ...proj,
           milestones: proj.milestones.map((m) =>
-            m.id === milestoneId ? { ...m, status, completed: status === 'completed' } : m
+            m.id === milestoneId
+              ? { ...m, status: resolvedStatus, completed: resolvedStatus === 'completed' }
+              : m
           )
         };
       })

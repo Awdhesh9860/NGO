@@ -268,10 +268,10 @@ export const ImpactView: React.FC<ImpactViewProps> = ({ onNavigate, onOpenDonate
                 Education
               </span>
               <h3 className="text-base font-bold text-slate-900">
-                [Person Name]'s Journey to College
+                [Person Name]&apos;s Journey to College
               </h3>
               <p className="text-xs text-slate-600 leading-relaxed">
-                "[Person Name] from [Project Location] was about to drop out in 9th grade because his family could not afford examination fees. With our after-school study center and learning kit support, he passed with high marks and is now pursuing his diploma."
+                &ldquo;[Person Name] from [Project Location] was about to drop out in 9th grade because his family could not afford examination fees. With our after-school study center and learning kit support, he passed with high marks and is now pursuing his diploma.&rdquo;
               </p>
               <p className="text-[11px] text-slate-400 italic">
                 Supported by our Rural Youth Education Initiative
@@ -286,10 +286,10 @@ export const ImpactView: React.FC<ImpactViewProps> = ({ onNavigate, onOpenDonate
                 [Person Name] Starts a Small Sewing Center
               </h3>
               <p className="text-xs text-slate-600 leading-relaxed">
-                "After attending our six-month vocational stitching training, [Person Name] received a micro-toolkit and opened a small home tailoring shop in [Project Location]. She now earns enough each month to support her two daughters' schooling."
+                &ldquo;After attending our six-month vocational stitching training, [Person Name] received a micro-toolkit and opened a small home tailoring shop in [Project Location]. She now earns enough each month to support her two daughters&apos; schooling.&rdquo;
               </p>
               <p className="text-[11px] text-slate-400 italic">
-                Supported by our Women's Livelihood Program
+                Supported by our Women&apos;s Livelihood Program
               </p>
             </div>
           </div>

@@ -5,6 +5,7 @@ import { stakeholderRepository } from '@/server/repositories/stakeholder.reposit
 import { volunteerService } from '@/server/services/volunteer.service';
 import { createVolunteerApplicationSchema } from '@/features/volunteers/schemas/volunteer.schema';
 import { VolunteerApplicationStatus } from '@/server/database/models/VolunteerApplication';
+import { enforceRateLimit } from '@/server/security/rate-limit';
 import { NotFoundError } from '@/lib/error-handler';
 import { successResponse, HTTP_STATUS } from '@/lib/api-response';
 import { handleRouteError } from '@/server/errors';
@@ -51,6 +52,7 @@ export async function GET(req: NextRequest) {
  */
 export async function POST(req: NextRequest) {
   try {
+    await enforceRateLimit(req, 'PUBLIC_FORM');
     const authContext = await getAuthenticatedContext(req).catch(() => null);
     const tenant = await resolveTenant(req, authContext?.user.organizationId.toString());
     if (!tenant) throw new NotFoundError('Active organization could not be resolved');

@@ -35,7 +35,10 @@ export default function AdminMilestonesPage() {
   }, [projectFilter, statusFilter, overdueOnly]);
 
   useEffect(() => {
-    loadMilestones();
+    const id = setTimeout(() => {
+      void loadMilestones();
+    }, 0);
+    return () => clearTimeout(id);
   }, [loadMilestones]);
 
   useEffect(() => {

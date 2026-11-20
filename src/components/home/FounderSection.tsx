@@ -42,7 +42,7 @@ export const FounderSection: React.FC<FounderSectionProps> = ({ onNavigate }) =>
           <Quote className="h-10 w-10 text-emerald-400/30" />
 
           <p className="text-base sm:text-lg text-slate-200 leading-relaxed italic font-normal">
-            "True social transformation begins with quiet listening. When we sit with a mother who worries about her child's schooling, or an elder who needs safe water for their hamlet, our foremost duty is humility. We are not saviors; we are partners. Every single donation entrusted to us is a sacred responsibility to make that child's life genuinely better."
+            &ldquo;True social transformation begins with quiet listening. When we sit with a mother who worries about her child&apos;s schooling, or an elder who needs safe water for their hamlet, our foremost duty is humility. We are not saviors; we are partners. Every single donation entrusted to us is a sacred responsibility to make that child&apos;s life genuinely better.&rdquo;
           </p>
 
           <div className="pt-2 flex flex-wrap items-center gap-4">

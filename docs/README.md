@@ -134,6 +134,16 @@ This directory contains the complete technical architecture, security specificat
 13. **[Financial Data Security](file:///s:/Project/NGO/docs/security/FINANCIAL_DATA_SECURITY.md)**: Separation of duties matrix, AES-256-GCM encryption, masking, and CSV/document security.
 14. **[Finance Module Development Guidelines](file:///s:/Project/NGO/docs/development/FINANCE_MODULE_GUIDELINES.md)**: Multi-developer squad ownership, engineering invariants, and verification commands.
 
+---
+
+### 🧪 Enterprise Quality Assurance & Audit Suite (QA Phase 1)
+
+1. **[QA Master Plan](file:///s:/Project/NGO/docs/qa/QA_MASTER_PLAN.md)**: 30-discipline enterprise QA strategy (20 core + 10 specialized NGO layers), runtime tiers, test data policy, and release gates.
+2. **[Complete Application Audit](file:///s:/Project/NGO/docs/qa/APPLICATION_AUDIT.md)**: Verified repository inventory (125 pages, 139 APIs, 61 models), 23-area maturity audit, and static/test verification baseline.
+3. **[Test Coverage Matrix](file:///s:/Project/NGO/docs/qa/TEST_COVERAGE_MATRIX.md)**: Current Vitest & Playwright inventory mapped against all 30 testing disciplines and platform modules.
+4. **[Risk Register & Bug Ledger](file:///s:/Project/NGO/docs/qa/RISK_REGISTER.md)**: Prioritized P0–P3 real codebase defects, security gaps, OWASP mappings, and remediation status.
+5. **[QA Phase 2 Bug Report & Verified Fixes](file:///s:/Project/NGO/docs/qa/BUG_REPORT_AND_FIXES.md)**: Complete resolution log of all 5 P0 Critical, 4 P1 High, and 4 P2 Medium fixes with test evidence.
+
 
 
 
