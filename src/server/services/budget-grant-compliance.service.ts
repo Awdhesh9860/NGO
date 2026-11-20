@@ -15,7 +15,7 @@ import {
 import { accountingService } from '@/server/services/accounting.service';
 import { adminService, AdminActor } from '@/server/services/admin.service';
 import { checkRolePermission } from '@/server/authorization/permissions';
-import { validateDocumentFile } from '@/integrations/storage/local.provider';
+import { storageProvider, validateDocumentFile } from '@/integrations/storage/local.provider';
 import {
   AuthorizationError,
   ConflictError,
@@ -1046,14 +1046,63 @@ export class BudgetGrantComplianceService {
     actor: AdminActor
   ) {
     validateDocumentFile(input.mimeType, input.sizeBytes);
+    const existing = await financeRepository.findFinancialDocuments(
+      organizationId,
+      input.linkedEntityType,
+      input.linkedEntityId
+    );
+    const nextVersion =
+      existing.filter((d) => d.documentType === input.documentType && d.title === input.title).length + 1;
+
     const doc = await financeRepository.createFinancialDocument({
       organizationId: new mongoose.Types.ObjectId(organizationId),
       ...input,
       isPrivate: true,
-      version: 1,
+      version: nextVersion,
       uploadedBy: new mongoose.Types.ObjectId(actor.id),
     });
+
+    await adminService.logAudit(
+      actor,
+      'FINANCE_DOCUMENT_REGISTERED',
+      'FinancialDocument',
+      doc._id.toString(),
+      `Registered private financial document "${doc.title}" (v${nextVersion}, ${doc.documentType})`
+    );
     return doc;
+  }
+
+  async listFinancialDocumentsWithSignedUrls(
+    organizationId: string,
+    linkedEntityType:
+      | 'EXPENSE'
+      | 'VENDOR'
+      | 'VENDOR_BILL'
+      | 'BANK_ACCOUNT'
+      | 'GRANT'
+      | 'COMPLIANCE_RECORD'
+      | 'JOURNAL_ENTRY',
+    linkedEntityId: string
+  ) {
+    const docs = await financeRepository.findFinancialDocuments(
+      organizationId,
+      linkedEntityType,
+      linkedEntityId
+    );
+    return Promise.all(
+      docs.map(async (d) => ({
+        id: d._id.toString(),
+        documentType: d.documentType,
+        title: d.title,
+        fileName: d.fileName,
+        mimeType: d.mimeType,
+        sizeBytes: d.sizeBytes,
+        version: d.version,
+        isPrivate: d.isPrivate,
+        signedDownloadUrl: await storageProvider.getSignedDownloadUrl(d.storageKey, 900),
+        createdAt: d.createdAt,
+      }))
+    );
   }
 }
 

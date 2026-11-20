@@ -639,4 +639,91 @@ describe('Phase 10: Expense Approvals, Vendor Bills, Bank Reconciliation, Restri
     expect(csv).toContain('Account Code');
     expect(csv).toContain('1020');
   });
+
+  it('validates financial document MIME types, enforces size caps, versions uploads, and generates signed download URLs', async () => {
+    const entityId = new mongoose.Types.ObjectId().toString();
+
+    // Disallowed executable MIME type rejected
+    await expect(
+      budgetGrantCompliance.registerFinancialDocument(
+        ORG_A,
+        {
+          documentType: 'EXPENSE_INVOICE',
+          title: 'Suspicious File',
+          fileName: 'invoice.exe',
+          mimeType: 'application/x-msdownload',
+          sizeBytes: 1024,
+          storageKey: 'finance/invoice.exe',
+          linkedEntityType: 'EXPENSE',
+          linkedEntityId: entityId,
+        },
+        accountantActor
+      )
+    ).rejects.toThrow(/Unsupported file MIME type/i);
+
+    // Oversized file (> 15 MB) rejected
+    await expect(
+      budgetGrantCompliance.registerFinancialDocument(
+        ORG_A,
+        {
+          documentType: 'AUDIT_REPORT',
+          title: 'Huge PDF',
+          fileName: 'audit.pdf',
+          mimeType: 'application/pdf',
+          sizeBytes: 25 * 1024 * 1024,
+          storageKey: 'finance/audit.pdf',
+          linkedEntityType: 'COMPLIANCE_RECORD',
+          linkedEntityId: entityId,
+        },
+        accountantActor
+      )
+    ).rejects.toThrow(/File size must be between/i);
+
+    // Valid PDF versions cleanly and produces HMAC signed download URLs
+    vi.spyOn(financeRepository, 'findFinancialDocuments').mockResolvedValue([
+      {
+        _id: new mongoose.Types.ObjectId(),
+        documentType: 'EXPENSE_INVOICE',
+        title: 'Vendor Invoice',
+        fileName: 'inv-1.pdf',
+        mimeType: 'application/pdf',
+        sizeBytes: 4096,
+        storageKey: 'finance/inv-1.pdf',
+        version: 1,
+        isPrivate: true,
+        createdAt: new Date(),
+      },
+    ] as never);
+
+    let capturedVersion = 0;
+    vi.spyOn(financeRepository, 'createFinancialDocument').mockImplementation(async (doc) => {
+      capturedVersion = doc.version || 0;
+      return { _id: new mongoose.Types.ObjectId(), ...doc } as never;
+    });
+
+    await budgetGrantCompliance.registerFinancialDocument(
+      ORG_A,
+      {
+        documentType: 'EXPENSE_INVOICE',
+        title: 'Vendor Invoice',
+        fileName: 'inv-1-revised.pdf',
+        mimeType: 'application/pdf',
+        sizeBytes: 4096,
+        storageKey: 'finance/inv-1-revised.pdf',
+        linkedEntityType: 'EXPENSE',
+        linkedEntityId: entityId,
+      },
+      accountantActor
+    );
+    expect(capturedVersion).toBe(2);
+
+    const signedList = await budgetGrantCompliance.listFinancialDocumentsWithSignedUrls(
+      ORG_A,
+      'EXPENSE',
+      entityId
+    );
+    expect(signedList).toHaveLength(1);
+    expect(signedList[0].signedDownloadUrl).toContain('sig=');
+    expect(signedList[0].signedDownloadUrl).toContain('expires=');
+  });
 });

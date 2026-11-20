@@ -3,6 +3,7 @@ import connectToDatabase from '@/server/database/connection';
 import { financeRepository } from '@/server/repositories/finance.repository';
 import { IJournalLineDocument } from '@/server/database/models/JournalLine';
 import { Expense } from '@/server/database/models/Expense';
+import { ExpenseApproval } from '@/server/database/models/ExpenseApproval';
 import { VendorBill } from '@/server/database/models/VendorBill';
 import { Donation } from '@/server/database/models/Donation';
 import { accountingService } from '@/server/services/accounting.service';
@@ -345,6 +346,108 @@ export class FinancialReportsService {
         totalReceivedMinor: sumMinorUnits(grantRows.map((g) => g.receivedAmountMinor)),
         totalUtilizedMinor: sumMinorUnits(grantRows.map((g) => g.utilizedAmountMinor)),
       },
+    };
+  }
+
+  /**
+   * Dimensional NGO Financial Breakdown:
+   * - Campaign-wise Income (posted INCOME ledger lines)
+   * - Program-wise, Project-wise & Department-wise Expenses (posted EXPENSE ledger lines)
+   * - Vendor Outstanding Report (unpaid/partially paid VendorBills)
+   * - Expense Approval Summary (ExpenseApproval audit records)
+   */
+  async getNgoOperationalBreakdownReport(
+    organizationId: string,
+    filters?: { periodId?: string; from?: Date; to?: Date }
+  ) {
+    await connectToDatabase();
+    const orgObjId = new mongoose.Types.ObjectId(organizationId);
+
+    const [postedLines, openBills, approvalSummary] = await Promise.all([
+      financeRepository.findPostedLedgerLines(organizationId, filters || {}, 5000),
+      VendorBill.find({
+        organizationId: orgObjId,
+        paymentStatus: { $in: ['UNPAID', 'PARTIALLY_PAID'] },
+      }).sort({ dueDate: 1 }),
+      ExpenseApproval.aggregate([
+        { $match: { organizationId: orgObjId } },
+        {
+          $group: {
+            _id: '$decision',
+            count: { $sum: 1 },
+            totalAmountMinor: { $sum: '$expenseAmountMinor' },
+          },
+        },
+      ]),
+    ]);
+
+    const campaignIncome = new Map<string, number>();
+    const programExpenses = new Map<string, number>();
+    const projectExpenses = new Map<string, number>();
+    const departmentExpenses = new Map<string, number>();
+
+    for (const line of postedLines) {
+      if (line.accountTypeSnapshot === 'INCOME' && line.campaignId) {
+        const key = line.campaignId.toString();
+        campaignIncome.set(
+          key,
+          sumMinorUnits([campaignIncome.get(key) || 0, subtractMinorUnits(line.creditMinor, line.debitMinor)])
+        );
+      } else if (line.accountTypeSnapshot === 'EXPENSE') {
+        const netExpense = subtractMinorUnits(line.debitMinor, line.creditMinor);
+        if (line.programId) {
+          const k = line.programId.toString();
+          programExpenses.set(k, sumMinorUnits([programExpenses.get(k) || 0, netExpense]));
+        }
+        if (line.projectId) {
+          const k = line.projectId.toString();
+          projectExpenses.set(k, sumMinorUnits([projectExpenses.get(k) || 0, netExpense]));
+        }
+        if (line.departmentId) {
+          const k = line.departmentId.toString();
+          departmentExpenses.set(k, sumMinorUnits([departmentExpenses.get(k) || 0, netExpense]));
+        }
+      }
+    }
+
+    const vendorOutstanding = openBills.map((b) => ({
+      billId: b._id.toString(),
+      vendorId: b.vendorId.toString(),
+      billNumber: b.billNumber,
+      dueDate: b.dueDate,
+      totalAmountMinor: b.totalAmountMinor,
+      paidAmountMinor: b.paidAmountMinor,
+      outstandingMinor: Math.max(0, subtractMinorUnits(b.totalAmountMinor, b.paidAmountMinor)),
+      currency: b.currency,
+      paymentStatus: b.paymentStatus,
+    }));
+
+    return {
+      campaignWiseIncome: Array.from(campaignIncome.entries()).map(([campaignId, netIncomeMinor]) => ({
+        campaignId,
+        netIncomeMinor,
+      })),
+      programWiseExpenses: Array.from(programExpenses.entries()).map(([programId, netExpenseMinor]) => ({
+        programId,
+        netExpenseMinor,
+      })),
+      projectWiseExpenses: Array.from(projectExpenses.entries()).map(([projectId, netExpenseMinor]) => ({
+        projectId,
+        netExpenseMinor,
+      })),
+      departmentWiseExpenses: Array.from(departmentExpenses.entries()).map(
+        ([departmentId, netExpenseMinor]) => ({ departmentId, netExpenseMinor })
+      ),
+      vendorOutstanding: {
+        bills: vendorOutstanding,
+        totalOutstandingMinor: sumMinorUnits(vendorOutstanding.map((v) => v.outstandingMinor)),
+      },
+      expenseApprovalSummary: approvalSummary.map((row) => ({
+        decision: String(row._id),
+        count: Math.trunc(row.count || 0),
+        totalAmountMinor: Math.trunc(row.totalAmountMinor || 0),
+      })),
+      derivedFromPostedLedgerOnly: true,
     };
   }
 
