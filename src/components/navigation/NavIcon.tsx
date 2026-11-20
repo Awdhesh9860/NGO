@@ -31,12 +31,13 @@ import {
   Sparkles,
   CalendarDays,
   Newspaper,
-  Image,
+  Image as ImageIcon,
   Files,
   BadgeCheck,
   HelpCircle,
   FolderOpen,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Scale,
 } from 'lucide-react';
 
 interface NavIconProps {
@@ -77,11 +78,12 @@ export const NavIcon: React.FC<NavIconProps> = ({ name, className = 'h-4 w-4' })
     case 'Sparkles': return <Sparkles className={className} />;
     case 'CalendarDays': return <CalendarDays className={className} />;
     case 'Newspaper': return <Newspaper className={className} />;
-    case 'Image': return <Image className={className} />;
+    case 'Image': return <ImageIcon className={className} />;
     case 'Files': return <Files className={className} />;
     case 'BadgeCheck': return <BadgeCheck className={className} />;
     case 'HelpCircle': return <HelpCircle className={className} />;
     case 'FileSpreadsheet': return <FileSpreadsheet className={className} />;
+    case 'Scale': return <Scale className={className} />;
     default: return <FolderOpen className={className} />;
   }
 };

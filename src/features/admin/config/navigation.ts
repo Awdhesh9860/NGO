@@ -445,10 +445,47 @@ export const ADMIN_ACCESS_ROLES: UserRole[] = [
 
 const NON_CONSOLE_PORTAL_ROLES: UserRole[] = ['GUEST', 'DONOR', 'MEMBER', 'VOLUNTEER'];
 
+export type AdminNavGroupKey =
+  | 'Core'
+  | 'Operations'
+  | 'Fundraising'
+  | 'Stakeholders'
+  | 'Finance'
+  | 'Organization'
+  | 'Security';
+
+export const ADMIN_NAV_GROUPS_ORDER: AdminNavGroupKey[] = [
+  'Core',
+  'Operations',
+  'Fundraising',
+  'Stakeholders',
+  'Finance',
+  'Organization',
+  'Security',
+];
+
+export interface GroupedAdminNavSection {
+  group: AdminNavGroupKey;
+  items: AdminNavItem[];
+}
+
 export function getAuthorizedAdminNav(role: UserRole): AdminNavItem[] {
   if (NON_CONSOLE_PORTAL_ROLES.includes(role)) return [];
   if (role === 'SUPER_ADMIN') return ADMIN_NAVIGATION_ITEMS;
   return ADMIN_NAVIGATION_ITEMS.filter((item) =>
     checkRoleAnyPermission(role, item.requiredPermissions)
   );
+}
+
+/**
+ * Returns role-authorized admin navigation organized into non-empty semantic groups.
+ * Guarantees unauthorized routes are never surfaced in sidebars or dropdowns.
+ */
+export function getGroupedAdminNav(role: UserRole): GroupedAdminNavSection[] {
+  const authorized = getAuthorizedAdminNav(role);
+  if (authorized.length === 0) return [];
+  return ADMIN_NAV_GROUPS_ORDER.map((group) => ({
+    group,
+    items: authorized.filter((item) => item.group === group),
+  })).filter((section) => section.items.length > 0);
 }

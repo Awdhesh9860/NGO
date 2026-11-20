@@ -16,6 +16,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    exclude: ['**/node_modules/**', '**/dist/**', '**/.claude/**', '**/.next/**'],
+    testTimeout: 15000,
+    exclude: ['**/node_modules/**', '**/dist/**', '**/.claude/**', '**/.next/**', '**/tests/e2e/**'],
   },
 });

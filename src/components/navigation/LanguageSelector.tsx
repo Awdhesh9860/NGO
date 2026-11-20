@@ -48,11 +48,11 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ isScrolled =
         aria-expanded={isOpen}
         aria-haspopup="listbox"
         aria-label="Select Language"
-        className={`inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer border ${
+        className={`inline-flex h-9 items-center gap-1.5 rounded-xl px-2.5 text-xs font-semibold tracking-wide transition-all duration-150 cursor-pointer border ${
           isScrolled
-            ? 'border-slate-700/60 bg-slate-800/60 text-slate-200 hover:bg-slate-700/70 hover:text-white'
+            ? 'border-slate-200 dark:border-[#1d332b] bg-slate-50 dark:bg-[#152721] text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#1d352c]'
             : 'border-white/20 bg-black/25 text-white/90 hover:bg-black/40 hover:text-white backdrop-blur-md'
-        } focus:outline-hidden focus-visible:ring-2 focus-visible:ring-emerald-400`}
+        } focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#087F5B]`}
       >
         <Globe className="h-3.5 w-3.5 opacity-80" />
         <span className="uppercase font-bold text-[11px]">{currentLangObj.code}</span>
@@ -66,9 +66,9 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ isScrolled =
       {isOpen && (
         <div
           role="listbox"
-          className="absolute right-0 mt-2 w-44 rounded-2xl border border-slate-700/80 bg-slate-900/95 p-1.5 text-slate-200 shadow-2xl backdrop-blur-xl z-50 animate-in fade-in slide-in-from-top-2 duration-150"
+          className="absolute right-0 mt-2 w-44 rounded-2xl border border-slate-200 dark:border-[#1d332b] bg-white dark:bg-[#10201a] p-1.5 text-slate-800 dark:text-slate-200 shadow-2xl backdrop-blur-xl z-50 animate-in fade-in slide-in-from-top-1 duration-150 motion-reduce:animate-none"
         >
-          <div className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800/80 mb-1">
+          <div className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 dark:border-[#1d332b] mb-1">
             Choose Language
           </div>
           {LANGUAGES.map((lang) => {
@@ -84,15 +84,15 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ isScrolled =
                 }}
                 className={`w-full flex items-center justify-between rounded-xl px-2.5 py-2 text-xs font-medium transition cursor-pointer ${
                   isSelected
-                    ? 'bg-emerald-600/20 text-emerald-400 font-bold'
-                    : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
+                    ? 'bg-emerald-50 dark:bg-emerald-950/60 text-[#087F5B] dark:text-emerald-400 font-bold'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#172b22]'
                 }`}
               >
                 <div className="flex flex-col text-left">
                   <span className="text-xs font-bold leading-tight">{lang.native}</span>
-                  <span className="text-[10px] text-slate-400">{lang.label}</span>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400">{lang.label}</span>
                 </div>
-                {isSelected && <Check className="h-3.5 w-3.5 text-emerald-400 shrink-0" />}
+                {isSelected && <Check className="h-3.5 w-3.5 text-[#087F5B] dark:text-emerald-400 shrink-0" />}
               </button>
             );
           })}

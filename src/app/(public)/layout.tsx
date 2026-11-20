@@ -21,7 +21,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
   const setMobileMenuOpen = useUIStore((s) => s.setMobileMenuOpen);
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans antialiased selection:bg-emerald-500 selection:text-white">
+    <div className="min-h-screen flex flex-col overflow-x-clip bg-slate-50 dark:bg-[#0c1813] text-slate-900 dark:text-[#f0f7f4] font-sans antialiased selection:bg-emerald-500 selection:text-white transition-colors duration-150">
       <OrganizationJsonLd />
       <Navbar
         currentView={currentView}

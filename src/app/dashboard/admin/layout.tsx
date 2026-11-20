@@ -70,7 +70,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8faf9] dark:bg-[#0c1813] text-slate-800 dark:text-slate-100 flex flex-col overflow-x-hidden transition-colors duration-150">
+    <div className="min-h-screen bg-[#f8faf9] dark:bg-[#0c1813] text-slate-800 dark:text-slate-100 flex flex-col overflow-x-clip transition-colors duration-150">
       <DashboardHeader
         userName={currentUser?.name}
         userRole={role}
